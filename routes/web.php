@@ -6,6 +6,13 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/login-pegawai', function () {
+    return view('login-pegawai');
+})->name('login.pegawai');
+
+Route::get('/home', function () {
+    return view('home'); // Buat file ini nanti
+})->name('home');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
