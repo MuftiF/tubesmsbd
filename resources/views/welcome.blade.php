@@ -27,7 +27,7 @@
 
             <a href="{{ route('login') }}"
                class="px-6 py-3 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition">
-               Login Pegawai
+               Login 
             </a>
         </div>
     </div>
