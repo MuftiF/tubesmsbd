@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'security' => \App\Http\Middleware\Security::class,
             'manager' => \App\Http\Middleware\manager::class,
             'cleaning' => \App\Http\Middleware\cleaning::class,
+            'kantoran' => \App\Http\Middleware\kantoran::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

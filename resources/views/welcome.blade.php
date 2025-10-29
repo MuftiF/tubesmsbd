@@ -6,30 +6,37 @@
     <title>Main Gate</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+<body class="bg-gradient-to-b from-gray-100 to-gray-200 flex items-center justify-center min-h-screen">
 
-    <div class="text-center">
+    <!-- Kartu utama -->
+    <div class="bg-white p-10 rounded-2xl shadow-lg border border-gray-200 text-center w-full max-w-md">
+        
         <!-- Logo besar -->
-        <div class="mb-10">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzBngVaz7tSw2CaQXVNqw7VJu6Sz99M5U2PQ&s"
-            alt="Logo Laravel"
-            class="mx-auto w-40 h-40">
-
-            <h1 class="text-3xl font-bold mt-4 text-gray-800">Selamat Datang</h1>
+        <div class="mb-8">
+            <img src="{{ asset('images/LOGO.jpg') }}" 
+                 alt="Logo Perusahaan"
+                 class="mx-auto w-36 h-36 rounded-xl shadow-sm border border-gray-100">
         </div>
 
+        <!-- Teks sambutan -->
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Selamat Datang</h1>
+        <p class="text-gray-600 mb-8">Portal resmi untuk karyawan dan pengunjung</p>
+
         <!-- Tombol navigasi -->
-        <div class="space-x-4">
+        <div class="flex justify-center gap-4">
             <a href="{{ url('/home') }}"
-               class="px-6 py-3 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition">
+               class="px-6 py-3 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 transition text-lg font-medium">
                Homepage
             </a>
 
             <a href="{{ route('login') }}"
-               class="px-6 py-3 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition">
-               Login 
+               class="px-6 py-3 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 focus:ring-4 focus:ring-green-300 transition text-lg font-medium">
+               Login
             </a>
         </div>
+
+        <!-- Footer kecil -->
+        <p class="text-sm text-gray-400 mt-8">© {{ date('Y') }} PT. Sipirok Indah</p>
     </div>
 
 </body>

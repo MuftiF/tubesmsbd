@@ -42,3 +42,7 @@ Route::get('manager/dashboard', function () {
 Route::get('cleaning/dashboard', function () {
     return view('cleaning.dashboard');
 })->middleware(['auth', 'cleaning']);
+
+Route::get('kantoran/dashboard', function () {
+    return view('kantoran.dashboard');
+})->middleware(['auth', 'kantoran']);
