@@ -27,7 +27,18 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
-route::get('admin/dashboard',[HomeController::class,'index'])->
-middleware(['auth','admin'])
-;   
- 
+Route::get('admin/dashboard', function () {
+    return view('admin.dashboard');
+})->middleware(['auth', 'admin']);
+
+Route::get('security/dashboard', function () {
+    return view('security.dashboard');
+})->middleware(['auth', 'security']);
+
+Route::get('manager/dashboard', function () {
+    return view('manager.dashboard');
+})->middleware(['auth', 'manager']);
+
+Route::get('cleaning/dashboard', function () {
+    return view('cleaning.dashboard');
+})->middleware(['auth', 'cleaning']);
