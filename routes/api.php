@@ -1,21 +1,20 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use app\Http\Controllers\AbsensiController;
-use app\Http\Controllers\AreaKerjaController;
-use app\Http\Controllers\AttendanceController;
-use app\Http\Controllers\CatatanPanenController;
-use app\Http\Controllers\DepartemenController;
-use app\Http\Controllers\HariLiburController;
-use app\Http\Controllers\LemburController;
-use app\Http\Controllers\LogAktivitasController;
-use app\Http\Controllers\PegawaiController;
-use app\Http\Controllers\PenggajianController;
-use app\Http\Controllers\RekapBulananController;
-use app\Http\Controllers\RekapHarianController;
-use app\Http\Controllers\RekapTahunanController;
-use app\Http\Controllers\ShiftController;
-use app\Http\Controllers\StatusAbsensiController;
+use App\Http\Controllers\AbsensiController;
+use App\Http\Controllers\AreaKerjaController;
+use App\Http\Controllers\CatatanPanenController;
+use App\Http\Controllers\DepartemenController;
+use App\Http\Controllers\HariLiburController;
+use App\Http\Controllers\LemburController;
+use App\Http\Controllers\LogAktivitasController;
+use App\Http\Controllers\PegawaiController;
+use App\Http\Controllers\PenggajianController;
+use App\Http\Controllers\RekapBulananController;
+use App\Http\Controllers\RekapHarianController;
+use App\Http\Controllers\RekapTahunanController;
+use App\Http\Controllers\ShiftController;
+use App\Http\Controllers\StatusAbsensiController;
 
 Route::apiResource('absensi', AbsensiController::class);
 
@@ -44,9 +43,6 @@ Route::apiResource('hari-libur', HariLiburController::class);
 Route::apiResource('catatan-panen', CatatanPanenController::class);
 
 Route::apiResource('penggajian', PenggajianController::class);
-
-Route::apiResource('attendance', AttendanceController::class);
-
 
 
 Route::get('/test', function () {
