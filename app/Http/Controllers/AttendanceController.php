@@ -11,9 +11,9 @@ use Illuminate\Support\Facades\Storage;
 class AttendanceController extends Controller
 {
     public function index()
-    {
+{
     $user = Auth::user();
-    $today = \Carbon\Carbon::today();
+    $today = Carbon::today();
 
     $attendanceToday = Attendance::where('user_id', $user->id)
         ->whereDate('created_at', $today)
@@ -35,10 +35,14 @@ class AttendanceController extends Controller
         ->selectRaw('AVG(TIMESTAMPDIFF(HOUR, check_in, check_out)) as avg_hours')
         ->value('avg_hours');
 
+    // Tambahkan serverTime di sini
+    $serverTime = Carbon::now('Asia/Jakarta');
+
     return view('attendance', compact(
-        'attendanceToday', 'monthlyCount', 'onTimeCount', 'averageHours'
+        'attendanceToday', 'monthlyCount', 'onTimeCount', 'averageHours', 'serverTime'
     ));
-    }
+}
+
 
     public function store(Request $request)
     {
