@@ -19,7 +19,6 @@ class AttendanceController extends Controller
         ->whereDate('created_at', $today)
         ->first();
 
-    // Statistik bulanan contoh
     $monthlyCount = Attendance::where('user_id', $user->id)
         ->whereMonth('created_at', now()->month)
         ->count();
@@ -29,13 +28,15 @@ class AttendanceController extends Controller
         ->where('status', 'tepat waktu')
         ->count();
 
-    $averageHours = Attendance::where('user_id', $user->id)
+    $attendances = Attendance::where('user_id', $user->id)
         ->whereMonth('created_at', now()->month)
         ->whereNotNull('check_out')
-        ->selectRaw('AVG(TIMESTAMPDIFF(HOUR, check_in, check_out)) as avg_hours')
-        ->value('avg_hours');
+        ->get();
 
-    // Tambahkan serverTime di sini
+    $averageHours = $attendances->avg(function ($attendance) {
+        return $attendance->check_out->diffInHours($attendance->check_in);
+    });
+
     $serverTime = Carbon::now('Asia/Jakarta');
 
     return view('attendance', compact(

@@ -74,56 +74,54 @@
 
     {{-- Tab: Absen --}}
     <div id="absen" class="tab-content hidden bg-white shadow rounded-xl p-6">
-    <h3 class="text-lg font-semibold mb-4">
-        {{ $attendanceToday && !$attendanceToday->check_out ? 'Check Out' : 'Form Absensi' }}
-    </h3>
+        <h3 class="text-lg font-semibold mb-4">
+            {{ $attendanceToday && !$attendanceToday->check_out ? 'Check Out' : 'Form Absensi' }}
+        </h3>
 
-    <div class="mb-4 text-center bg-gradient-to-r from-indigo-500 to-purple-500 text-white p-4 rounded-xl">
-        {{-- Menggunakan waktu dari server untuk tampilan tanggal --}}
-        <p class="text-sm">{{ \Carbon\Carbon::parse($serverTime)->translatedFormat('l, d F Y') }}</p>
-        <h2 id="realtimeClock" class="text-3xl font-bold">00:00:00</h2>
-    </div>
-
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-
-    @if (!$attendanceToday)
-        {{-- === Check In Form === --}}
-        <form action="{{ route('attendance.store') }}" method="POST" enctype="multipart/form-data">
-            @csrf
-            <div class="mb-4">
-                <label class="block text-gray-600">Upload Foto Bukti Kehadiran *</label>
-                <input type="file" name="photo" required class="mt-2 border rounded-lg w-full p-2">
-            </div>
-            <div class="mb-4">
-                <label class="block text-gray-600">Catatan (Opsional)</label>
-                <textarea name="note" class="mt-2 border rounded-lg w-full p-2"></textarea>
-            </div>
-            <button type="submit"
-                class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg w-full">
-                Check In Sekarang
-            </button>
-        </form>
-    @elseif ($attendanceToday && !$attendanceToday->check_out)
-        {{-- === Check Out Button === --}}
-        <form action="{{ route('attendance.store') }}" method="POST">
-            @csrf
-            <div class="text-center mb-4">
-                <p class="text-gray-700 mb-2">Anda sudah melakukan Check In pada pukul
-                    <b>{{ $attendanceToday->check_in->format('H:i') }}</b>.
-                </p>
-                <p>Silakan lakukan <b>Check Out</b> saat Anda selesai bekerja.</p>
-            </div>
-            <button type="submit"
-                class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg w-full">
-                Check Out Sekarang
-            </button>
-        </form>
-    @else
-        <div class="text-center text-green-600 font-semibold">
-            Anda telah menyelesaikan absensi hari ini. 🎉
+        <div class="mb-4 text-center bg-gradient-to-r from-indigo-500 to-purple-500 text-white p-4 rounded-xl">
+            <p class="text-sm">{{ \Carbon\Carbon::parse($serverTime)->translatedFormat('l, d F Y') }}</p>
+            <h2 id="realtimeClock" class="text-3xl font-bold">00:00:00</h2>
         </div>
-    @endif
-        </div>
+
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+
+        @if (!$attendanceToday)
+            {{-- === Check In Form === --}}
+            <form action="{{ route('attendance.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="mb-4">
+                    <label class="block text-gray-600">Upload Foto Bukti Kehadiran *</label>
+                    <input type="file" name="photo" required class="mt-2 border rounded-lg w-full p-2">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-600">Catatan (Opsional)</label>
+                    <textarea name="note" class="mt-2 border rounded-lg w-full p-2"></textarea>
+                </div>
+                <button type="submit"
+                    class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg w-full">
+                    Check In Sekarang
+                </button>
+            </form>
+        @elseif ($attendanceToday && !$attendanceToday->check_out)
+            {{-- === Check Out Button === --}}
+            <form action="{{ route('attendance.store') }}" method="POST">
+                @csrf
+                <div class="text-center mb-4">
+                    <p class="text-gray-700 mb-2">Anda sudah melakukan Check In pada pukul
+                        <b>{{ $attendanceToday->check_in->format('H:i') }}</b>.
+                    </p>
+                    <p>Silakan lakukan <b>Check Out</b> saat Anda selesai bekerja.</p>
+                </div>
+                <button type="submit"
+                    class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg w-full">
+                    Check Out Sekarang
+                </button>
+            </form>
+        @else
+            <div class="text-center text-green-600 font-semibold">
+                Anda telah menyelesaikan absensi hari ini. 🎉
+            </div>
+        @endif
 
         <div class="mt-6 text-sm text-blue-600">
             <p><b>Petunjuk Absensi:</b></p>
@@ -160,13 +158,9 @@
     }
 
     // === Realtime Clock ===
-    <script>
-    // Ambil waktu server yang dikirim dari controller Laravel
     const initialServerTime = "{{ $serverTime }}";
-    // Inisialisasi objek Date menggunakan waktu server
     let currentTime = new Date(initialServerTime);
 
-    // Fungsi untuk memformat waktu menjadi HH:MM:SS
     function formatTime(date) {
         const hours = String(date.getHours()).padStart(2, '0');
         const minutes = String(date.getMinutes()).padStart(2, '0');
@@ -174,17 +168,12 @@
         return `${hours}:${minutes}:${seconds}`;
     }
 
-    // Fungsi untuk memperbarui jam setiap detik
     function updateClock() {
-        // Tambahkan 1 detik ke waktu saat ini
         currentTime.setSeconds(currentTime.getSeconds() + 1);
-        
-        // Tampilkan waktu yang sudah diupdate
         document.getElementById('realtimeClock').textContent = formatTime(currentTime);
     }
 
     setInterval(updateClock, 1000);
-    
     updateClock();
 
     // === Load History ===
@@ -223,5 +212,8 @@
     }
 
     document.getElementById('searchDate').addEventListener('change', e => loadHistory(e.target.value));
+
+    // Tampilkan tab "Hari Ini" default saat halaman load
+    showTab('today');
 </script>
 @endsection

@@ -27,6 +27,6 @@ class Attendance extends Model
     // Relasi ke User
     public function user()
     {
-        return $this->belongsTo(Pegawai::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 }
