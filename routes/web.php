@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CleaningAbsenController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\AttendanceController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -26,6 +28,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::middleware(['auth'])->group(function () {
+    Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
+    Route::post('/attendance', [AttendanceController::class, 'store'])->name('attendance.store');
+    Route::get('/attendance/history', [AttendanceController::class, 'history'])->name('attendance.history');
+});
+
 require __DIR__.'/auth.php';
 
 // Route untuk role-based dashboard
@@ -45,17 +53,21 @@ Route::get('kantoran/dashboard', function () {
     return view('kantoran.dashboard');
 })->middleware(['auth', 'kantoran']);
 
-// GROUP ROUTE CLEANING SERVICE - PASTIKAN INI DIGUNAKAN
-Route::middleware(['auth', 'cleaning'])->prefix('cleaning')->name('cleaning.')->group(function () {
-    // Dashboard cleaning
-    Route::get('/dashboard', [CleaningAbsenController::class, 'index'])->name('dashboard');
-    
-    // Absen
-    Route::get('/absen', [CleaningAbsenController::class, 'index'])->name('absen');
-    
-    // Proses absen datang
-    Route::post('/absen-datang', [CleaningAbsenController::class, 'absenDatang'])->name('absen.datang');
-    
-    // Proses absen pulang
-    Route::post('/absen-pulang', [CleaningAbsenController::class, 'absenPulang'])->name('absen.pulang');
+// GROUP ROUTE CLEANING SERVICE
+Route::middleware(['auth', 'cleaning'])
+    ->prefix('cleaning')
+    ->name('cleaning.')
+    ->group(function () {
+
+        // Dashboard cleaning
+        Route::get('/dashboard', [CleaningAbsenController::class, 'index'])->name('dashboard');
+        
+        // Absen
+        Route::get('/absen', [CleaningAbsenController::class, 'index'])->name('absen');
+        
+        // Proses absen datang
+        Route::post('/absen-datang', [CleaningAbsenController::class, 'absenDatang'])->name('absen.datang');
+        
+        // Proses absen pulang
+        Route::post('/absen-pulang', [CleaningAbsenController::class, 'absenPulang'])->name('absen.pulang');
 });
