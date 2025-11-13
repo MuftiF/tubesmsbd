@@ -1,18 +1,19 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\CleaningAbsenController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\HomeController;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
 Route::get('/login-pegawai', function () {
     return view('login-pegawai');
 })->name('login.pegawai');
 
 Route::get('/home', function () {
-    return view('home'); // Buat file ini nanti
+    return view('home');
 })->name('home');
 
 Route::get('/dashboard', function () {
@@ -27,6 +28,7 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
+// Route untuk role-based dashboard
 Route::get('admin/dashboard', function () {
     return view('admin.dashboard');
 })->middleware(['auth', 'admin']);
@@ -39,10 +41,21 @@ Route::get('manager/dashboard', function () {
     return view('manager.dashboard');
 })->middleware(['auth', 'manager']);
 
-Route::get('cleaning/dashboard', function () {
-    return view('cleaning.dashboard');
-})->middleware(['auth', 'cleaning']);
-
 Route::get('kantoran/dashboard', function () {
     return view('kantoran.dashboard');
 })->middleware(['auth', 'kantoran']);
+
+// GROUP ROUTE CLEANING SERVICE - PASTIKAN INI DIGUNAKAN
+Route::middleware(['auth', 'cleaning'])->prefix('cleaning')->name('cleaning.')->group(function () {
+    // Dashboard cleaning
+    Route::get('/dashboard', [CleaningAbsenController::class, 'index'])->name('dashboard');
+    
+    // Absen
+    Route::get('/absen', [CleaningAbsenController::class, 'index'])->name('absen');
+    
+    // Proses absen datang
+    Route::post('/absen-datang', [CleaningAbsenController::class, 'absenDatang'])->name('absen.datang');
+    
+    // Proses absen pulang
+    Route::post('/absen-pulang', [CleaningAbsenController::class, 'absenPulang'])->name('absen.pulang');
+});
