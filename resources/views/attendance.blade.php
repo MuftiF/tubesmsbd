@@ -44,8 +44,6 @@
             class="px-4 py-2 rounded-full bg-indigo-100 text-indigo-700 font-medium">Hari Ini</button>
         <button onclick="showTab('absen')" id="tab-absen"
             class="px-4 py-2 rounded-full bg-gray-200 text-gray-600 font-medium">Absen</button>
-        <button onclick="showTab('history')" id="tab-history"
-            class="px-4 py-2 rounded-full bg-gray-200 text-gray-600 font-medium">Riwayat</button>
     </div>
 
     {{-- Tab: Hari Ini --}}
@@ -135,14 +133,6 @@
         </div>
     </div>
 
-    {{-- Tab: Riwayat --}}
-    <div id="history" class="tab-content hidden bg-white shadow rounded-xl p-6">
-        <h3 class="text-lg font-semibold mb-4">Riwayat Kehadiran</h3>
-        <input type="date" id="searchDate" class="border rounded-lg p-2 mb-4">
-        <div id="historyTable" class="overflow-x-auto"></div>
-    </div>
-</div>
-
 <script>
     // === Handle Tabs ===
     function showTab(tab) {
@@ -175,42 +165,6 @@
 
     setInterval(updateClock, 1000);
     updateClock();
-
-    // === Load History ===
-    function loadHistory(date = '') {
-        fetch(`{{ route('attendance.history') }}?date=${date}`)
-            .then(res => res.json())
-            .then(data => {
-                const container = document.getElementById('historyTable');
-                if (data.length === 0) {
-                    container.innerHTML = `<p class="text-gray-500 text-center py-4">Tidak ada data ditemukan</p>`;
-                    return;
-                }
-                let html = `
-                <table class="min-w-full text-sm">
-                    <thead><tr class="border-b bg-gray-100">
-                        <th class="px-3 py-2 text-left">Tanggal</th>
-                        <th class="px-3 py-2 text-left">Check In</th>
-                        <th class="px-3 py-2 text-left">Check Out</th>
-                        <th class="px-3 py-2 text-left">Status</th>
-                        <th class="px-3 py-2 text-left">Foto</th>
-                    </tr></thead><tbody>`;
-                data.forEach(a => {
-                    html += `<tr class="border-b">
-                        <td class="px-3 py-2">${a.date}</td>
-                        <td class="px-3 py-2">${a.check_in ?? '-'}</td>
-                        <td class="px-3 py-2">${a.check_out ?? '-'}</td>
-                        <td class="px-3 py-2 capitalize">${a.status ?? '-'}</td>
-                        <td class="px-3 py-2">
-                            ${a.photo_path ? `<img src="/storage/${a.photo_path}" class="w-16 rounded-lg">` : '-'}
-                        </td>
-                    </tr>`;
-                });
-                html += '</tbody></table>';
-                container.innerHTML = html;
-            });
-    }
-
     document.getElementById('searchDate').addEventListener('change', e => loadHistory(e.target.value));
 
     // Tampilkan tab "Hari Ini" default saat halaman load

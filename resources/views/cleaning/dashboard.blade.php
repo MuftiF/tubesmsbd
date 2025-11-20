@@ -1,227 +1,87 @@
-@php
-    $sudahHadir = $sudahHadir ?? false;
-@endphp
+@extends('layouts.app')
 
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Cleaning Service Dashboard') }}
-        </h2>
-    </x-slot>
+@section('content')
+<div class="max-w-md mx-auto">
+    <!-- Header -->
+    <div class="text-center mb-8">
+        <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="text-3xl">🧹</span>
+        </div>
+        <h1 class="text-2xl font-bold text-gray-800">CLEANING SERVICE</h1>
+        <p class="text-gray-600">Area Kebersihan & Perawatan</p>
+    </div>
 
-    <div class="py-8">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-
-            {{-- Tampilkan pesan sukses/error --}}
-            @if(session('success'))
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                    {{ session('success') }}
+    <!-- Status Card -->
+    <div class="bg-white rounded-xl shadow-lg p-6 mb-6 border-l-4 border-green-500">
+        <h2 class="text-lg font-bold text-gray-800 mb-4">Status Tugas Hari Ini</h2>
+        <div class="grid grid-cols-2 gap-4">
+            <div class="text-center">
+                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                    <span class="text-xl">⏰</span>
                 </div>
-            @endif
-
-            @if($errors->any())
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                    <ul>
-                        @foreach($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
-            {{-- Informasi Status Absen --}}
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-6">
-                <div class="p-6 text-center">
-                    <h3 class="text-lg font-semibold mb-2">Status Absen Hari Ini</h3>
-                    <p class="text-sm">
-                        @if($sudahHadir)
-                            <span class="text-green-600 font-medium text-lg">✓ Anda sudah absen datang hari ini</span>
-                            <p class="text-gray-600 dark:text-gray-400 mt-2">Silakan lakukan absen pulang setelah selesai kerja</p>
-                        @else
-                            <span class="text-yellow-600 font-medium text-lg">● Belum absen datang</span>
-                            <p class="text-gray-600 dark:text-gray-400 mt-2">Silakan lakukan absen datang untuk memulai kerja</p>
-                        @endif
-                    </p>
-                </div>
+                <p class="text-sm text-gray-600">Masuk</p>
+                <p class="font-bold text-gray-800">06:00</p>
             </div>
-
-            {{-- TOMBOL HADIR DAN PULANG --}}
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                
-                {{-- TOMBOL HADIR --}}
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-center">
-                        <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Absen Datang</h3>
-                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                            Klik tombol di bawah untuk melakukan absen datang
-                        </p>
-
-                        @if(!$sudahHadir)
-                            <button type="button" onclick="openHadirModal()"
-                                class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-lg shadow text-lg">
-                                HADIR
-                            </button>
-                        @else
-                            <button disabled
-                                class="w-full bg-gray-400 text-white font-bold py-4 px-6 rounded-lg cursor-not-allowed text-lg">
-                                SUDAH HADIR
-                            </button>
-                        @endif
-                    </div>
+            <div class="text-center">
+                <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                    <span class="text-xl">✅</span>
                 </div>
-
-                {{-- TOMBOL PULANG --}}
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-center">
-                        <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Absen Pulang</h3>
-                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                            Klik tombol di bawah untuk melakukan absen pulang
-                        </p>
-
-                        @if($sudahHadir)
-                            <button type="button" onclick="openPulangModal()"
-                                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-lg shadow text-lg">
-                                PULANG
-                            </button>
-                        @else
-                            <button disabled
-                                class="w-full bg-gray-400 text-white font-bold py-4 px-6 rounded-lg cursor-not-allowed text-lg">
-                                BELUM HADIR
-                            </button>
-                        @endif
-                    </div>
-                </div>
+                <p class="text-sm text-gray-600">Area Selesai</p>
+                <p class="font-bold text-gray-800">3/5</p>
             </div>
         </div>
     </div>
 
-    {{-- MODAL ABSEN HADIR --}}
-    <div id="hadirModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
-        <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-1/2 lg:w-1/3 shadow-lg rounded-md bg-white dark:bg-gray-800">
-            <div class="mt-3">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Absen Datang</h3>
-                
-                <form action="{{ route('cleaning.absen.datang') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
-                    @csrf
-                    
-                    <div>
-                        <label class="block font-medium text-sm text-gray-700 dark:text-gray-300 mb-1">
-                            Foto Kehadiran
-                        </label>
-                        <input type="file" name="foto_datang" accept="image/*" required
-                            class="w-full border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-900">
-                        <p class="text-xs text-gray-500 mt-1">Ambil foto selfie sebagai bukti kehadiran</p>
-                        @error('foto_datang')
-                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
+<!-- Action Buttons -->
+    <div class="space-y-4">
+        @if(!isset($absenHariIni) || !$absenHariIni || !$absenHariIni->check_in)
+        <a href="{{ route('attendance.index') }}"
+           class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg transition duration-200 transform hover:scale-105 flex items-center justify-center block text-center">
+            <span class="text-xl mr-3">📍</span>
+            ABSEN MASUK
+        </a>
+        @endif
 
-                    <div class="flex gap-3 pt-3">
-                        <button type="button" onclick="closeHadirModal()"
-                            class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg">
-                            Batal
-                        </button>
-                        <button type="submit"
-                            class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg">
-                            Simpan
-                        </button>
-                    </div>
-                </form>
-            </div>
+        @if(isset($absenHariIni) && $absenHariIni && $absenHariIni->check_in && !$absenHariIni->check_out)
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 text-center">Absen Pulang</h3>
+
+            <a href="{{ route('attendance.index') }}"
+               class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-lg mb-3 transition duration-200 flex items-center justify-center block text-center">
+                <span class="text-xl mr-2">📸</span>
+                AMBIL FOTO & ABSEN PULANG
+            </a>
+        </div>
+        @endif
+
+        @if(isset($absenHariIni) && $absenHariIni && $absenHariIni->check_out)
+        <div class="bg-green-50 border border-green-200 rounded-xl p-6 text-center">
+            <div class="text-4xl mb-2">✅</div>
+            <h3 class="text-xl font-bold text-green-800 mb-2">Absensi Selesai</h3>
+            <p class="text-green-600">Terima kasih sudah bekerja keras hari ini!</p>
+            <a href="{{ route('attendance.history') }}" class="text-blue-600 hover:text-blue-800 mt-2 inline-block">
+                Lihat Riwayat →
+            </a>
+        </div>
+        @endif
+    </div>
+    &nbsp;
+
+    <!-- Quick Actions -->
+    <div class="bg-white rounded-xl shadow-lg p-6">
+        <h3 class="text-lg font-bold text-gray-800 mb-4">Aksi Cepat</h3>
+        <div class="grid grid-cols-2 gap-4">
+            <a href="{{ route('attendance.index') }}"
+               class="bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded-lg text-center font-semibold transition duration-200 block">
+                <div class="text-xl mb-1">📍</div>
+                <div class="text-sm">Absen</div>
+            </a>
+            <a href="{{ route('attendance.history') }}"
+               class="bg-green-500 hover:bg-green-600 text-white py-3 px-4 rounded-lg text-center font-semibold transition duration-200 block">
+                <div class="text-xl mb-1">📋</div>
+                <div class="text-sm">Riwayat</div>
+            </a>
         </div>
     </div>
-
-    {{-- MODAL ABSEN PULANG --}}
-    <div id="pulangModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
-        <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-2/3 lg:w-1/2 shadow-lg rounded-md bg-white dark:bg-gray-800">
-            <div class="mt-3">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Absen Pulang</h3>
-                
-                <form action="{{ route('cleaning.absen.pulang') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
-                    @csrf
-                    
-                    <div>
-                        <label class="block font-medium text-sm text-gray-700 dark:text-gray-300 mb-1">
-                            Hasil Kerja Hari Ini
-                        </label>
-                        <textarea name="hasil_kerja" rows="3" placeholder="Tuliskan pekerjaan yang sudah diselesaikan hari ini..."
-                            class="w-full border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-900"
-                            required>{{ old('hasil_kerja') }}</textarea>
-                        @error('hasil_kerja')
-                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block font-medium text-sm text-gray-700 dark:text-gray-300 mb-1">
-                                Foto Sebelum
-                            </label>
-                            <input type="file" name="foto_sebelum" accept="image/*" required
-                                class="w-full border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-900">
-                            <p class="text-xs text-gray-500 mt-1">Foto area sebelum dibersihkan</p>
-                            @error('foto_sebelum')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div>
-                            <label class="block font-medium text-sm text-gray-700 dark:text-gray-300 mb-1">
-                                Foto Sesudah
-                            </label>
-                            <input type="file" name="foto_sesudah" accept="image/*" required
-                                class="w-full border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-900">
-                            <p class="text-xs text-gray-500 mt-1">Foto area setelah dibersihkan</p>
-                            @error('foto_sesudah')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <div class="flex gap-3 pt-3">
-                        <button type="button" onclick="closePulangModal()"
-                            class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg">
-                            Batal
-                        </button>
-                        <button type="submit"
-                            class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg">
-                            Simpan
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Modal functions
-        function openHadirModal() {
-            document.getElementById('hadirModal').classList.remove('hidden');
-        }
-
-        function closeHadirModal() {
-            document.getElementById('hadirModal').classList.add('hidden');
-        }
-
-        function openPulangModal() {
-            document.getElementById('pulangModal').classList.remove('hidden');
-        }
-
-        function closePulangModal() {
-            document.getElementById('pulangModal').classList.add('hidden');
-        }
-
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            const hadirModal = document.getElementById('hadirModal');
-            const pulangModal = document.getElementById('pulangModal');
-            
-            if (event.target === hadirModal) {
-                closeHadirModal();
-            }
-            if (event.target === pulangModal) {
-                closePulangModal();
-            }
-        }
-    </script>
-</x-app-layout> 
+</div>
+@endsection

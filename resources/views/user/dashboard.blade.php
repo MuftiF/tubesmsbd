@@ -2,37 +2,61 @@
 
 @section('content')
 <div class="max-w-md mx-auto">
-    <!-- Header -->
+    <!-- Header Info -->
     <div class="text-center mb-8">
-        <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span class="text-3xl">🛡️</span>
+        <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="text-3xl">🌴</span>
         </div>
-        <h1 class="text-2xl font-bold text-gray-800">SECURITY DASHBOARD</h1>
-        <p class="text-gray-600">Pos Keamanan & Monitoring</p>
+        <h1 class="text-2xl font-bold text-gray-800">PEKERJA SAWIT</h1>
+        <p class="text-gray-600">Selamat datang, {{ Auth::user()->name }}</p>
     </div>
 
     <!-- Status Card -->
-    <div class="bg-white rounded-xl shadow-lg p-6 mb-6 border-l-4 border-blue-500">
-        <h2 class="text-lg font-bold text-gray-800 mb-4">Status Patroli</h2>
+    <div class="bg-white rounded-xl shadow-lg p-6 mb-6 border-l-4 border-green-500">
+        <h2 class="text-lg font-bold text-gray-800 mb-4">Status Hari Ini</h2>
         <div class="grid grid-cols-2 gap-4">
             <div class="text-center">
-                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <span class="text-xl">📍</span>
+                <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                    <span class="text-xl">⏰</span>
                 </div>
-                <p class="text-sm text-gray-600">Shift Masuk</p>
-                <p class="font-bold text-gray-800">18:00</p>
+                <p class="text-sm text-gray-600">Masuk</p>
+                <p class="font-bold text-gray-800">
+                    @if(isset($absenHariIni) && $absenHariIni && $absenHariIni->check_in)
+                        {{ \Carbon\Carbon::parse($absenHariIni->check_in)->format('H:i') }}
+                    @else
+                        -
+                    @endif
+                </p>
+                <span class="inline-block mt-1 px-2 py-1
+                    @if(isset($absenHariIni) && $absenHariIni && $absenHariIni->check_in) bg-green-100 text-green-800
+                    @else bg-yellow-100 text-yellow-800 @endif text-xs rounded-full">
+                    @if(isset($absenHariIni) && $absenHariIni && $absenHariIni->check_in) TEPAT WAKTU
+                    @else BELUM @endif
+                </span>
             </div>
             <div class="text-center">
-                <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <span class="text-xl">🔄</span>
+                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                    <span class="text-xl">🚪</span>
                 </div>
-                <p class="text-sm text-gray-600">Patroli Ke</p>
-                <p class="font-bold text-gray-800">3</p>
+                <p class="text-sm text-gray-600">Pulang</p>
+                <p class="font-bold text-gray-800">
+                    @if(isset($absenHariIni) && $absenHariIni && $absenHariIni->check_out)
+                        {{ \Carbon\Carbon::parse($absenHariIni->check_out)->format('H:i') }}
+                    @else
+                        -
+                    @endif
+                </p>
+                <span class="inline-block mt-1 px-2 py-1
+                    @if(isset($absenHariIni) && $absenHariIni && $absenHariIni->check_out) bg-green-100 text-green-800
+                    @else bg-yellow-100 text-yellow-800 @endif text-xs rounded-full">
+                    @if(isset($absenHariIni) && $absenHariIni && $absenHariIni->check_out) SELESAI
+                    @else BELUM @endif
+                </span>
             </div>
         </div>
     </div>
 
-<!-- Action Buttons -->
+    <!-- Action Buttons -->
     <div class="space-y-4">
         @if(!isset($absenHariIni) || !$absenHariIni || !$absenHariIni->check_in)
         <a href="{{ route('attendance.index') }}"
@@ -64,11 +88,11 @@
             </a>
         </div>
         @endif
+        
     </div>
-    &nbsp;
 
-    <!-- Quick Actions -->
-    <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+    <!-- Quick Stats -->
+    <div class="bg-white rounded-xl shadow-lg p-6 mt-6">
         <h3 class="text-lg font-bold text-gray-800 mb-4">Aksi Cepat</h3>
         <div class="grid grid-cols-2 gap-4">
             <a href="{{ route('attendance.index') }}"
