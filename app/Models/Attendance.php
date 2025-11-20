@@ -16,17 +16,20 @@ class Attendance extends Model
         'check_out',
         'status',
         'photo_path',
-        'note',
+        'checkout_photo_path',
+        'palm_weight',
+        'note'
     ];
 
     protected $casts = [
+        'date' => 'date', //ini yang beda
         'check_in' => 'datetime',
         'check_out' => 'datetime',
     ];
 
-    // Relasi ke User
+    // Relationship dengan user/pegawai
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(Pegawai::class, 'user_id');
     }
 }

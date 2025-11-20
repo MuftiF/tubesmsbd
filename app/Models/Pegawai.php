@@ -1,5 +1,5 @@
 <?php
-
+// app/Models/Pegawai.php
 namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -13,16 +13,15 @@ class Pegawai extends Authenticatable
 
     protected $table = 'pegawai';
 
-protected $fillable = [
-    'nama_lengkap',
-    'email',
-    'kata_sandi',
-    'peran',
-];
+    protected $fillable = [
+        'name', // Match database column
+        'email',
+        'password', // Match database column
+        'role', // Match database column
+    ];
+
     protected $hidden = [
-        'kata_sandi',
+        'password',
         'remember_token',
     ];
 }
-
-
