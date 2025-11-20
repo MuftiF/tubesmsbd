@@ -1,9 +1,10 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CleaningAbsenController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AttendanceController;
+use Illuminate\Support\Facades\Route;
 
 // Public Routes
 Route::get('/', function () {
