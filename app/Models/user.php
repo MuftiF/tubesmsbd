@@ -11,7 +11,7 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     // Tambahkan ini supaya Laravel tahu tabel yang dipakai
-    protected $table = 'pegawai';
+    protected $table = 'users';
 
     protected $fillable = ['name', 'email', 'password', 'role'];
 

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Attendance;
 
 class AreaKerja extends Model
 {
@@ -14,7 +15,7 @@ class AreaKerja extends Model
 
     public function absensi()
     {
-        return $this->hasMany(Absensi::class, 'id_area_kerja');
+        return $this->hasMany(Attendance::class, 'id_area_kerja');
     }
 }
 
