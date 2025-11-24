@@ -223,6 +223,130 @@ class HomeController extends Controller
         return redirect()->route('manager.pegawai')->with('success', 'Data pegawai berhasil diupdate!');
     }
 
+ public function laporanAdmin(Request $request)
+{
+    $today = now('Asia/Jakarta')->startOfDay();
+
+    $startDate = $request->start_date
+        ? \Carbon\Carbon::parse($request->start_date)
+        : $today;
+
+    $endDate = $request->end_date
+        ? \Carbon\Carbon::parse($request->end_date)
+        : $today;
+
+    // Query utama
+    $attendancesQuery = Attendance::with('user')
+        ->whereBetween('date', [
+            $startDate->toDateString(),
+            $endDate->toDateString()
+        ]);
+
+    // Filter role
+    if ($request->filled('role')) {
+        $attendancesQuery->whereHas('user', function ($q) use ($request) {
+            $q->where('role', $request->role);
+        });
+    }
+
+    // Statistik utama
+    $totalPegawai = User::count();
+
+    $totalPalmWeight = Attendance::whereBetween('date', [
+            $startDate->toDateString(),
+            $endDate->toDateString()
+        ])
+        ->whereNotNull('palm_weight')
+        ->sum('palm_weight') ?? 0;
+
+    $totalHadir = Attendance::whereBetween('date', [
+            $startDate->toDateString(),
+            $endDate->toDateString()
+        ])
+        ->whereNotNull('check_in')
+        ->distinct('user_id')
+        ->count('user_id');
+
+    $averagePalmWeight = $totalHadir > 0 ? $totalPalmWeight / $totalHadir : 0;
+
+    // Chart: Kehadiran
+    $chartStartDate = \Carbon\Carbon::parse($endDate)->subDays(6);
+    $dailyAttendance = Attendance::selectRaw('DATE(date) as date, COUNT(DISTINCT user_id) as total')
+        ->whereBetween('date', [
+            $chartStartDate->toDateString(),
+            $endDate->toDateString()
+        ])
+        ->whereNotNull('check_in')
+        ->groupBy('date')
+        ->orderBy('date')
+        ->get();
+
+    // Chart: Produksi Sawit
+    $dailyPalmWeight = Attendance::selectRaw('DATE(date) as date, SUM(palm_weight) as total_weight')
+        ->whereBetween('date', [
+            $chartStartDate->toDateString(),
+            $endDate->toDateString()
+        ])
+        ->whereNotNull('palm_weight')
+        ->groupBy('date')
+        ->orderBy('date')
+        ->get();
+
+    // Produksi per Role
+    $palmWeightByRole = Attendance::with('user')
+        ->whereBetween('date', [
+            $startDate->toDateString(),
+            $endDate->toDateString()
+        ])
+        ->whereNotNull('palm_weight')
+        ->get()
+        ->groupBy('user.role')
+        ->map(function ($items) {
+            return [
+                'total_weight' => $items->sum('palm_weight'),
+                'total_workers' => $items->unique('user_id')->count(),
+                'avg_weight' => $items->unique('user_id')->count() > 0
+                    ? $items->sum('palm_weight') / $items->unique('user_id')->count()
+                    : 0,
+            ];
+        });
+
+    // Top pekerja
+    $topPerformers = Attendance::with('user')
+        ->whereBetween('date', [
+            $startDate->toDateString(),
+            $endDate->toDateString()
+        ])
+        ->whereNotNull('palm_weight')
+        ->selectRaw('user_id, COUNT(*) as total_hadir, SUM(palm_weight) as total_weight')
+        ->groupBy('user_id')
+        ->orderByDesc('total_weight')
+        ->limit(5)
+        ->get();
+
+    // Detail tabel
+    $detailedAttendances = $attendancesQuery
+        ->orderBy('date', 'desc')
+        ->orderBy('check_in', 'asc')
+        ->paginate(10)
+        ->appends($request->except('page'));
+
+    return view('admin.laporan', compact(
+        'startDate',
+        'endDate',
+        'totalPegawai',
+        'totalPalmWeight',
+        'averagePalmWeight',
+        'totalHadir',
+        'dailyAttendance',
+        'dailyPalmWeight',
+        'palmWeightByRole',
+        'topPerformers',
+        'detailedAttendances'
+    ));
+}
+
+
     public function managerHapusPegawai($id)
     {
         if (Auth::user()->role != 'manager') return redirect('/');

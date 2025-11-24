@@ -1,45 +1,63 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-7xl mx-auto">
+<div class="max-w-7xl mx-auto py-10">
+
     <!-- Header -->
-    <div class="text-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-800">DATA PEGAWAI</h1>
-        <p class="text-gray-600">Daftar semua pegawai perusahaan</p>
+    <div class="text-center mb-10">
+        <h1 class="text-4xl font-bold text-gray-900 tracking-tight">Data Pegawai</h1>
+        <p class="text-gray-500 text-sm mt-2">Daftar lengkap pegawai perusahaan</p>
     </div>
 
     <!-- Stats Cards -->
-    <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
-        <div class="bg-white rounded-xl shadow-lg p-4 text-center border-l-4 border-blue-500">
-            <div class="text-2xl font-bold text-blue-600">{{ $pegawai->count() }}</div>
-            <div class="text-sm text-gray-600">Total Pegawai</div>
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-6 mb-10">
+
+        <div class="bg-white shadow-md rounded-xl p-5 border border-gray-100 text-center">
+            <p class="text-sm text-gray-500">Total Pegawai</p>
+            <h3 class="text-3xl font-bold text-blue-700 mt-1">{{ $pegawai->count() }}</h3>
         </div>
-        <div class="bg-white rounded-xl shadow-lg p-4 text-center border-l-4 border-green-500">
-            <div class="text-2xl font-bold text-green-600">{{ $pegawai->where('role', 'user')->count() }}</div>
-            <div class="text-sm text-gray-600">Kebun & Panen</div>
+
+        <div class="bg-white shadow-md rounded-xl p-5 border border-gray-100 text-center">
+            <p class="text-sm text-gray-500">Kebun & Panen</p>
+            <h3 class="text-3xl font-bold text-green-700 mt-1">{{ $pegawai->where('role','user')->count() }}</h3>
         </div>
-        <div class="bg-white rounded-xl shadow-lg p-4 text-center border-l-4 border-purple-500">
-            <div class="text-2xl font-bold text-purple-600">{{ $pegawai->where('role', 'security')->count() }}</div>
-            <div class="text-sm text-gray-600">Security</div>
+
+        <div class="bg-white shadow-md rounded-xl p-5 border border-gray-100 text-center">
+            <p class="text-sm text-gray-500">Security</p>
+            <h3 class="text-3xl font-bold text-blue-700 mt-1">{{ $pegawai->where('role','security')->count() }}</h3>
         </div>
-        <div class="bg-white rounded-xl shadow-lg p-4 text-center border-l-4 border-yellow-500">
-            <div class="text-2xl font-bold text-yellow-600">{{ $pegawai->where('role', 'cleaning')->count() }}</div>
-            <div class="text-sm text-gray-600">Cleaning</div>
+
+        <div class="bg-white shadow-md rounded-xl p-5 border border-gray-100 text-center">
+            <p class="text-sm text-gray-500">Cleaning</p>
+            <h3 class="text-3xl font-bold text-yellow-600 mt-1">{{ $pegawai->where('role','cleaning')->count() }}</h3>
         </div>
-        <div class="bg-white rounded-xl shadow-lg p-4 text-center border-l-4 border-red-500">
-            <div class="text-2xl font-bold text-red-600">{{ $pegawai->where('role', 'kantoran')->count() }}</div>
-            <div class="text-sm text-gray-600">Administrasi</div>
+
+        <div class="bg-white shadow-md rounded-xl p-5 border border-gray-100 text-center">
+            <p class="text-sm text-gray-500">Administrasi</p>
+            <h3 class="text-3xl font-bold text-red-600 mt-1">{{ $pegawai->where('role','kantoran')->count() }}</h3>
         </div>
+
     </div>
 
-    <!-- Search and Filter -->
-    <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
-        <div class="flex flex-col md:flex-row gap-4">
-            <div class="flex-1">
-                <input type="text" id="searchInput" placeholder="Cari pegawai..." class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+    <!-- Search & Filter -->
+    <div class="bg-white border border-gray-100 shadow-lg rounded-xl p-6 mb-8">
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            <div class="md:col-span-2">
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    placeholder="Cari nama atau email pegawai..." 
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                >
             </div>
+
             <div>
-                <select id="roleFilter" class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <select 
+                    id="roleFilter" 
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                >
                     <option value="">Semua Role</option>
                     <option value="admin">Admin</option>
                     <option value="manager">Manager</option>
@@ -49,58 +67,59 @@
                     <option value="kantoran">Administrasi</option>
                 </select>
             </div>
+
         </div>
+
     </div>
 
-    <!-- Employee Table -->
-    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-200">
+    <!-- Table -->
+    <div class="bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden">
+
+        <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
             <h3 class="text-lg font-semibold text-gray-800">Daftar Pegawai</h3>
         </div>
 
         <div class="overflow-x-auto">
-            <table class="w-full">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bergabung</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+            <table class="w-full text-sm">
+
+                <thead class="bg-gray-100">
+                    <tr class="text-gray-600 uppercase text-xs">
+                        <th class="px-6 py-3 text-left">No</th>
+                        <th class="px-6 py-3 text-left">Nama</th>
+                        <th class="px-6 py-3 text-left">Email</th>
+                        <th class="px-6 py-3 text-left">Role</th>
+                        <th class="px-6 py-3 text-left">Bergabung</th>
+                        <th class="px-6 py-3 text-left">Status</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200" id="employeeTable">
-                    @foreach($pegawai as $index => $emp)
+
+                <tbody id="employeeTable" class="divide-y divide-gray-200">
+
+                    @foreach($pegawai as $i => $emp)
                     <tr class="hover:bg-gray-50 employee-row" data-role="{{ $emp->role }}">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            {{ $index + 1 }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
+                        
+                        <td class="px-6 py-4 font-semibold text-gray-900">{{ $i + 1 }}</td>
+
+                        <td class="px-6 py-4">
                             <div class="flex items-center">
-                                <div class="flex-shrink-0 h-10 w-10">
-                                    <div class="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
-                                        <span class="text-sm font-medium text-gray-700">
-                                            {{ strtoupper(substr($emp->name, 0, 1)) }}
-                                        </span>
-                                    </div>
+                                <div class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center font-bold text-gray-600">
+                                    {{ strtoupper(substr($emp->name, 0, 1)) }}
                                 </div>
-                                <div class="ml-4">
-                                    <div class="text-sm font-medium text-gray-900">{{ $emp->name }}</div>
-                                </div>
+                                <span class="ml-4 font-medium text-gray-900">{{ $emp->name }}</span>
                             </div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {{ $emp->email }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full
-                                @if($emp->role == 'admin') bg-red-100 text-red-800
-                                @elseif($emp->role == 'manager') bg-purple-100 text-purple-800
-                                @elseif($emp->role == 'user') bg-green-100 text-green-800
-                                @elseif($emp->role == 'security') bg-blue-100 text-blue-800
-                                @elseif($emp->role == 'cleaning') bg-yellow-100 text-yellow-800
-                                @else bg-gray-100 text-gray-800
+
+                        <td class="px-6 py-4 text-gray-600">{{ $emp->email }}</td>
+
+                        <td class="px-6 py-4">
+                            <span class="px-3 py-1 rounded-full text-xs font-semibold
+                                @if($emp->role=='admin') bg-red-100 text-red-700
+                                @elseif($emp->role=='manager') bg-purple-100 text-purple-700
+                                @elseif($emp->role=='user') bg-green-100 text-green-700
+                                @elseif($emp->role=='security') bg-blue-100 text-blue-700
+                                @elseif($emp->role=='cleaning') bg-yellow-100 text-yellow-700
+                                @elseif($emp->role=='kantoran') bg-orange-100 text-orange-700
+                                @else bg-gray-100 text-gray-700
                                 @endif">
                                 @if($emp->role == 'user') Kebun & Panen
                                 @elseif($emp->role == 'security') Security
@@ -110,59 +129,64 @@
                                 @endif
                             </span>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+
+                        <td class="px-6 py-4 text-gray-500">
                             {{ $emp->created_at ? $emp->created_at->format('d M Y') : '-' }}
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+
+                        <td class="px-6 py-4">
+                            <span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold">
                                 Aktif
                             </span>
                         </td>
+
                     </tr>
                     @endforeach
+
                 </tbody>
+
             </table>
         </div>
 
         @if($pegawai->isEmpty())
-        <div class="px-6 py-12 text-center">
-            <div class="text-gray-500">
-                <div class="text-4xl mb-4">👥</div>
-                <div>Tidak ada data pegawai</div>
-            </div>
+        <div class="px-6 py-12 text-center text-gray-500">
+            <div class="text-4xl">👥</div>
+            <div class="mt-2">Tidak ada data pegawai</div>
         </div>
         @endif
+
     </div>
+
 </div>
 
+<!-- FILTER SCRIPT -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+
     const searchInput = document.getElementById('searchInput');
-    const roleFilter = document.getElementById('roleFilter');
-    const employeeRows = document.querySelectorAll('.employee-row');
+    const roleFilter  = document.getElementById('roleFilter');
+    const rows        = document.querySelectorAll('.employee-row');
 
-    function filterEmployees() {
-        const searchTerm = searchInput.value.toLowerCase();
-        const selectedRole = roleFilter.value;
+    function filter() {
+        const search = searchInput.value.toLowerCase();
+        const role   = roleFilter.value;
 
-        employeeRows.forEach(row => {
-            const name = row.querySelector('.text-gray-900').textContent.toLowerCase();
-            const email = row.querySelector('.text-gray-500').textContent.toLowerCase();
-            const role = row.dataset.role;
+        rows.forEach(row => {
+            const name  = row.querySelector('.font-medium.text-gray-900')?.textContent.toLowerCase() || '';
+            const email = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+            const r     = row.dataset.role;
 
-            const matchesSearch = name.includes(searchTerm) || email.includes(searchTerm);
-            const matchesRole = !selectedRole || role === selectedRole;
+            const matchSearch = name.includes(search) || email.includes(search);
+            const matchRole   = !role || r === role;
 
-            if (matchesSearch && matchesRole) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
+            row.style.display = (matchSearch && matchRole) ? '' : 'none';
         });
     }
 
-    searchInput.addEventListener('input', filterEmployees);
-    roleFilter.addEventListener('change', filterEmployees);
+    searchInput.addEventListener('input', filter);
+    roleFilter.addEventListener('change', filter);
+
 });
 </script>
+
 @endsection

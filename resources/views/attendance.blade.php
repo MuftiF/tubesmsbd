@@ -2,172 +2,198 @@
 
 @section('content')
 <div class="p-6 bg-blue-50 min-h-screen">
-    {{-- Header --}}
-    <div class="flex justify-between items-center mb-6">
+
+    {{-- HEADER --}}
+    <div class="flex justify-between items-center mb-8">
         <div>
-            <h1 class="text-2xl font-bold text-indigo-700">Sistem Absensi</h1>
+            <h1 class="text-3xl font-bold text-indigo-700">Sistem Absensi</h1>
             <p class="text-gray-600">Kelola kehadiran pribadi Anda</p>
         </div>
-        <div class="text-right">
-            <h2 class="font-semibold">{{ Auth::user()->name }}</h2>
-            <p class="text-sm text-gray-500">{{ Auth::user()->role ?? 'Karyawan' }}</p>
+        <div class="bg-white shadow-md px-4 py-3 rounded-xl text-right border">
+            <h2 class="font-semibold text-gray-800">{{ Auth::user()->name }}</h2>
+            <p class="text-xs text-gray-500 capitalize">{{ Auth::user()->role ?? 'Karyawan' }}</p>
         </div>
     </div>
 
-    {{-- Statistik --}}
-    <div class="grid grid-cols-4 gap-4 mb-6">
-        <div class="bg-white shadow rounded-xl p-4 text-center">
-            <p>Status Hari Ini</p>
-            <h2 class="text-lg font-semibold">
+    {{-- STATISTIK --}}
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+
+        <div class="bg-white rounded-xl shadow p-5 border-l-4 border-indigo-500">
+            <p class="text-gray-600">Status Hari Ini</p>
+            <h2 class="text-xl font-bold text-gray-800 mt-1">
                 {{ $attendanceToday ? 'Sudah Absen' : 'Belum Absen' }}
             </h2>
         </div>
-        <div class="bg-white shadow rounded-xl p-4 text-center">
-            <p>Total Kehadiran Bulan Ini</p>
-            <h2 class="text-lg font-semibold">{{ $monthlyCount }}</h2>
+
+        <div class="bg-white rounded-xl shadow p-5 border-l-4 border-green-500">
+            <p class="text-gray-600">Kehadiran Bulan Ini</p>
+            <h2 class="text-xl font-bold text-gray-800 mt-1">{{ $monthlyCount }}</h2>
         </div>
-        <div class="bg-white shadow rounded-xl p-4 text-center">
-            <p>Tepat Waktu</p>
-            <h2 class="text-lg font-semibold text-green-600">{{ $onTimeCount }}</h2>
+
+        <div class="bg-white rounded-xl shadow p-5 border-l-4 border-blue-500">
+            <p class="text-gray-600">Tepat Waktu</p>
+            <h2 class="text-xl font-bold text-green-600 mt-1">{{ $onTimeCount }}</h2>
         </div>
-        <div class="bg-white shadow rounded-xl p-4 text-center">
-            <p>Rata-rata Jam Kerja</p>
-            <h2 class="text-lg font-semibold text-orange-500">
-                {{ $averageHours ? number_format($averageHours, 1) . ' jam' : '-' }}
+
+        <div class="bg-white rounded-xl shadow p-5 border-l-4 border-yellow-500">
+            <p class="text-gray-600">Rata-rata Jam Kerja</p>
+            <h2 class="text-xl font-bold text-orange-600 mt-1">
+                {{ $averageHours ? number_format($averageHours, 1).' jam' : '-' }}
             </h2>
         </div>
+
     </div>
 
-    {{-- Tabs Navigation --}}
-    <div class="flex justify-center mb-6 space-x-2">
+    {{-- TABS --}}
+    <div class="flex justify-center mb-6 space-x-3">
         <button onclick="showTab('today')" id="tab-today"
-            class="px-4 py-2 rounded-full bg-indigo-100 text-indigo-700 font-medium">Hari Ini</button>
+            class="px-6 py-2 rounded-full font-semibold bg-indigo-600 text-white shadow">
+            Hari Ini
+        </button>
         <button onclick="showTab('absen')" id="tab-absen"
-            class="px-4 py-2 rounded-full bg-gray-200 text-gray-600 font-medium">Absen</button>
+            class="px-6 py-2 rounded-full font-semibold bg-gray-200 text-gray-600 hover:bg-gray-300 transition">
+            Absen
+        </button>
     </div>
 
-    {{-- Tab: Hari Ini --}}
-    <div id="today" class="tab-content bg-white shadow rounded-xl p-6">
-        <h3 class="text-lg font-semibold mb-4">Status Kehadiran Hari Ini</h3>
+    {{-- TAB: TODAY --}}
+    <div id="today" class="tab-content bg-white shadow-xl rounded-xl p-6">
+
+        <h3 class="text-xl font-bold mb-5 text-gray-800">Status Kehadiran Hari Ini</h3>
 
         @if ($attendanceToday)
-            <p>Anda telah melakukan absensi hari ini.</p>
-            <ul class="mt-3 text-gray-700">
-                <li>Check In: <b>{{ $attendanceToday->check_in ?? '-' }}</b></li>
-                <li>Check Out: <b>{{ $attendanceToday->check_out ?? '-' }}</b></li>
-                <li>Status: <b>{{ ucfirst($attendanceToday->status ?? '-') }}</b></li>
+            <ul class="text-gray-700 leading-relaxed space-y-2">
+                <li>Check In:
+                    <b>{{ $attendanceToday->check_in ? $attendanceToday->check_in->format('H:i') : '-' }}</b>
+                </li>
+
+                <li>Check Out:
+                    <b>{{ $attendanceToday->check_out ? $attendanceToday->check_out->format('H:i') : '-' }}</b>
+                </li>
+
+                <li>Status:
+                    <b class="capitalize">{{ $attendanceToday->status ?? '-' }}</b>
+                </li>
+
                 @if ($attendanceToday->photo_path)
-                    <li class="mt-3">
-                        <img src="{{ asset('storage/' . $attendanceToday->photo_path) }}" class="w-40 rounded-xl border">
-                    </li>
+                <li class="mt-4">
+                    <img src="{{ asset('storage/'.$attendanceToday->photo_path) }}"
+                         class="w-48 rounded-xl border shadow">
+                </li>
                 @endif
             </ul>
+
         @else
-            <div class="text-center text-gray-500">
-                <p>Anda belum melakukan absensi hari ini</p>
-                <p>Klik tab <b>Absen</b> untuk check in</p>
+
+            <div class="text-center p-8 text-gray-500">
+                <div class="text-5xl mb-3">📭</div>
+                <p class="font-semibold">Anda belum melakukan absensi hari ini</p>
+                <p>Klik tab <b class="text-indigo-600">Absen</b> untuk mulai check in</p>
             </div>
+
         @endif
+
     </div>
 
-    {{-- Tab: Absen --}}
-    <div id="absen" class="tab-content hidden bg-white shadow rounded-xl p-6">
-        <h3 class="text-lg font-semibold mb-4">
+    {{-- TAB: ABSEN --}}
+    <div id="absen" class="tab-content hidden bg-white shadow-xl rounded-xl p-6">
+
+        <h3 class="text-xl font-bold mb-4 text-gray-800">
             {{ $attendanceToday && !$attendanceToday->check_out ? 'Check Out' : 'Form Absensi' }}
         </h3>
 
-        <div class="mb-4 text-center bg-gradient-to-r from-indigo-500 to-purple-500 text-white p-4 rounded-xl">
-            <p class="text-sm">{{ \Carbon\Carbon::parse($serverTime)->translatedFormat('l, d F Y') }}</p>
-            <h2 id="realtimeClock" class="text-3xl font-bold">00:00:00</h2>
+        {{-- WAKTU --}}
+        <div class="mb-6 text-center bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-5 rounded-xl shadow-lg">
+            <p class="text-sm opacity-90">{{ \Carbon\Carbon::parse($serverTime)->translatedFormat('l, d F Y') }}</p>
+            <h2 id="realtimeClock" class="text-4xl font-bold mt-1">00:00:00</h2>
         </div>
 
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
+        {{-- CHECK IN --}}
         @if (!$attendanceToday)
-            {{-- === Check In Form === --}}
-            <form action="{{ route('attendance.store') }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                <div class="mb-4">
-                    <label class="block text-gray-600">Upload Foto Bukti Kehadiran *</label>
-                    <input type="file" name="photo" required class="mt-2 border rounded-lg w-full p-2">
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-600">Catatan (Opsional)</label>
-                    <textarea name="note" class="mt-2 border rounded-lg w-full p-2"></textarea>
-                </div>
-                <button type="submit"
-                    class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg w-full">
-                    Check In Sekarang
-                </button>
-            </form>
-        @elseif ($attendanceToday && !$attendanceToday->check_out)
-            {{-- === Check Out Button === --}}
-            <form action="{{ route('attendance.store') }}" method="POST">
-                @csrf
-                <div class="text-center mb-4">
-                    <p class="text-gray-700 mb-2">Anda sudah melakukan Check In pada pukul
-                        <b>{{ $attendanceToday->check_in->format('H:i') }}</b>.
-                    </p>
-                    <p>Silakan lakukan <b>Check Out</b> saat Anda selesai bekerja.</p>
-                </div>
-                <button type="submit"
-                    class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg w-full">
-                    Check Out Sekarang
-                </button>
-            </form>
-        @else
-            <div class="text-center text-green-600 font-semibold">
-                Anda telah menyelesaikan absensi hari ini. 🎉
+        <form action="{{ route('attendance.store') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+
+            <div class="mb-4">
+                <label class="font-semibold text-gray-700">Foto Kehadiran *</label>
+                <input type="file" name="photo" required
+                       class="mt-2 border rounded-lg w-full p-2 focus:ring focus:ring-indigo-200">
             </div>
+
+            <div class="mb-4">
+                <label class="font-semibold text-gray-700">Catatan (Opsional)</label>
+                <textarea name="note" class="mt-2 border rounded-lg w-full p-2"></textarea>
+            </div>
+
+            <button class="bg-green-600 hover:bg-green-700 text-white py-3 w-full rounded-lg font-semibold shadow">
+                Check In Sekarang
+            </button>
+        </form>
+
+        {{-- CHECK OUT --}}
+        @elseif ($attendanceToday && !$attendanceToday->check_out)
+        <form action="{{ route('attendance.store') }}" method="POST">
+            @csrf
+
+            <p class="text-gray-700 text-center mb-4">
+                Anda sudah check-in pukul <b>{{ $attendanceToday->check_in->format('H:i') }}</b>
+            </p>
+
+            <button class="bg-red-600 hover:bg-red-700 text-white py-3 w-full rounded-lg font-semibold shadow">
+                Check Out Sekarang
+            </button>
+        </form>
+
+        {{-- ABSEN SELESAI --}}
+        @else
+        <div class="text-center py-8 text-green-600 font-semibold">
+            🎉 Anda telah menyelesaikan absensi hari ini.
+        </div>
         @endif
 
-        <div class="mt-6 text-sm text-blue-600">
-            <p><b>Petunjuk Absensi:</b></p>
-            <ul class="list-disc ml-6">
-                <li>Upload foto sebagai bukti kehadiran di lokasi kerja</li>
-                <li>Pastikan foto jelas dan menunjukkan lokasi Anda</li>
+        {{-- PETUNJUK --}}
+        <div class="mt-8 bg-indigo-50 p-4 rounded-xl border border-indigo-200">
+            <h4 class="font-semibold text-indigo-700 mb-2">Petunjuk Absensi</h4>
+            <ul class="text-sm text-gray-700 list-disc ml-6 space-y-1">
+                <li>Upload foto kehadiran yang jelas</li>
                 <li>Jam kerja: 08:00 - 17:00</li>
-                <li>Terlambat jika check in setelah jam 08:00</li>
-                <li>Jangan lupa check out saat pulang</li>
+                <li>Terlambat jika check in setelah 08:00</li>
+                <li>Wajib check out saat pulang</li>
             </ul>
         </div>
+
     </div>
+</div>
 
+
+{{-- SCRIPT TAB + JAM --}}
 <script>
-    // === Handle Tabs ===
-    function showTab(tab) {
-        document.querySelectorAll('.tab-content').forEach(div => div.classList.add('hidden'));
-        document.querySelectorAll('[id^="tab-"]').forEach(btn => {
-            btn.classList.remove('bg-indigo-100', 'text-indigo-700');
-            btn.classList.add('bg-gray-200', 'text-gray-600');
-        });
-        document.getElementById(tab).classList.remove('hidden');
-        document.getElementById('tab-' + tab).classList.add('bg-indigo-100', 'text-indigo-700');
-        document.getElementById('tab-' + tab).classList.remove('bg-gray-200', 'text-gray-600');
-        if (tab === 'history') loadHistory();
-    }
+function showTab(tab) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+    document.getElementById(tab).classList.remove('hidden');
 
-    // === Realtime Clock ===
-    const initialServerTime = "{{ $serverTime }}";
-    let currentTime = new Date(initialServerTime);
+    document.querySelectorAll('[id^="tab-"]').forEach(el => {
+        el.classList.remove('bg-indigo-600','text-white');
+        el.classList.add('bg-gray-200','text-gray-600');
+    });
 
-    function formatTime(date) {
-        const hours = String(date.getHours()).padStart(2, '0');
-        const minutes = String(date.getMinutes()).padStart(2, '0');
-        const seconds = String(date.getSeconds()).padStart(2, '0');
-        return `${hours}:${minutes}:${seconds}`;
-    }
+    const active = document.getElementById('tab-' + tab);
+    active.classList.remove('bg-gray-200','text-gray-600');
+    active.classList.add('bg-indigo-600','text-white');
+}
 
-    function updateClock() {
-        currentTime.setSeconds(currentTime.getSeconds() + 1);
-        document.getElementById('realtimeClock').textContent = formatTime(currentTime);
-    }
+// JAM REALTIME
+let currentTime = new Date("{{ $serverTime }}");
 
-    setInterval(updateClock, 1000);
-    updateClock();
-    document.getElementById('searchDate').addEventListener('change', e => loadHistory(e.target.value));
+function updateClock(){
+    currentTime.setSeconds(currentTime.getSeconds() + 1);
+    document.getElementById('realtimeClock').textContent =
+        currentTime.toLocaleTimeString('id-ID',{hour12:false});
+}
 
-    // Tampilkan tab "Hari Ini" default saat halaman load
-    showTab('today');
+setInterval(updateClock, 1000);
+updateClock();
 </script>
+
 @endsection

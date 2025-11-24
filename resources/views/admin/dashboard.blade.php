@@ -1,139 +1,145 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-6xl mx-auto">
+<div class="max-w-7xl mx-auto py-10">
+
     <!-- Header -->
-    <div class="text-center mb-8">
-        <div class="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+    <div class="mb-10 text-center">
+        <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto shadow-sm">
             <span class="text-4xl">👑</span>
         </div>
-        <h1 class="text-3xl font-bold text-gray-800">ADMIN DASHBOARD</h1>
-        <p class="text-gray-600">Sistem Manajemen Absensi Perusahaan Sawit</p>
+        <h1 class="text-3xl font-bold text-gray-900 mt-4">Admin Dashboard</h1>
+        <p class="text-gray-500 text-sm mt-1">Dashboard Sistem Manajemen Absensi Perusahaan Sawit</p>
     </div>
 
-    <!-- Stats Overview -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <div class="bg-white rounded-xl shadow-lg p-6 text-center border-l-4 border-blue-500 transform hover:scale-105 transition duration-200">
-            <div class="text-3xl font-bold text-blue-600">{{ $totalPegawai ?? 0 }}</div>
-            <div class="text-sm text-gray-600">Total Pegawai</div>
+    <!-- Stats -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-5 mb-10">
+        @php 
+            $stats = [
+                ['label' => 'Total Pegawai', 'value' => $totalPegawai ?? 0, 'color' => 'blue'],
+                ['label' => 'Hadir Hari Ini', 'value' => $hadirHariIni ?? 0, 'color' => 'green'],
+                ['label' => 'Produksi Hari Ini', 'value' => number_format($produksiHariIni ?? 0, 1) . " kg", 'color' => 'purple'],
+                ['label' => 'Rate Kehadiran', 'value' => ($rateKehadiran ?? 0) . "%", 'color' => 'yellow'],
+            ];
+        @endphp
+
+        @foreach($stats as $s)
+        <div class="bg-white shadow-md rounded-xl border border-gray-200 p-6">
+            <div class="text-xl font-bold text-{{ $s['color'] }}-600">
+                {{ $s['value'] }}
+            </div>
+            <div class="text-gray-600 text-sm mt-1">{{ $s['label'] }}</div>
         </div>
-        <div class="bg-white rounded-xl shadow-lg p-6 text-center border-l-4 border-green-500 transform hover:scale-105 transition duration-200">
-            <div class="text-3xl font-bold text-green-600">{{ $hadirHariIni ?? 0 }}</div>
-            <div class="text-sm text-gray-600">Hadir Hari Ini</div>
-        </div>
-        <div class="bg-white rounded-xl shadow-lg p-6 text-center border-l-4 border-purple-500 transform hover:scale-105 transition duration-200">
-            <div class="text-3xl font-bold text-purple-600">{{ number_format($produksiHariIni ?? 0, 1) }} kg</div>
-            <div class="text-sm text-gray-600">Produksi Hari Ini</div>
-        </div>
-        <div class="bg-white rounded-xl shadow-lg p-6 text-center border-l-4 border-yellow-500 transform hover:scale-105 transition duration-200">
-            <div class="text-3xl font-bold text-yellow-600">{{ $rateKehadiran ?? 0 }}%</div>
-            <div class="text-sm text-gray-600">Rate Kehadiran</div>
-        </div>
+        @endforeach
     </div>
 
-    <!-- Main Actions -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <!-- Quick Actions -->
-        <div class="bg-white rounded-xl shadow-lg p-6">
-            <h3 class="text-xl font-bold text-gray-800 mb-4">Aksi Cepat</h3>
+    <!-- Main Panels -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+        
+        <!-- Quick Action -->
+        <div class="bg-white shadow-md rounded-xl border border-gray-200 p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-5">Aksi Cepat</h3>
             <div class="grid grid-cols-2 gap-4">
-                <a href="{{ route('admin.laporan') }}" class="bg-blue-500 hover:bg-blue-600 text-white py-4 px-4 rounded-lg text-center font-semibold transition duration-200 transform hover:scale-105 block">
-                    <div class="text-2xl mb-2">📊</div>
-                    <div class="text-sm">Laporan</div>
+                <a href="{{ route('admin.laporan') }}" 
+                   class="p-5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-center font-medium shadow transition">
+                    <div class="text-2xl mb-1">📊</div>
+                    Laporan
                 </a>
-                <a href="{{ route('admin.pegawai') }}" class="bg-green-500 hover:bg-green-600 text-white py-4 px-4 rounded-lg text-center font-semibold transition duration-200 transform hover:scale-105 block">
-                    <div class="text-2xl mb-2">👥</div>
-                    <div class="text-sm">Data Pegawai</div>
+
+                <a href="{{ route('admin.pegawai') }}"
+                   class="p-5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-center font-medium shadow transition">
+                    <div class="text-2xl mb-1">👥</div>
+                    Data Pegawai
                 </a>
             </div>
         </div>
 
-        <!-- Today's Overview -->
-        <div class="bg-white rounded-xl shadow-lg p-6">
-            <h3 class="text-xl font-bold text-gray-800 mb-4">Ringkasan Hari Ini</h3>
+        <!-- Summary -->
+        <div class="bg-white shadow-md rounded-xl border border-gray-200 p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Ringkasan Hari Ini</h3>
+
             <div class="space-y-4">
-                <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-                    <div class="flex items-center">
-                        <span class="text-green-600 text-xl mr-3">✅</span>
-                        <span class="font-semibold">Kehadiran</span>
-                    </div>
-                    <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-bold">
+                <div class="flex justify-between items-center p-4 bg-green-50 rounded-lg border border-green-100">
+                    <span class="text-gray-800 font-semibold flex items-center">
+                        <span class="text-green-600 text-xl mr-2">🔰</span> Kehadiran
+                    </span>
+                    <span class="text-green-700 font-semibold px-3 py-1 bg-green-100 rounded-full text-sm">
                         {{ $rateKehadiran ?? 0 }}%
                     </span>
                 </div>
-                <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-                    <div class="flex items-center">
-                        <span class="text-blue-600 text-xl mr-3">🌴</span>
-                        <span class="font-semibold">Produktivitas</span>
-                    </div>
-                    <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-bold">
-                        @if(($produksiHariIni ?? 0) > 100)
-                            Tinggi
-                        @elseif(($produksiHariIni ?? 0) > 50)
-                            Sedang
-                        @else
-                            Rendah
+
+                <div class="flex justify-between items-center p-4 bg-blue-50 rounded-lg border border-blue-100">
+                    <span class="text-gray-800 font-semibold flex items-center">
+                        <span class="text-blue-600 text-xl mr-2">🌴</span> Produktivitas
+                    </span>
+                    <span class="text-blue-700 font-semibold px-3 py-1 bg-blue-100 rounded-full text-sm">
+                        @if(($produksiHariIni ?? 0) > 100) Tinggi
+                        @elseif(($produksiHariIni ?? 0) > 50) Sedang
+                        @else Rendah
                         @endif
                     </span>
                 </div>
-                <div class="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
-                    <div class="flex items-center">
-                        <span class="text-yellow-600 text-xl mr-3">📈</span>
-                        <span class="font-semibold">Total Pegawai</span>
-                    </div>
-                    <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-bold">{{ $totalPegawai ?? 0 }}</span>
+
+                <div class="flex justify-between items-center p-4 bg-yellow-50 rounded-lg border border-yellow-100">
+                    <span class="text-gray-800 font-semibold flex items-center">
+                        <span class="text-yellow-600 text-xl mr-2">📈</span> Total Pegawai
+                    </span>
+                    <span class="text-yellow-700 font-semibold px-3 py-1 bg-yellow-100 rounded-full text-sm">
+                        {{ $totalPegawai ?? 0 }}
+                    </span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Recent Activity & Stats -->
+    <!-- Bottom Panels -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- Recent Activity -->
-        <div class="bg-white rounded-xl shadow-lg p-6">
-            <h3 class="text-xl font-bold text-gray-800 mb-4">Aktivitas Terbaru</h3>
+
+        <!-- Recent Activities -->
+        <div class="bg-white shadow-md rounded-xl border border-gray-200 p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Aktivitas Terbaru</h3>
+
             <div class="space-y-3">
                 @forelse($recentActivities as $activity)
-                <div class="flex items-center p-4 bg-green-50 rounded-lg border-l-4 border-green-500">
-                    <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-3">
-                        <span class="text-green-600">✓</span>
+                    <div class="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
+                        <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mr-3 text-green-600 text-xl">
+                            ✓
+                        </div>
+
+                        <div>
+                            <div class="font-semibold text-gray-900">{{ $activity->user->name }}</div>
+                            <div class="text-sm text-gray-600">
+                                {{ ucfirst($activity->user->role) }} — 
+                                Check In: {{ $activity->check_in ? \Carbon\Carbon::parse($activity->check_in)->format('H:i') : '-' }}
+                            </div>
+                        </div>
                     </div>
-                    <div class="flex-1">
-                        <div class="font-semibold">{{ $activity->user->name }}</div>
-                        <div class="text-sm text-gray-600">{{ ucfirst($activity->user->role) }} | Check In: {{ $activity->check_in ? \Carbon\Carbon::parse($activity->check_in)->format('H:i') : '-' }}</div>
-                    </div>
-                </div>
                 @empty
-                <div class="flex items-center p-4 bg-gray-50 rounded-lg border-l-4 border-gray-500">
-                    <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mr-3">
-                        <span class="text-gray-600">📝</span>
-                    </div>
-                    <div class="flex-1">
-                        <div class="font-semibold">Belum ada aktivitas hari ini</div>
-                        <div class="text-sm text-gray-600">Aktivitas akan muncul setelah pegawai mulai absen</div>
-                    </div>
-                </div>
+                <div class="text-gray-500 text-sm">Belum ada aktivitas hari ini.</div>
                 @endforelse
             </div>
         </div>
 
         <!-- Department Overview -->
-        <div class="bg-white rounded-xl shadow-lg p-6">
-            <h3 class="text-xl font-bold text-gray-800 mb-4">Overview Departemen</h3>
+        <div class="bg-white shadow-md rounded-xl border border-gray-200 p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Overview Departemen</h3>
+
             <div class="space-y-4">
                 @foreach($departments as $role => $dept)
                 <div>
                     <div class="flex justify-between mb-1">
-                        <span class="font-semibold">{{ $dept['name'] }}</span>
-                        <span class="font-bold text-green-600">{{ $dept['hadir'] }}/{{ $dept['total'] }}</span>
+                        <span class="font-medium text-gray-700">{{ $dept['name'] }}</span>
+                        <span class="font-semibold text-green-700">{{ $dept['hadir'] }}/{{ $dept['total'] }}</span>
                     </div>
-                    <div class="w-full bg-gray-200 rounded-full h-2">
-                        <div class="bg-green-600 h-2 rounded-full" style="width: {{ $dept['percentage'] }}%"></div>
+                    <div class="w-full h-2 rounded-full bg-gray-200">
+                        <div class="h-2 rounded-full bg-green-500" style="width: {{ $dept['percentage'] }}%"></div>
                     </div>
                 </div>
                 @endforeach
             </div>
         </div>
+
     </div>
+
 </div>
 @endsection

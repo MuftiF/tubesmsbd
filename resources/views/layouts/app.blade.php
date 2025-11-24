@@ -27,7 +27,7 @@
                         <a href="{{ route('admin.pegawai') }}" class="text-gray-600 font-semibold hover:text-blue-600">👥 Pegawai</a>
                         <a href="{{ route('admin.laporan') }}" class="text-gray-600 font-semibold hover:text-blue-600">📊 Laporan</a>
                         <a href="{{ route('admin.rapot.index') }}" class="text-gray-600 font-semibold hover:text-blue-600">📘 Rapot</a>
-                        <a href="{{ route('pengumuman.admin') }}" class="text-gray-600 font-semibold hover:text-blue-600">📢 Pengumuman</a>
+                        <a href="{{ route('admin.pengumuman') }}" class="text-gray-600 font-semibold hover:text-blue-600">📢 Pengumuman</a>
 
                     {{-- MANAGER --}}
                     @elseif(Auth::user()->role == 'manager')

@@ -3,100 +3,262 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>PT Sipirok Indah — Solusi Hijau</title>
-  <meta name="description" content="PT Sipirok Indah: solusi energi terbarukan, konsultasi lingkungan, dan pengelolaan limbah berkelanjutan.">
+  <title>PT Sipirok Indah — Solusi Hijau Berkelanjutan</title>
+  <meta name="description" content="PT Sipirok Indah: solusi energi terbarukan, konsultasi lingkungan, dan pengelolaan limbah berkelanjutan yang berfokus pada dampak nyata dan keberlanjutan.">
 
-  <!-- Tailwind CDN (small, production-friendly) -->
-  <script src="https://cdn.tailwindcss.com" defer></script>
-  <!-- Chart.js (defer) -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+  <!-- Font: Plus Jakarta Sans (lebih profesional) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
-    /* Minimal custom styles to keep small and mobile-first */
-    :root{--green:#16a34a;--green-dark:#14532d}
-    html,body{height:100%}
-    .focus-ring:focus{outline:3px solid rgba(22,163,74,0.15);outline-offset:3px}
-    /* simple visible fade for progressive reveal */
-    .reveal{opacity:0;transform:translateY(10px);transition:opacity .5s ease,transform .5s ease}
-    .reveal.visible{opacity:1;transform:none}
-    /* make header compact on scroll */
-    header.compact{backdrop-filter: blur(6px);background-color:rgba(255,255,255,0.8)}
-    /* keep chart responsive height */
-    .chart-h{height:320px}
+    :root{
+      --green:#16a34a;
+      --green-dark:#14532d;
+      --brand-shadow:0 18px 40px rgba(15,118,110,.18);
+    }
+
+    html,body{
+      height:100%;
+    }
+
+    body{
+      font-family:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background: radial-gradient(circle at top left,#ecfdf5 0,#f9fafb 52%,#e5f5ff 100%);
+    }
+
+    .focus-ring:focus{
+      outline:3px solid rgba(37,99,235,0.2);
+      outline-offset:3px;
+    }
+
+    .reveal{
+      opacity:0;
+      transform:translateY(12px);
+      transition:opacity .5s ease,transform .5s ease;
+    }
+    .reveal.visible{
+      opacity:1;
+      transform:none;
+    }
+
+    header{
+      transition:background-color .25s ease,box-shadow .25s ease,backdrop-filter .25s ease;
+    }
+    header.compact{
+      background-color:rgba(255,255,255,0.86);
+      backdrop-filter:blur(10px);
+      box-shadow:0 12px 30px rgba(15,23,42,0.08);
+    }
+
+    .chart-h{
+      height:320px;
+    }
+
+    /* Card hover lembut */
+    .card-soft{
+      transition:transform .22s ease,box-shadow .22s ease,background-color .22s ease;
+    }
+    .card-soft:hover{
+      transform:translateY(-4px);
+      box-shadow:var(--brand-shadow);
+      background-color:#f9fafb;
+    }
   </style>
 </head>
-<body class="antialiased text-gray-800 bg-gray-50">
+<body class="antialiased text-gray-800">
 
-  <!-- Navbar -->
-  <header id="site-header" class="fixed w-full z-40 top-0">
-    <div class="max-w-5xl mx-auto flex items-center justify-between px-4 py-3 md:py-4">
-      <a href="#home" class="flex items-center gap-3">
-        <img loading="lazy" src="/images/logo-small.png" alt="Logo PT Sipirok Indah" class="w-10 h-10 rounded-full object-cover" onerror="this.style.display='none'">
-        <span class="font-semibold text-lg text-[var(--green)]">PT Sipirok Indah</span>
+  <!-- NAVBAR -->
+  <header id="site-header" class="fixed top-0 inset-x-0 z-40 border-b border-gray-100 bg-white/80 backdrop-blur">
+    <div class="max-w-6xl mx-auto flex items-center justify-between px-4 sm:px-6 py-3 md:py-3.5">
+      <!-- Logo + Brand -->
+      <a href="#home" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 rounded-full bg-emerald-600/10 flex items-center justify-center">
+          <span class="text-sm font-bold text-emerald-700 tracking-tight">SI</span>
+        </div>
+        <div class="flex flex-col leading-tight">
+          <span class="font-semibold text-base sm:text-lg text-gray-900 group-hover:text-emerald-700">
+            PT Sipirok Indah
+          </span>
+          <span class="text-[11px] sm:text-xs text-gray-500 tracking-wide">
+            Sustainable Plantation & Energy
+          </span>
+        </div>
       </a>
 
-      <nav class="hidden md:flex items-center gap-6 text-sm font-medium" aria-label="Main navigation">
-        <a href="#home" class="nav-link hover:text-[var(--green)]">Beranda</a>
-        <a href="#tentang" class="nav-link hover:text-[var(--green)]">Tentang</a>
-        <a href="#layanan" class="nav-link hover:text-[var(--green)]">Layanan</a>
-        <a href="#grafik" class="nav-link hover:text-[var(--green)]">Grafik</a>
-        <a href="#kontak" class="nav-link hover:text-[var(--green)]">Kontak</a>
+      <!-- Desktop Nav -->
+      <nav class="hidden md:flex items-center gap-7 text-sm font-medium" aria-label="Main navigation">
+        <a href="#home" class="text-gray-600 hover:text-emerald-700 transition">Beranda</a>
+        <a href="#tentang" class="text-gray-600 hover:text-emerald-700 transition">Tentang</a>
+        <a href="#layanan" class="text-gray-600 hover:text-emerald-700 transition">Layanan</a>
+        <a href="#grafik" class="text-gray-600 hover:text-emerald-700 transition">Grafik</a>
+        <a href="#kontak" class="text-gray-600 hover:text-emerald-700 transition">Kontak</a>
       </nav>
 
-      <!-- Mobile Toggle -->
-      <button id="nav-toggle" class="md:hidden p-2 rounded-md focus-ring" aria-expanded="false" aria-controls="mobile-menu">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
-          <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-        </svg>
-      </button>
+      <!-- CTA + Mobile Toggle -->
+      <div class="flex items-center gap-3">
+        <a href="#kontak"
+           class="hidden sm:inline-flex items-center justify-center px-3.5 py-2 rounded-full text-xs font-semibold bg-emerald-600 text-white shadow-sm hover:bg-emerald-700 transition">
+          Konsultasi Cepat
+        </a>
+        <button id="nav-toggle"
+                class="md:hidden p-2 rounded-md focus-ring text-gray-700"
+                aria-expanded="false"
+                aria-controls="mobile-menu">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
+            <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </button>
+      </div>
     </div>
 
-    <!-- Mobile menu -->
-    <div id="mobile-menu" class="md:hidden bg-white border-t hidden">
-      <div class="px-4 py-3 flex flex-col gap-1">
-        <a href="#home" class="px-3 py-2 rounded-md text-gray-800">Beranda</a>
-        <a href="#tentang" class="px-3 py-2 rounded-md text-gray-800">Tentang</a>
-        <a href="#layanan" class="px-3 py-2 rounded-md text-gray-800">Layanan</a>
-        <a href="#grafik" class="px-3 py-2 rounded-md text-gray-800">Grafik</a>
-        <a href="#kontak" class="px-3 py-2 rounded-md text-gray-800">Kontak</a>
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="md:hidden hidden border-t border-gray-100 bg-white">
+      <div class="px-4 py-3 flex flex-col gap-1 text-sm">
+        <a href="#home" class="px-3 py-2 rounded-md text-gray-800 hover:bg-gray-50">Beranda</a>
+        <a href="#tentang" class="px-3 py-2 rounded-md text-gray-800 hover:bg-gray-50">Tentang</a>
+        <a href="#layanan" class="px-3 py-2 rounded-md text-gray-800 hover:bg-gray-50">Layanan</a>
+        <a href="#grafik" class="px-3 py-2 rounded-md text-gray-800 hover:bg-gray-50">Grafik</a>
+        <a href="#kontak" class="px-3 py-2 rounded-md text-gray-800 hover:bg-gray-50">Kontak</a>
       </div>
     </div>
   </header>
 
-  <main class="pt-20">
+  <main class="pt-20 md:pt-24">
 
     <!-- HERO -->
-    <section id="home" class="min-h-[60vh] flex items-center bg-gradient-to-b from-white to-green-50">
-      <div class="max-w-5xl mx-auto px-4 py-12 text-center">
-        <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-3">Membangun Masa Depan <span class="text-[var(--green)]">Hijau</span> & Berkelanjutan</h1>
-        <p class="text-gray-600 max-w-2xl mx-auto mb-6">Solusi energi terbarukan, konsultasi lingkungan, dan pengelolaan limbah dengan pendekatan praktis dan lokal.</p>
-        <div class="flex flex-col sm:flex-row gap-3 justify-center">
-          <a href="#tentang" class="inline-flex items-center justify-center px-5 py-3 rounded-full bg-[var(--green)] text-white text-sm font-semibold shadow-sm hover:opacity-95">Pelajari Lebih Lanjut</a>
-          <a href="#kontak" class="inline-flex items-center justify-center px-5 py-3 rounded-full border border-gray-200 text-sm font-semibold bg-white">Hubungi Kami</a>
+    <section id="home" class="relative">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        <div class="grid md:grid-cols-[1.3fr,1fr] gap-10 items-center py-12 md:py-16">
+          <!-- Text -->
+          <div class="reveal">
+            <p class="inline-flex items-center text-xs font-semibold px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 mb-3">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-2"></span>
+              Solusi hijau untuk industri sawit & energi
+            </p>
+            <h1 class="text-3xl sm:text-4xl md:text-[2.6rem] font-extrabold text-slate-900 leading-tight mb-3">
+              Membangun Masa Depan
+              <span class="text-emerald-600">Hijau</span> & Berkelanjutan
+            </h1>
+            <p class="text-sm sm:text-base text-slate-600 max-w-xl mb-6">
+              PT Sipirok Indah berfokus pada pengelolaan kebun, energi terbarukan,
+              dan pengolahan limbah dengan pendekatan yang realistis, terukur,
+              dan berpihak pada keberlanjutan jangka panjang.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
+              <a href="#layanan"
+                 class="inline-flex items-center justify-center px-5 py-3 rounded-full bg-emerald-600 text-white text-sm font-semibold shadow-[var(--brand-shadow)] hover:bg-emerald-700 transition">
+                Lihat Layanan Utama
+              </a>
+              <a href="#grafik"
+                 class="inline-flex items-center justify-center px-5 py-3 rounded-full border border-slate-200 bg-white text-sm font-semibold text-slate-700 hover:border-emerald-300 hover:text-emerald-700 transition">
+                Lihat Data Produksi
+              </a>
+            </div>
+            <div class="mt-6 flex flex-wrap items-center gap-4 text-xs text-slate-500">
+              <div class="flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center text-[11px] text-emerald-700 font-semibold">10+</span>
+                <span>Proyek keberlanjutan terselesaikan</span>
+              </div>
+              <span class="hidden sm:inline-block w-1 h-1 rounded-full bg-slate-300"></span>
+              <span>Berbasis di Sipirok, melayani skala nasional</span>
+            </div>
+          </div>
+
+          <!-- Illustration / Stats -->
+          <div class="reveal">
+            <div class="relative">
+              <div class="rounded-2xl bg-white shadow-[var(--brand-shadow)] p-5 border border-emerald-50">
+                <p class="text-xs font-semibold text-emerald-700 mb-2">Ringkasan Produksi Mingguan</p>
+                <div class="flex items-baseline justify-between mb-4">
+                  <div>
+                    <p class="text-[11px] text-slate-500">Total panen minggu ini</p>
+                    <p class="text-2xl font-extrabold text-slate-900">1.120<span class="text-base font-semibold text-slate-500"> ton</span></p>
+                  </div>
+                  <div class="text-right">
+                    <p class="text-[11px] text-emerald-600 flex items-center justify-end gap-1">
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                      +8.4% dari minggu lalu
+                    </p>
+                    <p class="text-[11px] text-slate-500">Stabil & bertumbuh</p>
+                  </div>
+                </div>
+                <div class="grid grid-cols-3 gap-3 text-[11px]">
+                  <div class="p-3 rounded-xl bg-emerald-50">
+                    <p class="text-slate-500 mb-1">Kebun aktif</p>
+                    <p class="text-base font-semibold text-slate-900">12 lokasi</p>
+                  </div>
+                  <div class="p-3 rounded-xl bg-sky-50">
+                    <p class="text-slate-500 mb-1">Tingkat pemanfaatan</p>
+                    <p class="text-base font-semibold text-slate-900">87%</p>
+                  </div>
+                  <div class="p-3 rounded-xl bg-amber-50">
+                    <p class="text-slate-500 mb-1">Emisi ditekan</p>
+                    <p class="text-base font-semibold text-slate-900">−21%</p>
+                  </div>
+                </div>
+              </div>
+              <div class="hidden sm:block absolute -right-6 -bottom-8 w-40 rounded-2xl bg-slate-900 text-slate-100 p-4 shadow-2xl">
+                <p class="text-[11px] text-emerald-300 mb-1">Status hari ini</p>
+                <p class="text-sm font-semibold mb-2">Operasional Normal</p>
+                <p class="text-[11px] text-slate-300">Cuaca mendukung, aktivitas panen & pengolahan berjalan sesuai jadwal.</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- TENTANG -->
-    <section id="tentang" class="py-12">
-      <div class="max-w-5xl mx-auto px-4">
+    <section id="tentang" class="py-12 md:py-16">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6">
         <div class="text-center mb-8 reveal">
-          <h2 class="text-2xl font-bold text-gray-900">Tentang PT Sipirok Indah</h2>
-          <p class="text-gray-600 mt-2">Kami berkomitmen pada praktik ramah lingkungan yang memberikan manfaat ekonomi lokal.</p>
+          <p class="text-xs font-semibold text-emerald-600 tracking-wide uppercase">Tentang Kami</p>
+          <h2 class="text-2xl md:text-3xl font-bold text-slate-900 mt-1">PT Sipirok Indah</h2>
+          <p class="text-sm md:text-base text-slate-600 mt-2 max-w-2xl mx-auto">
+            Kami menggabungkan praktik agrikultur modern, energi terbarukan, dan pengelolaan limbah
+            untuk menciptakan nilai jangka panjang bagi lingkungan dan komunitas sekitar.
+          </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="bg-white p-5 rounded-lg shadow-sm reveal">
-            <h3 class="font-semibold text-[var(--green)] mb-2">Visi & Misi</h3>
-            <p class="text-sm text-gray-700">Mewujudkan pengelolaan sumber daya yang berkelanjutan sambil meningkatkan kesejahteraan masyarakat.</p>
+        <div class="grid md:grid-cols-3 gap-6 md:gap-7">
+          <div class="bg-white/90 border border-emerald-50 rounded-2xl p-5 card-soft reveal">
+            <h3 class="font-semibold text-slate-900 mb-2 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center text-[13px] text-emerald-700">V</span>
+              Visi
+            </h3>
+            <p class="text-sm text-slate-600">
+              Menjadi mitra utama dalam pengelolaan kebun dan energi hijau yang transparan, efisien,
+              dan bertanggung jawab.
+            </p>
           </div>
 
-          <div class="bg-white p-5 rounded-lg shadow-sm reveal">
-            <h3 class="font-semibold text-[var(--green)] mb-2">Nilai Perusahaan</h3>
-            <ul class="text-sm text-gray-700 space-y-2">
-              <li>• Integritas</li>
-              <li>• Inovasi</li>
-              <li>• Keberlanjutan</li>
+          <div class="bg-white/90 border border-emerald-50 rounded-2xl p-5 card-soft reveal">
+            <h3 class="font-semibold text-slate-900 mb-2 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center text-[13px] text-emerald-700">M</span>
+              Misi
+            </h3>
+            <ul class="text-sm text-slate-600 space-y-1.5">
+              <li>• Mengoptimalkan produksi tanpa mengorbankan lingkungan.</li>
+              <li>• Memberdayakan tenaga kerja lokal dengan pelatihan berkelanjutan.</li>
+              <li>• Mengurangi jejak karbon melalui inovasi proses.</li>
+            </ul>
+          </div>
+
+          <div class="bg-white/90 border border-emerald-50 rounded-2xl p-5 card-soft reveal">
+            <h3 class="font-semibold text-slate-900 mb-2 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center text-[13px] text-emerald-700">N</span>
+              Nilai
+            </h3>
+            <ul class="text-sm text-slate-600 space-y-1.5">
+              <li>• Integritas dalam setiap keputusan.</li>
+              <li>• Inovasi yang realistis dan terukur.</li>
+              <li>• Keberlanjutan sebagai prioritas, bukan slogan.</li>
             </ul>
           </div>
         </div>
@@ -104,60 +266,139 @@
     </section>
 
     <!-- LAYANAN -->
-    <section id="layanan" class="py-12 bg-white">
-      <div class="max-w-5xl mx-auto px-4">
+    <section id="layanan" class="py-12 md:py-16 bg-white">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6">
         <div class="text-center mb-8 reveal">
-          <h2 class="text-2xl font-bold text-gray-900">Layanan Kami</h2>
-          <p class="text-gray-600 mt-2">Solusi praktis yang siap diimplementasikan untuk bisnis dan komunitas.</p>
+          <p class="text-xs font-semibold text-emerald-600 tracking-wide uppercase">Layanan</p>
+          <h2 class="text-2xl md:text-3xl font-bold text-slate-900 mt-1">Solusi yang Kami Tawarkan</h2>
+          <p class="text-sm md:text-base text-slate-600 mt-2 max-w-2xl mx-auto">
+            Dirancang untuk kebun, pabrik, dan organisasi yang ingin bergerak menuju operasional yang lebih hijau,
+            tanpa kehilangan efisiensi bisnis.
+          </p>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
           <!-- Card 1 -->
-          <article class="p-4 bg-gray-50 rounded-lg shadow-sm reveal">
+          <article class="p-5 rounded-2xl bg-slate-50 border border-slate-100 card-soft reveal">
             <div class="flex items-center gap-3 mb-3">
-              <!-- inline SVG icon to avoid extra dependency -->
-              <svg class="w-10 h-10 text-[var(--green)]" viewBox="0 0 24 24" fill="none" aria-hidden>
-                <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-              </svg>
-              <h3 class="font-semibold">Energi Terbarukan</h3>
+              <div class="w-9 h-9 rounded-xl bg-emerald-100 flex items-center justify-center">
+                <svg class="w-5 h-5 text-emerald-700" viewBox="0 0 24 24" fill="none" aria-hidden>
+                  <path d="M4 12h16M4 7h16M4 17h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
+                </svg>
+              </div>
+              <h3 class="font-semibold text-slate-900 text-sm">Energi Terbarukan</h3>
             </div>
-            <p class="text-sm text-gray-700">Pemasangan panel surya, sistem mikrohidro, dan konsultasi efisiensi energi.</p>
+            <p class="text-sm text-slate-600 mb-3">
+              Perencanaan dan instalasi panel surya, sistem mikrohidro, dan integrasi dengan proses produksi
+              untuk efisiensi energi.
+            </p>
+            <p class="text-[11px] text-emerald-700 font-medium">
+              • Studi kelayakan • Desain sistem • Pemantauan performa
+            </p>
           </article>
 
           <!-- Card 2 -->
-          <article class="p-4 bg-gray-50 rounded-lg shadow-sm reveal">
+          <article class="p-5 rounded-2xl bg-slate-50 border border-slate-100 card-soft reveal">
             <div class="flex items-center gap-3 mb-3">
-              <svg class="w-10 h-10 text-[var(--green)]" viewBox="0 0 24 24" fill="none" aria-hidden>
-                <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5"></circle>
-              </svg>
-              <h3 class="font-semibold">Konsultasi Lingkungan</h3>
+              <div class="w-9 h-9 rounded-xl bg-emerald-100 flex items-center justify-center">
+                <svg class="w-5 h-5 text-emerald-700" viewBox="0 0 24 24" fill="none" aria-hidden>
+                  <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.6"></circle>
+                  <path d="M12 8v4l2.5 2.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
+                </svg>
+              </div>
+              <h3 class="font-semibold text-slate-900 text-sm">Konsultasi Lingkungan</h3>
             </div>
-            <p class="text-sm text-gray-700">Audit lingkungan, strategi keberlanjutan, dan pelatihan SDM.</p>
+            <p class="text-sm text-slate-600 mb-3">
+              Audit lingkungan, strategi keberlanjutan, dan pendampingan implementasi kebijakan ESG
+              yang relevan dengan operasional sawit.
+            </p>
+            <p class="text-[11px] text-emerald-700 font-medium">
+              • Audit • Sertifikasi • Program edukasi internal
+            </p>
           </article>
 
           <!-- Card 3 -->
-          <article class="p-4 bg-gray-50 rounded-lg shadow-sm reveal">
+          <article class="p-5 rounded-2xl bg-slate-50 border border-slate-100 card-soft reveal">
             <div class="flex items-center gap-3 mb-3">
-              <svg class="w-10 h-10 text-[var(--green)]" viewBox="0 0 24 24" fill="none" aria-hidden>
-                <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" stroke-width="1.5"></rect>
-              </svg>
-              <h3 class="font-semibold">Pengelolaan Limbah</h3>
+              <div class="w-9 h-9 rounded-xl bg-emerald-100 flex items-center justify-center">
+                <svg class="w-5 h-5 text-emerald-700" viewBox="0 0 24 24" fill="none" aria-hidden>
+                  <rect x="4" y="4" width="16" height="16" rx="3" stroke="currentColor" stroke-width="1.6"></rect>
+                  <path d="M9 9h6v6H9z" stroke="currentColor" stroke-width="1.4"></path>
+                </svg>
+              </div>
+              <h3 class="font-semibold text-slate-900 text-sm">Pengelolaan Limbah</h3>
             </div>
-            <p class="text-sm text-gray-700">Solusi pengolahan limbah industri dan program daur ulang terpadu.</p>
+            <p class="text-sm text-slate-600 mb-3">
+              Sistem pengolahan limbah cair & padat, program daur ulang, serta pemanfaatan residu
+              menjadi energi atau produk turunan.
+            </p>
+            <p class="text-[11px] text-emerald-700 font-medium">
+              • Desain IPAL • Daur ulang • Pemanfaatan residu
+            </p>
+          </article>
+
+          <!-- Card 4 -->
+          <article class="p-5 rounded-2xl bg-slate-50 border border-slate-100 card-soft reveal">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-9 h-9 rounded-xl bg-emerald-100 flex items-center justify-center">
+                <svg class="w-5 h-5 text-emerald-700" viewBox="0 0 24 24" fill="none" aria-hidden>
+                  <path d="M5 20v-8l7-8 7 8v8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+                  <path d="M9 20v-5h6v5" stroke="currentColor" stroke-width="1.6"></path>
+                </svg>
+              </div>
+              <h3 class="font-semibold text-slate-900 text-sm">Manajemen Kebun</h3>
+            </div>
+            <p class="text-sm text-slate-600 mb-3">
+              Pendampingan tata kelola kebun yang efisien: dari panen, pencatatan, hingga optimasi
+              tenaga kerja dan peralatan.
+            </p>
+            <p class="text-[11px] text-emerald-700 font-medium">
+              • Perencanaan panen • Monitoring • Pelaporan
+            </p>
+          </article>
+
+          <!-- Card 5 -->
+          <article class="p-5 rounded-2xl bg-slate-50 border border-slate-100 card-soft reveal">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-9 h-9 rounded-xl bg-emerald-100 flex items-center justify-center">
+                <svg class="w-5 h-5 text-emerald-700" viewBox="0 0 24 24" fill="none" aria-hidden>
+                  <path d="M6 8h12M6 12h8M6 16h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
+                  <rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" stroke-width="1.4"></rect>
+                </svg>
+              </div>
+              <h3 class="font-semibold text-slate-900 text-sm">Pelaporan & Dashboard</h3>
+            </div>
+            <p class="text-sm text-slate-600 mb-3">
+              Sistem pelaporan digital dan dashboard produksi yang memberikan visibilitas harian
+              untuk manajemen dan pemilik.
+            </p>
+            <p class="text-[11px] text-emerald-700 font-medium">
+              • Integrasi data • Analitik • Export laporan
+            </p>
           </article>
         </div>
       </div>
     </section>
 
     <!-- GRAFIK -->
-    <section id="grafik" class="py-12">
-      <div class="max-w-5xl mx-auto px-4">
-        <div class="text-center mb-6 reveal">
-          <h2 class="text-2xl font-bold">Grafik Pengumpulan Sawit per Hari</h2>
-          <p class="text-gray-600 mt-1">Data contoh untuk ilustrasi monitoring produksi harian.</p>
+    <section id="grafik" class="py-12 md:py-16">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6 reveal">
+          <div>
+            <p class="text-xs font-semibold text-emerald-600 uppercase tracking-wide">Data Contoh</p>
+            <h2 class="text-2xl md:text-3xl font-bold text-slate-900 mt-1">Grafik Pengumpulan Sawit per Hari</h2>
+            <p class="text-sm md:text-base text-slate-600 mt-2 max-w-xl">
+              Visualisasi sederhana untuk memantau tren produksi harian dan membantu pengambilan
+              keputusan operasional.
+            </p>
+          </div>
+          <div class="text-xs text-slate-500 bg-white/80 border border-slate-100 rounded-xl px-4 py-3">
+            <p class="font-semibold text-slate-700 mb-1">Catatan</p>
+            <p>Data ini bersifat ilustratif. Sistem dapat dihubungkan ke data riil dari aplikasi absensi & panen.</p>
+          </div>
         </div>
 
-        <div class="bg-white p-4 rounded-lg shadow-sm reveal">
+        <div class="bg-white/95 border border-slate-100 rounded-2xl shadow-sm p-4 sm:p-6 reveal">
           <div class="chart-h">
             <canvas id="grafikSawit" class="w-full h-full"></canvas>
           </div>
@@ -166,28 +407,65 @@
     </section>
 
     <!-- KONTAK -->
-    <section id="kontak" class="py-12 bg-gradient-to-b from-green-50 to-white">
-      <div class="max-w-5xl mx-auto px-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="bg-white p-6 rounded-lg shadow-sm reveal">
-            <h3 class="text-lg font-semibold text-[var(--green)] mb-3">Informasi Kontak</h3>
-            <p class="text-sm text-gray-700">Jl. Hijau Lestari No.123, Sipirok — +62 812 3456 7890 — info@ptsipirokindah.com</p>
+    <section id="kontak" class="py-12 md:py-16 bg-gradient-to-b from-emerald-50/70 to-white">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        <div class="grid grid-cols-1 md:grid-cols-[1.1fr,1fr] gap-6 md:gap-8">
+          <!-- Info -->
+          <div class="bg-white/95 border border-emerald-50 rounded-2xl p-6 md:p-7 shadow-sm reveal">
+            <p class="text-xs font-semibold text-emerald-600 uppercase tracking-wide">Kontak</p>
+            <h3 class="text-xl md:text-2xl font-bold text-slate-900 mt-1 mb-3">
+              Mulai diskusi dengan tim kami
+            </h3>
+            <p class="text-sm md:text-base text-slate-600 mb-5">
+              Sampaikan kebutuhan Anda terkait pengelolaan kebun, energi terbarukan, atau pengolahan limbah.
+              Kami akan merespons dengan solusi yang realistis dan terukur.
+            </p>
 
-            <div class="mt-4 flex gap-3">
-              <a aria-label="facebook" href="#" class="p-2 rounded bg-gray-100">FB</a>
-              <a aria-label="instagram" href="#" class="p-2 rounded bg-gray-100">IG</a>
-              <a aria-label="linkedin" href="#" class="p-2 rounded bg-gray-100">IN</a>
+            <div class="space-y-3 text-sm text-slate-700 mb-5">
+              <p><span class="font-semibold text-slate-900">Alamat:</span> Jl. Hijau Lestari No.123, Sipirok</p>
+              <p><span class="font-semibold text-slate-900">Telepon:</span> +62 812 3456 7890</p>
+              <p><span class="font-semibold text-slate-900">Email:</span> info@ptsipirokindah.com</p>
+            </div>
+
+            <div class="flex gap-2 mt-4">
+              <a aria-label="facebook" href="#" class="px-3 py-2 rounded-full bg-slate-900 text-xs text-white">Facebook</a>
+              <a aria-label="instagram" href="#" class="px-3 py-2 rounded-full bg-slate-900 text-xs text-white">Instagram</a>
+              <a aria-label="linkedin" href="#" class="px-3 py-2 rounded-full bg-slate-900 text-xs text-white">LinkedIn</a>
             </div>
           </div>
 
-          <div class="bg-white p-6 rounded-lg shadow-sm reveal">
-            <h3 class="text-lg font-semibold text-[var(--green)] mb-3">Kirim Pesan</h3>
+          <!-- Form -->
+          <div class="bg-white/95 border border-emerald-50 rounded-2xl p-6 md:p-7 shadow-sm reveal">
+            <h3 class="text-lg md:text-xl font-semibold text-slate-900 mb-2">Kirim Pesan</h3>
+            <p class="text-xs text-slate-500 mb-4">
+              Form ini bersifat simulasi untuk demo. Integrasi ke backend/email dapat ditambahkan kemudian.
+            </p>
             <form id="contact-form" class="space-y-3" novalidate>
-              <input name="name" type="text" placeholder="Nama" class="w-full px-3 py-2 border rounded focus-ring" required>
-              <input name="email" type="email" placeholder="Email" class="w-full px-3 py-2 border rounded focus-ring" required>
-              <textarea name="message" rows="4" placeholder="Pesan" class="w-full px-3 py-2 border rounded focus-ring" required></textarea>
-              <button type="submit" class="w-full inline-flex items-center justify-center gap-2 bg-[var(--green)] text-white px-4 py-2 rounded">Kirim Pesan</button>
-              <p id="form-msg" class="text-sm text-green-700 hidden">Pesan terkirim. Terima kasih!</p>
+              <div>
+                <label class="text-xs font-medium text-slate-600 mb-1 block">Nama</label>
+                <input name="name" type="text" placeholder="Nama lengkap"
+                       class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus-ring bg-slate-50/60"
+                       required>
+              </div>
+              <div>
+                <label class="text-xs font-medium text-slate-600 mb-1 block">Email</label>
+                <input name="email" type="email" placeholder="nama@perusahaan.com"
+                       class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus-ring bg-slate-50/60"
+                       required>
+              </div>
+              <div>
+                <label class="text-xs font-medium text-slate-600 mb-1 block">Pesan</label>
+                <textarea name="message" rows="4" placeholder="Ceritakan kebutuhan atau pertanyaan Anda..."
+                          class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus-ring bg-slate-50/60"
+                          required></textarea>
+              </div>
+              <button type="submit"
+                      class="w-full inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-4 py-2.5 rounded-full shadow-sm transition">
+                Kirim Pesan
+              </button>
+              <p id="form-msg" class="text-xs text-emerald-700 hidden mt-2">
+                Pesan terkirim. Terima kasih, tim kami akan segera meninjau.
+              </p>
             </form>
           </div>
         </div>
@@ -197,94 +475,133 @@
   </main>
 
   <!-- FOOTER -->
-  <footer class="bg-gray-900 text-gray-200 py-6">
-    <div class="max-w-5xl mx-auto px-4 text-sm text-center">
-      <p>© <span id="year"></span> PT Sipirok Indah — Semua hak dilindungi.</p>
+  <footer class="bg-slate-900 text-slate-200 py-6 mt-4">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 text-xs sm:text-sm flex flex-col sm:flex-row items-center justify-between gap-2">
+      <p>© <span id="year"></span> PT Sipirok Indah. Semua hak dilindungi.</p>
+      <p class="text-slate-400">
+        Dibangun dengan fokus pada keberlanjutan & transparansi data.
+      </p>
     </div>
   </footer>
 
   <script>
-    // Small helper: toggle mobile menu
     (function(){
       const btn = document.getElementById('nav-toggle');
       const menu = document.getElementById('mobile-menu');
-      btn && btn.addEventListener('click', ()=>{
-        const open = menu.classList.toggle('hidden');
-        btn.setAttribute('aria-expanded', !open);
-      });
+      const header = document.getElementById('site-header');
 
-      // Smooth scroll with header offset
+      if(btn && menu){
+        btn.addEventListener('click', ()=>{
+          const isHidden = menu.classList.toggle('hidden');
+          btn.setAttribute('aria-expanded', !isHidden);
+        });
+      }
+
+      // Smooth scroll dengan offset header
       document.querySelectorAll('a[href^="#"]').forEach(a=>{
         a.addEventListener('click', function(e){
-          const target = document.querySelector(this.getAttribute('href'));
-          if(target){
-            e.preventDefault();
-            const headerHeight = document.querySelector('header').offsetHeight || 64;
-            const top = target.getBoundingClientRect().top + window.scrollY - headerHeight - 8;
-            window.scrollTo({top, behavior:'smooth'});
-            // close mobile menu after click
-            if(!menu.classList.contains('hidden')) menu.classList.add('hidden');
-          }
+          const hash = this.getAttribute('href');
+          const target = document.querySelector(hash);
+          if(!target) return;
+          e.preventDefault();
+          const headerHeight = header.offsetHeight || 64;
+          const top = target.getBoundingClientRect().top + window.scrollY - headerHeight - 8;
+          window.scrollTo({ top, behavior:'smooth' });
+          if(!menu.classList.contains('hidden')) menu.classList.add('hidden');
         });
       });
 
-      // simple reveal on scroll (lightweight)
+      // Reveal effect
       const reveals = document.querySelectorAll('.reveal');
       const onScroll = ()=>{
         reveals.forEach(r=>{
           const rect = r.getBoundingClientRect();
-          if(rect.top < window.innerHeight - 60) r.classList.add('visible');
+          if(rect.top < window.innerHeight - 60){
+            r.classList.add('visible');
+          }
         });
       };
-      window.addEventListener('scroll', onScroll, {passive:true});
+      window.addEventListener('scroll', onScroll, { passive:true });
       window.addEventListener('load', onScroll);
 
-      // header compact on scroll
-      const header = document.getElementById('site-header');
+      // Header compact state
       window.addEventListener('scroll', ()=>{
-        if(window.scrollY > 80) header.classList.add('compact'); else header.classList.remove('compact');
-      }, {passive:true});
+        if(window.scrollY > 80) header.classList.add('compact');
+        else header.classList.remove('compact');
+      }, { passive:true });
 
-      // contact form simple fake submit
+      // Fake contact form submit
       const form = document.getElementById('contact-form');
       const msg = document.getElementById('form-msg');
       if(form){
         form.addEventListener('submit', function(e){
           e.preventDefault();
-          // minimal validation
           const fd = new FormData(form);
           if(!fd.get('name') || !fd.get('email') || !fd.get('message')){
-            alert('Lengkapi semua field');
+            alert('Lengkapi semua field terlebih dahulu.');
             return;
           }
-          // simulate submit
           msg.classList.remove('hidden');
           form.reset();
-          setTimeout(()=>msg.classList.add('hidden'), 4000);
+          setTimeout(()=>msg.classList.add('hidden'), 3500);
         });
       }
 
-      // set current year
-      document.getElementById('year').textContent = new Date().getFullYear();
+      // Tahun berjalan
+      const yearEl = document.getElementById('year');
+      if(yearEl) yearEl.textContent = new Date().getFullYear();
     })();
 
-    // Chart init: only when Chart is loaded and canvas exists
+    // Chart.js init
     window.addEventListener('load', ()=>{
       const canvas = document.getElementById('grafikSawit');
       if(!canvas || !window.Chart) return;
       const ctx = canvas.getContext('2d');
 
       const gradient = ctx.createLinearGradient(0,0,0,320);
-      gradient.addColorStop(0,'rgba(22,163,74,0.85)');
-      gradient.addColorStop(1,'rgba(187,247,208,0.6)');
+      gradient.addColorStop(0,'rgba(16,185,129,0.9)');
+      gradient.addColorStop(1,'rgba(209,250,229,0.4)');
 
       new Chart(ctx, {
         type:'bar',
         data:{
           labels:['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'],
-          datasets:[{label:'Jumlah Sawit (ton)', data:[120,150,180,140,200,170,160], backgroundColor:gradient, borderColor:'#14532d', borderWidth:1, borderRadius:6}]
+          datasets:[{
+            label:'Jumlah Sawit (ton)',
+            data:[120,150,180,140,200,170,160],
+            backgroundColor:gradient,
+            borderColor:'#14532d',
+            borderWidth:1,
+            borderRadius:8,
+            maxBarThickness:40
+          }]
         },
-        options:{responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true,ticks:{color:'#14532d'}} , x:{ticks:{color:'#14532d'}}},plugins:{legend:{display:false},tooltip:{backgroundColor:'#14532d',titleColor:'#fff',bodyColor:'#fff'}},animation:{duration:800}}
+        options:{
+          responsive:true,
+          maintainAspectRatio:false,
+          scales:{
+            y:{
+              beginAtZero:true,
+              grid:{ color:'rgba(148,163,184,0.25)', drawBorder:false },
+              ticks:{ color:'#475569', font:{ size:11 } }
+            },
+            x:{
+              grid:{ display:false },
+              ticks:{ color:'#475569', font:{ size:11 } }
+            }
+          },
+          plugins:{
+            legend:{ display:false },
+            tooltip:{
+              backgroundColor:'#0f172a',
+              titleColor:'#e5e7eb',
+              bodyColor:'#e5e7eb',
+              padding:8,
+              cornerRadius:6
+            }
+          },
+          animation:{ duration:700, easing:'easeOutCubic' }
+        }
       });
     });
   </script>
