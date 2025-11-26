@@ -96,7 +96,6 @@
         <a href="#home" class="text-gray-600 hover:text-emerald-700 transition">Beranda</a>
         <a href="#tentang" class="text-gray-600 hover:text-emerald-700 transition">Tentang</a>
         <a href="#layanan" class="text-gray-600 hover:text-emerald-700 transition">Layanan</a>
-        <a href="#grafik" class="text-gray-600 hover:text-emerald-700 transition">Grafik</a>
         <a href="#kontak" class="text-gray-600 hover:text-emerald-700 transition">Kontak</a>
       </nav>
 
@@ -123,7 +122,6 @@
         <a href="#home" class="px-3 py-2 rounded-md text-gray-800 hover:bg-gray-50">Beranda</a>
         <a href="#tentang" class="px-3 py-2 rounded-md text-gray-800 hover:bg-gray-50">Tentang</a>
         <a href="#layanan" class="px-3 py-2 rounded-md text-gray-800 hover:bg-gray-50">Layanan</a>
-        <a href="#grafik" class="px-3 py-2 rounded-md text-gray-800 hover:bg-gray-50">Grafik</a>
         <a href="#kontak" class="px-3 py-2 rounded-md text-gray-800 hover:bg-gray-50">Kontak</a>
       </div>
     </div>
@@ -154,10 +152,6 @@
               <a href="#layanan"
                  class="inline-flex items-center justify-center px-5 py-3 rounded-full bg-emerald-600 text-white text-sm font-semibold shadow-[var(--brand-shadow)] hover:bg-emerald-700 transition">
                 Lihat Layanan Utama
-              </a>
-              <a href="#grafik"
-                 class="inline-flex items-center justify-center px-5 py-3 rounded-full border border-slate-200 bg-white text-sm font-semibold text-slate-700 hover:border-emerald-300 hover:text-emerald-700 transition">
-                Lihat Data Produksi
               </a>
             </div>
             <div class="mt-6 flex flex-wrap items-center gap-4 text-xs text-slate-500">
@@ -203,7 +197,8 @@
                   </div>
                 </div>
               </div>
-              <div class="hidden sm:block absolute -right-6 -bottom-8 w-40 rounded-2xl bg-slate-900 text-slate-100 p-4 shadow-2xl">
+             <div class="hidden sm:block absolute right-0 bottom-0 translate-x-6 translate-y-6 w-40 rounded-2xl bg-slate-900 text-slate-100 p-4 shadow-2xl">
+
                 <p class="text-[11px] text-emerald-300 mb-1">Status hari ini</p>
                 <p class="text-sm font-semibold mb-2">Operasional Normal</p>
                 <p class="text-[11px] text-slate-300">Cuaca mendukung, aktivitas panen & pengolahan berjalan sesuai jadwal.</p>
@@ -215,55 +210,135 @@
     </section>
 
     <!-- TENTANG -->
-    <section id="tentang" class="py-12 md:py-16">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6">
-        <div class="text-center mb-8 reveal">
-          <p class="text-xs font-semibold text-emerald-600 tracking-wide uppercase">Tentang Kami</p>
-          <h2 class="text-2xl md:text-3xl font-bold text-slate-900 mt-1">PT Sipirok Indah</h2>
-          <p class="text-sm md:text-base text-slate-600 mt-2 max-w-2xl mx-auto">
-            Kami menggabungkan praktik agrikultur modern, energi terbarukan, dan pengelolaan limbah
-            untuk menciptakan nilai jangka panjang bagi lingkungan dan komunitas sekitar.
-          </p>
-        </div>
+<section id="tentang" class="py-14 md:py-20">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
 
-        <div class="grid md:grid-cols-3 gap-6 md:gap-7">
-          <div class="bg-white/90 border border-emerald-50 rounded-2xl p-5 card-soft reveal">
-            <h3 class="font-semibold text-slate-900 mb-2 flex items-center gap-2">
-              <span class="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center text-[13px] text-emerald-700">V</span>
-              Visi
-            </h3>
-            <p class="text-sm text-slate-600">
-              Menjadi mitra utama dalam pengelolaan kebun dan energi hijau yang transparan, efisien,
-              dan bertanggung jawab.
-            </p>
-          </div>
+    <!-- Heading -->
+    <div class="text-center mb-10 reveal">
+      <p class="text-xs font-semibold text-emerald-600 tracking-wide uppercase">Tentang Kami</p>
+      <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mt-1">PT Sipirok Indah</h2>
+      <p class="text-sm md:text-base text-slate-600 mt-3 max-w-2xl mx-auto leading-relaxed">
+        PT Sipirok Indah merupakan perusahaan perkebunan yang berdiri sejak 1991 
+        dan memiliki lebih dari 34 tahun pengalaman di industri kelapa sawit. 
+        Beroperasi di sektor agribisnis, perusahaan menunjukkan komitmen kuat 
+        dalam pengelolaan Sawit Tandan Buah Segar (TBS) secara profesional dan berkelanjutan.
+      </p>
+    </div>
 
-          <div class="bg-white/90 border border-emerald-50 rounded-2xl p-5 card-soft reveal">
-            <h3 class="font-semibold text-slate-900 mb-2 flex items-center gap-2">
-              <span class="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center text-[13px] text-emerald-700">M</span>
-              Misi
-            </h3>
-            <ul class="text-sm text-slate-600 space-y-1.5">
-              <li>• Mengoptimalkan produksi tanpa mengorbankan lingkungan.</li>
-              <li>• Memberdayakan tenaga kerja lokal dengan pelatihan berkelanjutan.</li>
-              <li>• Mengurangi jejak karbon melalui inovasi proses.</li>
-            </ul>
-          </div>
+    <!-- Cards -->
+    <div class="grid md:grid-cols-3 gap-7 items-start">
 
-          <div class="bg-white/90 border border-emerald-50 rounded-2xl p-5 card-soft reveal">
-            <h3 class="font-semibold text-slate-900 mb-2 flex items-center gap-2">
-              <span class="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center text-[13px] text-emerald-700">N</span>
-              Nilai
-            </h3>
-            <ul class="text-sm text-slate-600 space-y-1.5">
-              <li>• Integritas dalam setiap keputusan.</li>
-              <li>• Inovasi yang realistis dan terukur.</li>
-              <li>• Keberlanjutan sebagai prioritas, bukan slogan.</li>
-            </ul>
-          </div>
-        </div>
+      <!-- Visi -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-7 card-soft reveal h-full">
+        <h3 class="font-semibold text-slate-900 mb-4 flex items-center gap-2">
+          <span class="w-7 h-7 rounded-full bg-emerald-100 flex items-center justify-center text-[13px] text-emerald-700">V</span>
+          Visi
+        </h3>
+        <p class="text-sm text-slate-600 leading-relaxed">
+          Menjadi korporasi agrobisnis kelapa sawit yang diakui di Indonesia, 
+          menguntungkan, serta dikelola dengan terbaik, terintegrasi, dan berkesinambungan.
+        </p>
       </div>
-    </section>
+
+      <!-- Misi -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-7 card-soft reveal h-full">
+        <h3 class="font-semibold text-slate-900 mb-4 flex items-center gap-2">
+          <span class="w-7 h-7 rounded-full bg-emerald-100 flex items-center justify-center text-[13px] text-emerald-700">M</span>
+          Misi
+        </h3>
+        <ul class="list-disc pl-5 text-sm text-slate-600 space-y-2 leading-relaxed">
+          <li>Mensejahterakan masyarakat sekitar dan karyawan.</li>
+          <li>Meningkatkan produksi TBS yang berkualitas dan berkelanjutan.</li>
+          <li>Meningkatkan nilai moral dan spiritual karyawan.</li>
+          <li>Meningkatkan kompetensi SDM melalui pelatihan berkesinambungan agar profesional dan zero accident.</li>
+          <li>Meningkatkan pengelolaan lingkungan, keselamatan, dan kesehatan kerja.</li>
+          <li>Menerapkan sistem manajemen terbaik pada seluruh proses perusahaan.</li>
+        </ul>
+      </div>
+
+      <!-- Nilai -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-7 card-soft reveal h-full">
+        <h3 class="font-semibold text-slate-900 mb-4 flex items-center gap-2">
+          <span class="w-7 h-7 rounded-full bg-emerald-100 flex items-center justify-center text-[13px] text-emerald-700">N</span>
+          Nilai
+        </h3>
+        <ul class="list-disc pl-5 text-sm text-slate-600 space-y-2 leading-relaxed">
+          <li>Integritas dalam setiap keputusan.</li>
+          <li>Inovasi yang realistis dan terukur.</li>
+          <li>Keberlanjutan sebagai prioritas utama.</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PROGRAM & AKTIVITAS -->
+<section id="aktivitas" class="py-14 md:py-20 bg-white">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+
+    <div class="text-center mb-12 reveal">
+      <p class="text-xs font-semibold text-emerald-600 tracking-wide uppercase">Program & Aktivitas</p>
+      <h2 class="text-2xl md:text-3xl font-bold text-slate-900 mt-1">
+        Komitmen Kami Terhadap Operasional & Masyarakat
+      </h2>
+      <p class="text-sm md:text-base text-slate-600 mt-3 max-w-2xl mx-auto leading-relaxed">
+        Berbagai program rutin dan kegiatan sosial dilakukan sebagai bagian dari tanggung jawab 
+        perusahaan dalam menciptakan keberlanjutan, peningkatan kualitas hidup, dan lingkungan kerja yang lebih baik.
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+
+      <!-- Produk Yang Dihasilkan -->
+      <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 card-soft reveal">
+        <h3 class="font-semibold text-slate-900 text-lg mb-2">Produk Yang Dihasilkan</h3>
+        <p class="text-sm text-slate-600 leading-relaxed">
+          Perusahaan agribisnis yang berfokus pada pengelolaan perkebunan kelapa sawit berkelanjutan 
+          serta menjaga mutu buah kelapa sawit agar sesuai dengan standar industri.
+        </p>
+      </div>
+
+      <!-- Tenaga Kerja Kami -->
+      <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 card-soft reveal">
+        <h3 class="font-semibold text-slate-900 text-lg mb-2">Tenaga Kerja Kami</h3>
+        <p class="text-sm text-slate-600 leading-relaxed">
+          Tenaga kerja membutuhkan lingkungan yang aman dan kondusif. Kami berupaya menyediakan 
+          lingkungan kerja yang setara atau lebih baik dari standar industri.
+        </p>
+      </div>
+
+      <!-- Pendidikan -->
+      <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 card-soft reveal">
+        <h3 class="font-semibold text-slate-900 text-lg mb-2">Pendidikan</h3>
+        <p class="text-sm text-slate-600 leading-relaxed">
+          Pendidikan berperan penting dalam mengurangi kemiskinan dan meningkatkan kesejahteraan. 
+          Kami secara rutin memberikan beasiswa pendidikan untuk anak-anak karyawan yang berprestasi.
+        </p>
+      </div>
+
+      <!-- Peduli Kecerdasan Anak-Anak -->
+      <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 card-soft reveal">
+        <h3 class="font-semibold text-slate-900 text-lg mb-2">Peduli Terhadap Kecerdasan Anak-anak</h3>
+        <p class="text-sm text-slate-600 leading-relaxed">
+          PT Sipirok Indah peduli pada perkembangan pendidikan anak-anak masyarakat di sekitar 
+          perkebunan, termasuk memberikan dukungan dan bantuan kepada sekolah-sekolah setempat.
+        </p>
+      </div>
+
+      <!-- Perbaikan Jalan Umum -->
+      <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 card-soft reveal">
+        <h3 class="font-semibold text-slate-900 text-lg mb-2">Perbaikan Jalan Umum</h3>
+        <p class="text-sm text-slate-600 leading-relaxed">
+          Sebagai bentuk kontribusi kepada masyarakat, perusahaan turut mendukung perbaikan 
+          infrastruktur desa seperti akses jalan umum di Desa Sibargot dan wilayah sekitar kebun.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
 
     <!-- LAYANAN -->
     <section id="layanan" class="py-12 md:py-16 bg-white">
@@ -380,32 +455,6 @@
       </div>
     </section>
 
-    <!-- GRAFIK -->
-    <section id="grafik" class="py-12 md:py-16">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6 reveal">
-          <div>
-            <p class="text-xs font-semibold text-emerald-600 uppercase tracking-wide">Data Contoh</p>
-            <h2 class="text-2xl md:text-3xl font-bold text-slate-900 mt-1">Grafik Pengumpulan Sawit per Hari</h2>
-            <p class="text-sm md:text-base text-slate-600 mt-2 max-w-xl">
-              Visualisasi sederhana untuk memantau tren produksi harian dan membantu pengambilan
-              keputusan operasional.
-            </p>
-          </div>
-          <div class="text-xs text-slate-500 bg-white/80 border border-slate-100 rounded-xl px-4 py-3">
-            <p class="font-semibold text-slate-700 mb-1">Catatan</p>
-            <p>Data ini bersifat ilustratif. Sistem dapat dihubungkan ke data riil dari aplikasi absensi & panen.</p>
-          </div>
-        </div>
-
-        <div class="bg-white/95 border border-slate-100 rounded-2xl shadow-sm p-4 sm:p-6 reveal">
-          <div class="chart-h">
-            <canvas id="grafikSawit" class="w-full h-full"></canvas>
-          </div>
-        </div>
-      </div>
-    </section>
-
     <!-- KONTAK -->
     <section id="kontak" class="py-12 md:py-16 bg-gradient-to-b from-emerald-50/70 to-white">
       <div class="max-w-6xl mx-auto px-4 sm:px-6">
@@ -422,15 +471,15 @@
             </p>
 
             <div class="space-y-3 text-sm text-slate-700 mb-5">
-              <p><span class="font-semibold text-slate-900">Alamat:</span> Jl. Hijau Lestari No.123, Sipirok</p>
-              <p><span class="font-semibold text-slate-900">Telepon:</span> +62 812 3456 7890</p>
-              <p><span class="font-semibold text-slate-900">Email:</span> info@ptsipirokindah.com</p>
+              <p><span class="font-semibold text-slate-900">Alamat:</span>Jl. DI. Panjaitan No. 180 Kelurahan - Sei Sikambing D,Kecamatan Medan Petisah
+                                                                          Kota - Medan, Sumatra utara</p>
+              <p><span class="font-semibold text-slate-900">Telepon:</span> 061-4571801</p>
+              <p><span class="font-semibold text-slate-900">Email:</span> sipirokindah@gmail.com</p>
             </div>
 
             <div class="flex gap-2 mt-4">
               <a aria-label="facebook" href="#" class="px-3 py-2 rounded-full bg-slate-900 text-xs text-white">Facebook</a>
               <a aria-label="instagram" href="#" class="px-3 py-2 rounded-full bg-slate-900 text-xs text-white">Instagram</a>
-              <a aria-label="linkedin" href="#" class="px-3 py-2 rounded-full bg-slate-900 text-xs text-white">LinkedIn</a>
             </div>
           </div>
 
@@ -552,58 +601,6 @@
       if(yearEl) yearEl.textContent = new Date().getFullYear();
     })();
 
-    // Chart.js init
-    window.addEventListener('load', ()=>{
-      const canvas = document.getElementById('grafikSawit');
-      if(!canvas || !window.Chart) return;
-      const ctx = canvas.getContext('2d');
-
-      const gradient = ctx.createLinearGradient(0,0,0,320);
-      gradient.addColorStop(0,'rgba(16,185,129,0.9)');
-      gradient.addColorStop(1,'rgba(209,250,229,0.4)');
-
-      new Chart(ctx, {
-        type:'bar',
-        data:{
-          labels:['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'],
-          datasets:[{
-            label:'Jumlah Sawit (ton)',
-            data:[120,150,180,140,200,170,160],
-            backgroundColor:gradient,
-            borderColor:'#14532d',
-            borderWidth:1,
-            borderRadius:8,
-            maxBarThickness:40
-          }]
-        },
-        options:{
-          responsive:true,
-          maintainAspectRatio:false,
-          scales:{
-            y:{
-              beginAtZero:true,
-              grid:{ color:'rgba(148,163,184,0.25)', drawBorder:false },
-              ticks:{ color:'#475569', font:{ size:11 } }
-            },
-            x:{
-              grid:{ display:false },
-              ticks:{ color:'#475569', font:{ size:11 } }
-            }
-          },
-          plugins:{
-            legend:{ display:false },
-            tooltip:{
-              backgroundColor:'#0f172a',
-              titleColor:'#e5e7eb',
-              bodyColor:'#e5e7eb',
-              padding:8,
-              cornerRadius:6
-            }
-          },
-          animation:{ duration:700, easing:'easeOutCubic' }
-        }
-      });
-    });
   </script>
 </body>
 </html>
