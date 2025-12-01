@@ -40,25 +40,84 @@
 
         @if(!isset($absenHariIni) || !$absenHariIni || !$absenHariIni->check_in)
         <!-- BELUM CHECK IN -->
-        <a href="{{ route('attendance.index') }}"
-           class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-xl shadow-lg transition duration-200 transform hover:scale-105 flex items-center justify-center">
-            <span class="text-xl mr-2">📍</span>
-            ABSEN MASUK
-        </a>
+
+        <form action="{{ route('attendance.store') }}" method="POST" enctype="multipart/form-data"
+            class="bg-white rounded-xl shadow-xl p-6">
+            @csrf
+
+            <h3 class="text-lg font-bold text-gray-800 mb-4 text-center">Absen Masuk</h3>
+
+            <!-- MULTIPLE FOTO -->
+            <label class="font-semibold text-gray-700">Upload Foto</label>
+            <p class="text-sm text-gray-500 mb-2">Boleh satu, boleh lebih. Tidak wajib banyak.</p>
+
+            <input type="file" 
+                   name="photos[]" 
+                   multiple 
+                   accept="image/*"
+                   class="w-full mb-4 border border-gray-300 rounded-lg p-2">
+
+            @error('photos') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
+            @error('photos.*') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
+
+            <button type="submit"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-xl shadow-lg transition duration-200 transform hover:scale-105 flex items-center justify-center">
+                <span class="text-xl mr-2">📍</span>
+                ABSEN MASUK
+            </button>
+        </form>
+
         @endif
+
 
         @if(isset($absenHariIni) && $absenHariIni->check_in && !$absenHariIni->check_out)
         <!-- SUDAH CHECK IN BELUM CHECK OUT -->
-        <div class="bg-white rounded-xl shadow-xl p-6">
+
+        <form action="{{ route('attendance.store') }}" method="POST" enctype="multipart/form-data"
+            class="bg-white rounded-xl shadow-xl p-6">
+            @csrf
+
             <h3 class="text-lg font-bold text-gray-800 mb-4 text-center">Absen Pulang</h3>
 
-            <a href="{{ route('attendance.index') }}"
-               class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-xl transition duration-200 transform hover:scale-105 flex items-center justify-center">
+                        <!-- MULTIPLE FOTO -->
+            <label class="font-semibold text-gray-700">Upload Foto</label>
+            <p class="text-sm text-gray-500 mb-2">Boleh satu, boleh lebih. Tidak wajib banyak.</p>
+
+            <input type="file" 
+                name="photos[]" 
+                multiple 
+                accept="image/*"
+                class="w-full mb-4 border border-gray-300 rounded-lg p-2">
+
+            @error('photos') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
+            @error('photos.*') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
+
+
+            <!-- DESKRIPSI -->
+            <div class="mt-4">
+                <label class="font-semibold text-gray-700">Deskripsi (Opsional)</label>
+                <textarea 
+                    name="description"
+                    rows="3"
+                    class="w-full border border-gray-300 rounded-lg p-3 mt-1 focus:ring focus:ring-blue-300"
+                    placeholder="Contoh: Lokasi patroli, kondisi area, atau catatan tambahan..."
+                ></textarea>
+
+                @error('description')
+                    <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+
+            <button type="submit"
+                class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-xl transition duration-200 transform hover:scale-105 flex items-center justify-center">
                 <span class="text-xl mr-2">📸</span>
                 AMBIL FOTO & ABSEN PULANG
-            </a>
-        </div>
+            </button>
+        </form>
+
         @endif
+
 
         @if(isset($absenHariIni) && $absenHariIni->check_out)
         <!-- SUDAH SELESAI -->
@@ -72,6 +131,7 @@
             </a>
         </div>
         @endif
+
     </div>
 
     <!-- QUICK ACTIONS -->
