@@ -48,19 +48,19 @@
 
                 <a href="{{ route('manager.laporan') }}"
                     class="bg-blue-600 hover:bg-blue-700 text-white rounded-lg py-4 text-center shadow-sm font-semibold transform hover:scale-[1.03] transition">
-                    <div class="text-2xl mb-1">📊</div>
+                    <div class="text-2xl mb-1"></div>
                     Laporan
                 </a>
 
                 <a href="{{ route('manager.log') }}"
                     class="bg-green-600 hover:bg-green-700 text-white rounded-lg py-4 text-center shadow-sm font-semibold transform hover:scale-[1.03] transition">
-                    <div class="text-2xl mb-1">📋</div>
+                    <div class="text-2xl mb-1"></div>
                     Log Absensi
                 </a>
 
                 <a href="{{ route('manager.pegawai') }}"
                     class="bg-purple-600 hover:bg-purple-700 text-white rounded-lg py-4 text-center shadow-sm font-semibold transform hover:scale-[1.03] transition">
-                    <div class="text-2xl mb-1">👥</div>
+                    <div class="text-2xl mb-1"></div>
                     Pegawai
                 </a>
 
@@ -76,7 +76,7 @@
 
                 <div class="flex items-center justify-between bg-green-50 px-4 py-3 rounded-lg border border-green-200">
                     <div class="flex items-center">
-                        <span class="text-green-600 text-2xl mr-3">✅</span>
+                        <span class="text-green-600 text-2xl mr-3"></span>
                         <p class="font-semibold text-gray-800">Kehadiran</p>
                     </div>
                     <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-bold">
@@ -102,7 +102,7 @@
 
                 <div class="flex items-center justify-between bg-yellow-50 px-4 py-3 rounded-lg border border-yellow-200">
                     <div class="flex items-center">
-                        <span class="text-yellow-600 text-2xl mr-3">⏰</span>
+                        <span class="text-yellow-600 text-2xl mr-3"></span>
                         <p class="font-semibold text-gray-800">Keterlambatan</p>
                     </div>
                     <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-bold">{{ $totalTerlambat ?? 0 }}</span>

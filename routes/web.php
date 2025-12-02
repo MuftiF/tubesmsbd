@@ -108,4 +108,25 @@ Route::middleware('auth')->group(function () {
     // ======================================================================
     Route::get('/pengumuman', [AnnouncementController::class, 'showToUsers'])
         ->name('pengumuman.user');
+
+
+        Route::delete('/admin/pengumuman/{id}', [AnnouncementController::class, 'destroy'])->name('admin.pengumuman.delete');
+        Route::delete('/admin/pengumuman/{id}', [AnnouncementController::class, 'destroy'])
+    ->name('admin.pengumuman.delete');
+
+
+        // web.php
+        Route::post('/admin/rapot/generate/pdf/{id}', [RapotController::class, 'generatePDF'])->name('admin.rapot.generate.pdf');
+        Route::post('/admin/rapot/generate/excel/{id}', [RapotController::class, 'generateExcel'])->name('admin.rapot.generate.excel');
+
+        //Pengumuman Manajer
+        Route::middleware(['auth', 'role:manager'])->group(function() {
+    Route::get('/manager/pengumuman', [AnnouncementController::class, 'indexManager'])->name('manager.pengumuman.index');
+    Route::post('/manager/pengumuman', [AnnouncementController::class, 'storeManager'])->name('manager.pengumuman.store');
+    Route::delete('/manager/pengumuman/{id}', [AnnouncementController::class, 'destroyManager'])->name('manager.pengumuman.delete');
+});
+
+
+
+
 });

@@ -46,7 +46,7 @@
 
             <div class="flex items-center justify-between bg-green-50 px-4 py-3 rounded-lg border border-green-200 mb-5">
                 <div class="flex items-center">
-                    <span class="text-2xl mr-3">📍</span>
+                    <span class="text-2xl mr-3"></span>
                     <p class="font-semibold text-gray-700">Status Kehadiran</p>
                 </div>
 
@@ -69,13 +69,13 @@
 
                 <a href="{{ route('manager.laporan') }}"
                     class="bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-lg text-center shadow-md font-semibold transform hover:scale-[1.02] transition">
-                    <div class="text-2xl mb-2">📊</div>
+                    <div class="text-2xl mb-2"></div>
                     <p class="text-sm">Laporan</p>
                 </a>
 
                 <a href="{{ route('attendance.index') }}"
                     class="bg-green-600 hover:bg-green-700 text-white py-4 rounded-lg text-center shadow-md font-semibold transform hover:scale-[1.02] transition">
-                    <div class="text-2xl mb-2">📍</div>
+                    <div class="text-2xl mb-2"></div>
                     <p class="text-sm">Absen</p>
                 </a>
 

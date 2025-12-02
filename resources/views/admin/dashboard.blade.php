@@ -42,13 +42,13 @@
             <div class="grid grid-cols-2 gap-4">
                 <a href="{{ route('admin.laporan') }}" 
                    class="p-5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-center font-medium shadow transition">
-                    <div class="text-2xl mb-1">📊</div>
+                    <div class="text-2xl mb-1"></div>
                     Laporan
                 </a>
 
                 <a href="{{ route('admin.pegawai') }}"
                    class="p-5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-center font-medium shadow transition">
-                    <div class="text-2xl mb-1">👥</div>
+                    <div class="text-2xl mb-1"></div>
                     Data Pegawai
                 </a>
             </div>
@@ -61,7 +61,7 @@
             <div class="space-y-4">
                 <div class="flex justify-between items-center p-4 bg-green-50 rounded-lg border border-green-100">
                     <span class="text-gray-800 font-semibold flex items-center">
-                        <span class="text-green-600 text-xl mr-2">🔰</span> Kehadiran
+                        <span class="text-green-600 text-xl mr-2"></span> Kehadiran
                     </span>
                     <span class="text-green-700 font-semibold px-3 py-1 bg-green-100 rounded-full text-sm">
                         {{ $rateKehadiran ?? 0 }}%
@@ -70,7 +70,7 @@
 
                 <div class="flex justify-between items-center p-4 bg-blue-50 rounded-lg border border-blue-100">
                     <span class="text-gray-800 font-semibold flex items-center">
-                        <span class="text-blue-600 text-xl mr-2">🌴</span> Produktivitas
+                        <span class="text-blue-600 text-xl mr-2"></span>Produktivitas
                     </span>
                     <span class="text-blue-700 font-semibold px-3 py-1 bg-blue-100 rounded-full text-sm">
                         @if(($produksiHariIni ?? 0) > 100) Tinggi
@@ -82,7 +82,7 @@
 
                 <div class="flex justify-between items-center p-4 bg-yellow-50 rounded-lg border border-yellow-100">
                     <span class="text-gray-800 font-semibold flex items-center">
-                        <span class="text-yellow-600 text-xl mr-2">📈</span> Total Pegawai
+                        <span class="text-yellow-600 text-xl mr-2"></span> Total Pegawai
                     </span>
                     <span class="text-yellow-700 font-semibold px-3 py-1 bg-yellow-100 rounded-full text-sm">
                         {{ $totalPegawai ?? 0 }}

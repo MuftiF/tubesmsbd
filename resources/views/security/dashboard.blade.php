@@ -62,7 +62,7 @@
 
             <button type="submit"
                 class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-xl shadow-lg transition duration-200 transform hover:scale-105 flex items-center justify-center">
-                <span class="text-xl mr-2">📍</span>
+                <span class="text-xl mr-2"></span>
                 ABSEN MASUK
             </button>
         </form>
@@ -111,7 +111,7 @@
 
             <button type="submit"
                 class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-xl transition duration-200 transform hover:scale-105 flex items-center justify-center">
-                <span class="text-xl mr-2">📸</span>
+                <span class="text-xl mr-2"></span>
                 AMBIL FOTO & ABSEN PULANG
             </button>
         </form>
@@ -122,7 +122,7 @@
         @if(isset($absenHariIni) && $absenHariIni->check_out)
         <!-- SUDAH SELESAI -->
         <div class="bg-green-50 border border-green-200 rounded-xl p-6 text-center shadow">
-            <div class="text-5xl mb-2">✅</div>
+            <div class="text-5xl mb-2"></div>
             <h3 class="text-xl font-bold text-green-800">Absensi Selesai</h3>
             <p class="text-green-600">Terima kasih atas dedikasi Anda hari ini!</p>
             <a href="{{ route('attendance.history') }}"

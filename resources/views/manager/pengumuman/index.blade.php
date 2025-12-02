@@ -9,6 +9,18 @@
         <p class="text-gray-500 text-sm">Tambah, lihat, dan kelola pengumuman perusahaan.</p>
     </div>
 
+    <!-- Alert Sukses/Error -->
+    @if(session('success'))
+        <div class="mb-4 p-4 text-green-800 bg-green-100 rounded-lg">
+            {{ session('success') }}
+        </div>
+    @endif
+    @if(session('error'))
+        <div class="mb-4 p-4 text-red-800 bg-red-100 rounded-lg">
+            {{ session('error') }}
+        </div>
+    @endif
+
     <!-- Form Tambah -->
     <div class="bg-white shadow-md border border-gray-200 rounded-xl p-6 mb-10">
         <h2 class="text-xl font-semibold text-gray-800 mb-4">Tambah Pengumuman Baru</h2>

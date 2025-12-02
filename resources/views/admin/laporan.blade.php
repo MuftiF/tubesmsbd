@@ -53,6 +53,11 @@
         </div>
     </form>
 
+    @php
+        $selectedRole = request('role');
+        $hasPalmAccess = !$selectedRole || $selectedRole == 'user';
+    @endphp
+
     <!-- SUMMARY CARDS -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
 
@@ -63,12 +68,16 @@
 
         <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100 text-center">
             <p class="text-sm text-gray-500">Total Berat Sawit</p>
-            <p class="text-3xl font-bold text-green-700 mt-1">{{ number_format($totalPalmWeight,1) }} kg</p>
+            <p class="text-3xl font-bold text-green-700 mt-1">
+                {{ $hasPalmAccess ? number_format($totalPalmWeight,1).' kg' : '-' }}
+            </p>
         </div>
 
         <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100 text-center">
             <p class="text-sm text-gray-500">Rata-rata Panen</p>
-            <p class="text-3xl font-bold text-yellow-600 mt-1">{{ number_format($averagePalmWeight,1) }} kg</p>
+            <p class="text-3xl font-bold text-yellow-600 mt-1">
+                {{ $hasPalmAccess ? number_format($averagePalmWeight,1).' kg' : '-' }}
+            </p>
         </div>
 
         <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100 text-center">
@@ -81,6 +90,7 @@
     <!-- CHARTS -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
 
+        @if($hasPalmAccess)
         <!-- PANEN HARIAN -->
         <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
             <h3 class="text-lg font-bold text-gray-800 mb-4">Hasil Panen 7 Hari Terakhir</h3>
@@ -107,6 +117,7 @@
             <div class="h-40 flex items-center justify-center text-gray-400">Tidak ada data panen</div>
             @endif
         </div>
+        @endif
 
         <!-- KEHADIRAN HARIAN -->
         <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
@@ -137,10 +148,9 @@
 
     </div>
 
-    <!-- TOP PERFORMERS & ROLE STATS -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+    <!-- TOP PERFORMERS -->
+    <div class="grid grid-cols-1 gap-8 mb-10">
 
-        <!-- TOP PERFORMERS -->
         <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
             <h3 class="text-lg font-bold text-gray-800 mb-4">Pekerja Terbaik</h3>
 
@@ -183,29 +193,6 @@
             @endif
         </div>
 
-        <!-- PER ROLE -->
-        <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-            <h3 class="text-lg font-bold text-gray-800 mb-4">Hasil Panen per Role</h3>
-
-            @if($palmWeightByRole->count())
-            <div class="space-y-4">
-
-                @foreach($palmWeightByRole as $role => $data)
-                <div class="flex justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
-                    <div class="font-semibold capitalize text-gray-800">{{ $role }}</div>
-                    <div class="text-right">
-                        <p class="font-bold text-green-700">{{ number_format($data['total_weight'],1) }} kg</p>
-                        <p class="text-sm text-gray-500">{{ $data['total_workers'] }} pekerja • Avg {{ number_format($data['avg_weight'],1) }} kg</p>
-                    </div>
-                </div>
-                @endforeach
-
-            </div>
-            @else
-            <div class="h-40 flex items-center justify-center text-gray-400">Tidak ada data</div>
-            @endif
-        </div>
-
     </div>
 
     <!-- TABLE -->
@@ -243,7 +230,7 @@
                         <td class="px-4 py-3 text-gray-700">{{ $a->check_in ? \Carbon\Carbon::parse($a->check_in)->format('H:i'):'-' }}</td>
                         <td class="px-4 py-3 text-gray-700">{{ $a->check_out ? \Carbon\Carbon::parse($a->check_out)->format('H:i'):'-' }}</td>
                         <td class="px-4 py-3 font-semibold text-green-700">
-                            {{ $a->palm_weight ? number_format($a->palm_weight,1).' kg':'-' }}
+                            {{ $hasPalmAccess && $a->palm_weight ? number_format($a->palm_weight,1).' kg':'-' }}
                         </td>
                         <td class="px-4 py-3">
                             @if($a->status == 'tepat waktu')

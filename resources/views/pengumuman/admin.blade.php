@@ -47,13 +47,14 @@
                     <h3 class="text-xl font-bold text-gray-900">
                         {{ $a->judul }}
                     </h3>
-                    <form action="{{ route('admin.pengumuman.delete', $a->id) }}"
-                          method="POST">
+
+                    <form action="{{ route('admin.pengumuman.delete', $a->id) }}" method="POST" style="display:inline;">
                         @csrf
                         @method('DELETE')
 
-                        <button
-                            class="text-red-600 hover:text-red-800 font-semibold text-sm bg-red-100 px-3 py-1 rounded-lg">
+                        <button type="submit"
+                                onclick="return confirm('Yakin ingin menghapus?')"
+                                class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg text-sm font-semibold shadow transition">
                             Hapus
                         </button>
                     </form>
@@ -69,7 +70,7 @@
             </div>
         @empty
             <div class="bg-gray-50 border border-gray-200 rounded-xl p-10 text-center text-gray-500">
-                <div class="text-4xl mb-3">📭</div>
+                <div class="text-4xl mb-3"></div>
                 Belum ada pengumuman.
             </div>
         @endforelse

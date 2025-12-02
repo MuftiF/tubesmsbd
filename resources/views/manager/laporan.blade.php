@@ -6,21 +6,21 @@
     {{-- HEADER --}}
     <div class="text-center mb-12">
         <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">
-            🌴 Laporan Hasil Panen Sawit
+            Laporan Hasil Panen Sawit
         </h1>
         <p class="text-gray-500 mt-2">
             Monitoring dan analisis produktivitas pekerja sawit
         </p>
     </div>
 
-    {{-- FILTER --}}
+    {{-- FILTER (TIDAK ADA PERUBAHAN) --}}
     <form method="GET" action="{{ route('manager.laporan') }}"
           class="bg-white shadow-md border border-gray-100 rounded-xl p-6 mb-10">
 
         <h3 class="text-lg font-bold text-gray-800 mb-5">Filter Laporan</h3>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-
+            {{-- ... Kode Filter Tetap Sama ... --}}
             <div>
                 <label class="block mb-2 text-sm font-medium text-gray-700">Dari Tanggal</label>
                 <input type="date" name="start_date" value="{{ request('start_date', $startDate) }}"
@@ -60,7 +60,7 @@
 
     </form>
 
-    {{-- SUMMARY --}}
+    {{-- SUMMARY (Menggunakan variabel dari Controller yang sudah diperbaiki) --}}
     <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
 
         <div class="bg-white shadow-md rounded-xl p-6 text-center border-l-4 border-blue-500">
@@ -69,11 +69,13 @@
         </div>
 
         <div class="bg-white shadow-md rounded-xl p-6 text-center border-l-4 border-green-500">
+            {{-- Nilai ini harusnya sudah benar karena di Controller sudah diubah SUM('berat_kg') --}}
             <p class="text-3xl font-bold text-green-600">{{ number_format($totalPalmWeight, 1) }} kg</p>
             <p class="text-gray-600 text-sm mt-1">Total Berat Sawit</p>
         </div>
 
         <div class="bg-white shadow-md rounded-xl p-6 text-center border-l-4 border-yellow-500">
+            {{-- Nilai ini harusnya sudah benar karena di Controller sudah diubah --}}
             <p class="text-3xl font-bold text-yellow-600">{{ number_format($averagePalmWeight, 1) }} kg</p>
             <p class="text-gray-600 text-sm mt-1">Rata-rata / Pekerja</p>
         </div>
@@ -85,44 +87,38 @@
 
     </div>
 
-    {{-- MAIN: 2 CHART SECTIONS --}}
+    {{-- MAIN: 2 CHART SECTIONS (Menggunakan variabel dari Controller yang sudah diperbaiki) --}}
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
 
         {{-- CHART 1 --}}
         <div class="bg-white shadow-md rounded-xl p-6">
-            <h3 class="text-xl font-bold text-gray-800 mb-4">🌴 Hasil Panen Harian</h3>
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Hasil Panen Harian</h3>
 
             @if($dailyPalmWeight->count())
                 <div class="space-y-3">
-
+                    {{-- ... Kode Chart 1 Tetap Sama (Menggunakan $dailyPalmWeight) ... --}}
                     @php $maxWeight = $dailyPalmWeight->max('total_weight'); @endphp
-
                     @foreach($dailyPalmWeight as $daily)
                         @php
                             $percent = $maxWeight > 0
                                         ? ($daily->total_weight / $maxWeight) * 100
                                         : 0;
                         @endphp
-
                         <div>
                             <div class="flex justify-between mb-1 text-sm">
                                 <span class="text-gray-600">
                                     {{ \Carbon\Carbon::parse($daily->date)->format('d M Y') }}
                                 </span>
-
                                 <span class="font-bold text-green-600">
                                     {{ number_format($daily->total_weight, 1) }} kg
                                 </span>
                             </div>
-
                             <div class="w-full bg-gray-200 h-4 rounded-full overflow-hidden">
                                 <div class="bg-green-500 h-full"
                                      style="width: {{ $percent }}%"></div>
                             </div>
                         </div>
-
                     @endforeach
-
                 </div>
             @else
                 <div class="h-56 flex items-center justify-center text-gray-500 border-2 border-dashed rounded-xl">
@@ -133,8 +129,8 @@
 
         {{-- CHART 2 --}}
         <div class="bg-white shadow-md rounded-xl p-6">
-            <h3 class="text-xl font-bold text-gray-800 mb-4">👥 Kehadiran Harian</h3>
-
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Kehadiran Harian</h3>
+            {{-- ... Kode Chart 2 Tetap Sama (Menggunakan $dailyAttendance) ... --}}
             @if($dailyAttendance->count())
                 <div class="space-y-3">
                     @foreach($dailyAttendance as $daily)
@@ -172,15 +168,16 @@
 
     </div>
 
-    {{-- TOP PERFORMERS + ROLE SECTION --}}
+    {{-- TOP PERFORMERS + ROLE SECTION (Menggunakan variabel dari Controller yang sudah diperbaiki) --}}
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
 
         {{-- TOP PERFORMERS --}}
         <div class="bg-white shadow-md rounded-xl p-6">
-            <h3 class="text-xl font-bold text-gray-800 mb-4">🏆 Pekerja Terbaik</h3>
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Pekerja Terbaik</h3>
 
             @if($topPerformers->count())
                 <div class="space-y-4">
+                    {{-- ... Kode Top Performers Tetap Sama (Menggunakan $topPerformers) ... --}}
                     @foreach($topPerformers as $i => $p)
 
                         @php
@@ -201,6 +198,7 @@
 
                                 <div>
                                     <p class="font-semibold text-gray-800">{{ $p->user->name }}</p>
+                                    {{-- Data weight dan hadir berasal dari query agregasi di Controller --}}
                                     <p class="text-sm text-gray-600">
                                         {{ number_format($p->total_weight, 1) }} kg
                                         <span class="text-gray-400 mx-1">•</span>
@@ -227,10 +225,11 @@
 
         {{-- PER ROLE --}}
         <div class="bg-white shadow-md rounded-xl p-6">
-            <h3 class="text-xl font-bold text-gray-800 mb-4">📊 Hasil Panen per Role</h3>
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Hasil Panen per Role</h3>
 
             @if($palmWeightByRole->count())
                 <div class="space-y-4">
+                    {{-- ... Kode Per Role Tetap Sama (Menggunakan $palmWeightByRole) ... --}}
                     @foreach($palmWeightByRole as $role => $data)
 
                         <div class="p-4 bg-gray-50 rounded-xl border flex justify-between items-center">
@@ -265,7 +264,7 @@
     {{-- DETAIL TABLE --}}
     <div class="bg-white shadow-md rounded-xl p-6">
 
-        <h3 class="text-xl font-bold text-gray-800 mb-4">📋 Detail Laporan Panen</h3>
+        <h3 class="text-xl font-bold text-gray-800 mb-4">Detail Laporan Panen</h3>
 
         @if($detailedAttendances->count())
 
@@ -278,7 +277,7 @@
                         <th class="px-4 py-3 text-left">Role</th>
                         <th class="px-4 py-3 text-left">Check In</th>
                         <th class="px-4 py-3 text-left">Check Out</th>
-                        <th class="px-4 py-3 text-left">Berat</th>
+                        <th class="px-4 py-3 text-left">Berat</th> {{-- Kolom yang perlu diubah --}}
                         <th class="px-4 py-3 text-left">Status</th>
                         <th class="px-4 py-3 text-left">Foto</th>
                     </tr>
@@ -308,9 +307,16 @@
                                 {{ $a->check_out ? \Carbon\Carbon::parse($a->check_out)->format('H:i') : '-' }}
                             </td>
 
+                            {{-- START PERBAIKAN PENTING DI SINI --}}
                             <td class="px-4 py-3 font-bold text-green-600">
-                                {{ $a->palm_weight ? number_format($a->palm_weight, 1).' kg' : '-' }}
+                                {{-- Menggunakan relasi catatanPanenToday yang sudah di-eager load di Controller --}}
+                                @if($a->catatanPanenToday)
+                                    {{ number_format($a->catatanPanenToday->berat_kg, 1) . ' kg' }}
+                                @else
+                                    -
+                                @endif
                             </td>
+                            {{-- END PERBAIKAN PENTING --}}
 
                             <td class="px-4 py-3">
                                 @if($a->status == 'tepat waktu')
@@ -328,7 +334,7 @@
                                 @if($a->checkout_photo_path)
                                     <a href="{{ asset('storage/'.$a->checkout_photo_path) }}"
                                        class="text-blue-600 hover:text-blue-800 font-semibold"
-                                       target="_blank">📸 Lihat</a>
+                                       target="_blank">Lihat</a>
                                 @else
                                     <span class="text-gray-400">-</span>
                                 @endif

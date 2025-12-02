@@ -9,39 +9,39 @@
                 @auth
                     {{-- ADMIN --}}
                     @if(Auth::user()->role == 'admin')
-                        <a href="{{ route('admin.dashboard') }}" class="nav-link">👑 Admin</a>
-                        <a href="{{ route('admin.pegawai') }}" class="nav-link">👥 Pegawai</a>
-                        <a href="{{ route('admin.laporan') }}" class="nav-link">📊 Laporan</a>
-                        <a href="{{ route('admin.rapot.index') }}" class="nav-link">📘 Rapot Admin</a>
+                        <a href="{{ route('admin.dashboard') }}" class="nav-link">Admin</a>
+                        <a href="{{ route('admin.pegawai') }}" class="nav-link">Pegawai</a>
+                        <a href="{{ route('admin.laporan') }}" class="nav-link">Laporan</a>
+                        <a href="{{ route('admin.rapot.index') }}" class="nav-link">Rapot Admin</a>
 
                     {{-- MANAGER --}}
                     @elseif(Auth::user()->role == 'manager')
-                        <a href="{{ route('manager.dashboard') }}" class="nav-link">👨‍💼 Manager</a>
-                        <a href="{{ route('manager.laporan') }}" class="nav-link">📊 Laporan</a>
+                        <a href="{{ route('manager.dashboard') }}" class="nav-link">Manager</a>
+                        <a href="{{ route('manager.laporan') }}" class="nav-link">Laporan</a>
 
                     {{-- USER (Pemanen) --}}
                     @elseif(Auth::user()->role == 'user')
-                        <a href="{{ route('user.dashboard') }}" class="nav-link">🌴 Pekerja</a>
-                        <a href="{{ route('attendance.history') }}" class="nav-link">📋 Riwayat</a>
-                        <a href="{{ route('rapot.user') }}" class="nav-link">📘 Rapot</a>
+                        <a href="{{ route('user.dashboard') }}" class="nav-link">Pekerja</a>
+                        <a href="{{ route('attendance.history') }}" class="nav-link">Riwayat</a>
+                        <a href="{{ route('rapot.user') }}" class="nav-link">Rapot</a>
 
                     {{-- SECURITY --}}
                     @elseif(Auth::user()->role == 'security')
-                        <a href="{{ route('security.dashboard') }}" class="nav-link">🛡️ Security</a>
-                        <a href="{{ route('attendance.history') }}" class="nav-link">📋 Riwayat</a>
-                        <a href="{{ route('rapot.user') }}" class="nav-link">📘 Rapot</a>
+                        <a href="{{ route('security.dashboard') }}" class="nav-link">Security</a>
+                        <a href="{{ route('attendance.history') }}" class="nav-link">Riwayat</a>
+                        <a href="{{ route('rapot.user') }}" class="nav-link">Rapot</a>
 
                     {{-- CLEANING --}}
                     @elseif(Auth::user()->role == 'cleaning')
-                        <a href="{{ route('cleaning.dashboard') }}" class="nav-link">🧹 Cleaning</a>
-                        <a href="{{ route('attendance.history') }}" class="nav-link">📋 Riwayat</a>
-                        <a href="{{ route('rapot.user') }}" class="nav-link">📘 Rapot</a>
+                        <a href="{{ route('cleaning.dashboard') }}" class="nav-link">Cleaning</a>
+                        <a href="{{ route('attendance.history') }}" class="nav-link">Riwayat</a>
+                        <a href="{{ route('rapot.user') }}" class="nav-link">Rapot</a>
 
                     {{-- KANTORAN --}}
                     @elseif(Auth::user()->role == 'kantoran')
-                        <a href="{{ route('kantoran.dashboard') }}" class="nav-link">🏢 Kantoran</a>
-                        <a href="{{ route('attendance.history') }}" class="nav-link">📋 Riwayat</a>
-                        <a href="{{ route('rapot.user') }}" class="nav-link">📘 Rapot</a>
+                        <a href="{{ route('kantoran.dashboard') }}" class="nav-link">Kantoran</a>
+                        <a href="{{ route('attendance.history') }}" class="nav-link">Riwayat</a>
+                        <a href="{{ route('rapot.user') }}" class="nav-link">Rapot</a>
                     @endif
                 @endauth
             </div>

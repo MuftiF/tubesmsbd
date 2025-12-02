@@ -86,7 +86,7 @@
         @else
 
             <div class="text-center p-8 text-gray-500">
-                <div class="text-5xl mb-3">📭</div>
+                <div class="text-5xl mb-3"></div>
                 <p class="font-semibold">Anda belum melakukan absensi hari ini</p>
                 <p>Klik tab <b class="text-indigo-600">Absen</b> untuk mulai check in</p>
             </div>
@@ -148,7 +148,7 @@
         {{-- ABSEN SELESAI --}}
         @else
         <div class="text-center py-8 text-green-600 font-semibold">
-            🎉 Anda telah menyelesaikan absensi hari ini.
+             Anda telah menyelesaikan absensi hari ini.
         </div>
         @endif
 

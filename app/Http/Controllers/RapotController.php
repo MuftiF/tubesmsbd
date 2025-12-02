@@ -7,6 +7,10 @@ use App\Models\User;
 use App\Models\Rapot;
 use App\Models\Attendance;
 use Carbon\Carbon;
+use PDF;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\RapotExport;
+
 
 class RapotController extends Controller
 {

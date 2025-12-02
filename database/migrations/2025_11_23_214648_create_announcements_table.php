@@ -12,9 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('announcements', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+    $table->id();
+    $table->string('judul');
+    $table->text('isi');
+    $table->enum('target', ['public', 'user', 'all'])->default('all');
+    $table->enum('status', ['active', 'inactive'])->default('active');
+    $table->timestamps();
+    });
+
     }
 
     /**

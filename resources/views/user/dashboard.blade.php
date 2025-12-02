@@ -80,7 +80,7 @@
 
             <a href="{{ route('attendance.index') }}"
                class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 px-6 rounded-xl transition transform hover:scale-105 flex items-center justify-center">
-                <span class="text-xl mr-2">📸</span>
+                <span class="text-xl mr-2"></span>
                 AMBIL FOTO & ABSEN PULANG
             </a>
         </div>
@@ -89,7 +89,7 @@
         @if(!empty($absenHariIni) && $absenHariIni->check_out)
         <!-- SUDAH SELESAI -->
         <div class="bg-green-50 border border-green-200 rounded-xl p-6 text-center shadow">
-            <div class="text-5xl mb-2">✅</div>
+            <div class="text-5xl mb-2"></div>
             <h3 class="text-xl font-bold text-green-800">Absensi Selesai</h3>
             <p class="text-green-600">Terima kasih sudah bekerja keras hari ini!</p>
 
@@ -108,13 +108,13 @@
         <div class="grid grid-cols-2 gap-4">
             <a href="{{ route('attendance.index') }}"
                class="bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg text-center font-semibold transition transform hover:scale-105">
-                <div class="text-xl mb-1">📍</div>
+                <div class="text-xl mb-1"></div>
                 <p class="text-sm">Absen</p>
             </a>
 
             <a href="{{ route('attendance.history') }}"
                class="bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg text-center font-semibold transition transform hover:scale-105">
-                <div class="text-xl mb-1">📋</div>
+                <div class="text-xl mb-1"></div>
                 <p class="text-sm">Riwayat</p>
             </a>
         </div>

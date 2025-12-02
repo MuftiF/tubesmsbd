@@ -28,7 +28,7 @@
 
             <div class="text-center">
                 <div class="w-14 h-14 bg-orange-50 border border-orange-100 rounded-full flex items-center justify-center mx-auto shadow-sm">
-                    <span class="text-2xl">✅</span>
+                    <span class="text-2xl"></span>
                 </div>
                 <p class="text-sm text-gray-500 mt-2">Area Selesai</p>
                 <p class="font-bold text-gray-800 text-lg">3/5</p>
@@ -44,7 +44,7 @@
         @if(!isset($absenHariIni) || !$absenHariIni || !$absenHariIni->check_in)
         <a href="{{ route('attendance.index') }}"
            class="block text-center w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-4 px-6 rounded-xl shadow-md transform hover:scale-[1.02] transition">
-            <span class="text-xl mr-2">📍</span> Absen Masuk
+            <span class="text-xl mr-2"></span> Absen Masuk
         </a>
         @endif
 
@@ -55,7 +55,7 @@
 
             <a href="{{ route('attendance.index') }}"
                 class="block text-center w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 px-5 rounded-lg shadow-md transform hover:scale-[1.02] transition">
-                <span class="text-xl mr-2">📸</span> Ambil Foto & Absen Pulang
+                <span class="text-xl mr-2"></span> Ambil Foto & Absen Pulang
             </a>
         </div>
         @endif
@@ -63,7 +63,7 @@
         {{-- SELESAI --}}
         @if(isset($absenHariIni) && $absenHariIni->check_out)
         <div class="bg-green-50 border border-green-200 rounded-xl p-6 text-center shadow-sm">
-            <div class="text-5xl mb-3">🎉</div>
+            <div class="text-5xl mb-3"></div>
             <h3 class="text-xl font-bold text-green-800 mb-1">Absensi Selesai</h3>
             <p class="text-green-700 text-sm">Terima kasih sudah menjaga kebersihan hari ini!</p>
 
@@ -84,13 +84,13 @@
 
             <a href="{{ route('attendance.index') }}"
                 class="bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg text-center shadow-sm font-semibold transition">
-                <div class="text-2xl mb-1">📍</div>
+                <div class="text-2xl mb-1"></div>
                 <p class="text-sm">Absen</p>
             </a>
 
             <a href="{{ route('attendance.history') }}"
                 class="bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg text-center shadow-sm font-semibold transition">
-                <div class="text-2xl mb-1">📋</div>
+                <div class="text-2xl mb-1"></div>
                 <p class="text-sm">Riwayat</p>
             </a>
 
