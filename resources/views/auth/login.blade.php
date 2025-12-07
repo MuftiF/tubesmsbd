@@ -13,12 +13,12 @@
             <form method="POST" action="{{ route('login') }}">
                 @csrf
 
-                <!-- Email Address -->
+                <!-- No. HP (GANTI DARI EMAIL) -->
                 <div class="mb-4">
-                    <x-input-label for="email" :value="__('Email')" />
-                    <x-text-input id="email" class="block mt-1 w-full" type="email" name="email"
-                        :value="old('email')" required autofocus autocomplete="username" />
-                    <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                    <x-input-label for="no_hp" :value="__('No. HP')" />
+                    <x-text-input id="no_hp" class="block mt-1 w-full" type="text" name="no_hp"
+                        :value="old('no_hp')" required autofocus autocomplete="username" />
+                    <x-input-error :messages="$errors->get('no_hp')" class="mt-2" />
                 </div>
 
                 <!-- Password -->
@@ -42,12 +42,16 @@
                 </x-primary-button>
 
                 <div class="text-center mt-4">
+                    <!-- OPTIONAL: Hapus atau komentari link forgot password jika tidak menggunakan email -->
+                    {{--
                     @if (Route::has('password.request'))
                         <a class="text-sm text-indigo-600 hover:underline"
                             href="{{ route('password.request') }}">
                             {{ __('Lupa password?') }}
                         </a>
                     @endif
+                    --}}
+                    
                     <div class="mt-2">
                         <a href="{{ url('/') }}" class="text-gray-500 hover:text-gray-700 text-sm">← Kembali ke Halaman Utama</a>
                     </div>

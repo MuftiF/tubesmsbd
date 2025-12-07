@@ -12,14 +12,18 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->alias([
-            'admin' => \App\Http\Middleware\Admin::class,
-            'security' => \App\Http\Middleware\Security::class,
-            'manager' => \App\Http\Middleware\Manager::class,
-            'cleaning' => \App\Http\Middleware\Cleaning::class,
-            'kantoran' => \App\Http\Middleware\Kantoran::class,
-        ]);
-    })
+    $middleware->web(append: [
+        \App\Http\Middleware\DebugSession::class, // TAMBAHKAN INI
+    ]);
+    
+    $middleware->alias([
+        'admin' => \App\Http\Middleware\Admin::class,
+        'security' => \App\Http\Middleware\Security::class,
+        'manager' => \App\Http\Middleware\Manager::class,
+        'cleaning' => \App\Http\Middleware\Cleaning::class,
+        'kantoran' => \App\Http\Middleware\Kantoran::class,
+    ]);
+})
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })

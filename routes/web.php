@@ -7,19 +7,40 @@ use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\RapotController;
 use App\Http\Controllers\AnnouncementController;
 
-// PUBLIC
+// ======================================================================
+// DEBUG ROUTES - UNTUK TROUBLESHOOTING
+// ======================================================================
+Route::get('/debug-session', function() {
+    return [
+        'auth_check' => auth()->check(),
+        'user' => auth()->user(),
+        'session_id' => session()->getId(),
+        'session_data' => session()->all(),
+        'cookies' => request()->cookie(),
+        'ip' => request()->ip(),
+        'url' => request()->fullUrl()
+    ];
+});
+
+Route::get('/debug-manager', [HomeController::class, 'managerDashboard']);
+Route::get('/debug-test', function() {
+    return 'Debug test page - no middleware';
+});
+
+// ======================================================================
+// PUBLIC ROUTES
+// ======================================================================
 Route::get('/', fn() => view('welcome'));
 Route::get('/home', fn() => view('home'))->name('home');
 Route::get('/login-pegawai', fn() => view('login-pegawai'))->name('login.pegawai');
 
-// AUTH
+// ======================================================================
+// AUTH ROUTES
+// ======================================================================
 require __DIR__.'/auth.php';
 
-// DASHBOARD REDIRECT OTOMATIS BERDASARKAN ROLE
-Route::middleware('auth')->get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
-
 // ======================================================================
-// ROUTES YANG HANYA BOLEH DIAKSES JIKA LOGIN
+// ROUTES YANG MEMBUTUHKAN LOGIN (MIDDLEWARE AUTH)
 // ======================================================================
 Route::middleware('auth')->group(function () {
 
@@ -34,99 +55,88 @@ Route::middleware('auth')->group(function () {
     Route::post('/attendance/checkout', [AttendanceController::class, 'checkout'])->name('attendance.checkout');
     Route::get('/attendance/history', [AttendanceController::class, 'history'])->name('attendance.history');
 
-    // USER (Pekerja)
-    Route::prefix('user')->group(function () {
-        Route::get('/dashboard', [HomeController::class, 'userDashboard'])->name('user.dashboard');
-        Route::get('/riwayat', [HomeController::class, 'userRiwayat'])->name('user.riwayat');
-    });
-
-    // SECURITY
-    Route::prefix('security')->group(function () {
-        Route::get('/dashboard', [HomeController::class, 'securityDashboard'])->name('security.dashboard');
-    });
-
-    // CLEANING
-    Route::prefix('cleaning')->group(function () {
-        Route::get('/dashboard', [HomeController::class, 'cleaningDashboard'])->name('cleaning.dashboard');
-    });
-
-    // KANTORAN
-    Route::prefix('kantoran')->group(function () {
-        Route::get('/dashboard', [HomeController::class, 'kantoranDashboard'])->name('kantoran.dashboard');
-    });
-
-    // ======================================================================
-    // MANAGER (SESUAI DENGAN VIEW pegawai.blade.php)
-    // ======================================================================
-    Route::prefix('manager')->group(function () {
-
-        Route::get('/dashboard', [HomeController::class, 'managerDashboard'])->name('manager.dashboard');
-        Route::get('/laporan', [HomeController::class, 'laporanManager'])->name('manager.laporan');
-        Route::get('/log', [HomeController::class, 'managerLog'])->name('manager.log');
-
-        // Halaman lihat pegawai
-        Route::get('/pegawai', [HomeController::class, 'managerPegawai'])->name('manager.pegawai');
-
-        // Tambah pegawai (form add)
-        Route::post('/pegawai', [HomeController::class, 'managerTambahPegawai'])
-            ->name('manager.pegawai.tambah');
-
-        // Update pegawai (modal edit)
-        Route::put('/pegawai/{id}', [HomeController::class, 'managerUpdatePegawai'])
-            ->name('manager.pegawai.update');
-
-        // Hapus pegawai
-        Route::delete('/pegawai/{id}', [HomeController::class, 'managerHapusPegawai'])
-            ->name('manager.pegawai.hapus');
-    });
-
-    // ======================================================================
-    // ADMIN
-    // ======================================================================
-    Route::prefix('admin')->group(function () {
-        Route::get('/dashboard', [HomeController::class, 'adminDashboard'])->name('admin.dashboard');
-        Route::get('/pegawai', [HomeController::class, 'kelolaPegawai'])->name('admin.pegawai');
-        Route::get('/laporan', [HomeController::class, 'laporanAdmin'])->name('admin.laporan');
-
-        // Rapot Admin
-        Route::get('/rapot', [RapotController::class, 'indexAdmin'])->name('admin.rapot.index');
-        Route::post('/rapot/generate/{user}', [RapotController::class, 'generate'])->name('admin.rapot.generate');
-
-        // Pengumuman Admin
-        Route::get('/pengumuman', [AnnouncementController::class, 'indexAdmin'])->name('admin.pengumuman');
-        Route::post('/pengumuman', [AnnouncementController::class, 'store'])->name('admin.pengumuman.store');
-        Route::delete('/pengumuman/{id}', [AnnouncementController::class, 'destroy'])->name('admin.pengumuman.delete');
-    });
-
-    // ======================================================================
-    // RAPOT USER
-    // ======================================================================
+    // RAPOT USER (UMUM UNTUK SEMUA USER)
     Route::get('/rapot', [RapotController::class, 'indexUser'])->name('rapot.user');
 
-    // ======================================================================
-    // PENGUMUMAN USER
-    // ======================================================================
+    // PENGUMUMAN USER (UMUM UNTUK SEMUA USER)
     Route::get('/pengumuman', [AnnouncementController::class, 'showToUsers'])
         ->name('pengumuman.user');
-
-
-        Route::delete('/admin/pengumuman/{id}', [AnnouncementController::class, 'destroy'])->name('admin.pengumuman.delete');
-        Route::delete('/admin/pengumuman/{id}', [AnnouncementController::class, 'destroy'])
-    ->name('admin.pengumuman.delete');
-
-
-        // web.php
-        Route::post('/admin/rapot/generate/pdf/{id}', [RapotController::class, 'generatePDF'])->name('admin.rapot.generate.pdf');
-        Route::post('/admin/rapot/generate/excel/{id}', [RapotController::class, 'generateExcel'])->name('admin.rapot.generate.excel');
-
-        //Pengumuman Manajer
-        Route::middleware(['auth', 'role:manager'])->group(function() {
-    Route::get('/manager/pengumuman', [AnnouncementController::class, 'indexManager'])->name('manager.pengumuman.index');
-    Route::post('/manager/pengumuman', [AnnouncementController::class, 'storeManager'])->name('manager.pengumuman.store');
-    Route::delete('/manager/pengumuman/{id}', [AnnouncementController::class, 'destroyManager'])->name('manager.pengumuman.delete');
 });
 
+// ======================================================================
+// USER (Pekerja) - DENGAN MIDDLEWARE ROLE
+// ======================================================================
+Route::prefix('user')->middleware(['auth', 'user'])->group(function () {
+    Route::get('/dashboard', [HomeController::class, 'userDashboard'])->name('user.dashboard');
+    Route::get('/riwayat', [HomeController::class, 'userRiwayat'])->name('user.riwayat');
+});
 
+// ======================================================================
+// SECURITY - DENGAN MIDDLEWARE ROLE
+// ======================================================================
+Route::prefix('security')->middleware(['auth', 'security'])->group(function () {
+    Route::get('/dashboard', [HomeController::class, 'securityDashboard'])->name('security.dashboard');
+});
 
+// ======================================================================
+// CLEANING - DENGAN MIDDLEWARE ROLE
+// ======================================================================
+Route::prefix('cleaning')->middleware(['auth', 'cleaning'])->group(function () {
+    Route::get('/dashboard', [HomeController::class, 'cleaningDashboard'])->name('cleaning.dashboard');
+});
 
+// ======================================================================
+// KANTORAN - DENGAN MIDDLEWARE ROLE
+// ======================================================================
+Route::prefix('kantoran')->middleware(['auth', 'kantoran'])->group(function () {
+    Route::get('/dashboard', [HomeController::class, 'kantoranDashboard'])->name('kantoran.dashboard');
+});
+
+// ======================================================================
+// MANAGER - DENGAN MIDDLEWARE AUTH + MANAGER
+// ======================================================================
+Route::prefix('manager')->middleware(['auth', 'manager'])->group(function () {
+    Route::get('/dashboard', [HomeController::class, 'managerDashboard'])->name('manager.dashboard');
+    Route::get('/laporan', [HomeController::class, 'laporanManager'])->name('manager.laporan');
+    Route::get('/log', [HomeController::class, 'managerLog'])->name('manager.log');
+
+    // Halaman lihat pegawai
+    Route::get('/pegawai', [HomeController::class, 'managerPegawai'])->name('manager.pegawai');
+    
+    // Tambah pegawai (form add)
+    Route::post('/pegawai', [HomeController::class, 'managerTambahPegawai'])
+        ->name('manager.pegawai.tambah');
+        
+    // Update pegawai (modal edit)
+    Route::put('/pegawai/{id}', [HomeController::class, 'managerUpdatePegawai'])
+        ->name('manager.pegawai.update');
+        
+    // Hapus pegawai
+    Route::delete('/pegawai/{id}', [HomeController::class, 'managerHapusPegawai'])
+        ->name('manager.pegawai.hapus');
+        
+    // Pengumuman Manager
+    Route::get('/pengumuman', [AnnouncementController::class, 'indexManager'])->name('manager.pengumuman.index');
+    Route::post('/pengumuman', [AnnouncementController::class, 'storeManager'])->name('manager.pengumuman.store');
+    Route::delete('/pengumuman/{id}', [AnnouncementController::class, 'destroyManager'])->name('manager.pengumuman.delete');
+});
+
+// ======================================================================
+// ADMIN - DENGAN MIDDLEWARE AUTH + ADMIN
+// ======================================================================
+Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
+    Route::get('/dashboard', [HomeController::class, 'adminDashboard'])->name('admin.dashboard');
+    Route::get('/pegawai', [HomeController::class, 'kelolaPegawai'])->name('admin.pegawai');
+    Route::get('/laporan', [HomeController::class, 'laporanAdmin'])->name('admin.laporan');
+
+    // Rapot Admin
+    Route::get('/rapot', [RapotController::class, 'indexAdmin'])->name('admin.rapot.index');
+    Route::post('/rapot/generate/{user}', [RapotController::class, 'generate'])->name('admin.rapot.generate');
+    Route::post('/rapot/generate/pdf/{id}', [RapotController::class, 'generatePDF'])->name('admin.rapot.generate.pdf');
+    Route::post('/rapot/generate/excel/{id}', [RapotController::class, 'generateExcel'])->name('admin.rapot.generate.excel');
+
+    // Pengumuman Admin
+    Route::get('/pengumuman', [AnnouncementController::class, 'indexAdmin'])->name('admin.pengumuman');
+    Route::post('/pengumuman', [AnnouncementController::class, 'store'])->name('admin.pengumuman.store');
+    Route::delete('/pengumuman/{id}', [AnnouncementController::class, 'destroy'])->name('admin.pengumuman.delete');
 });

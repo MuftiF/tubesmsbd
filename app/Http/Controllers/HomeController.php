@@ -12,19 +12,30 @@ use Carbon\Carbon;
 class HomeController extends Controller
 {
     public function index()
-    {
-        $user = Auth::user();
-
-        return match ($user->role) {
-            'admin' => redirect()->route('admin.dashboard'),
-            'manager' => redirect()->route('manager.dashboard'),
-            'user' => redirect()->route('user.dashboard'),
-            'security' => redirect()->route('security.dashboard'),
-            'cleaning' => redirect()->route('cleaning.dashboard'),
-            'kantoran' => redirect()->route('kantoran.dashboard'),
-            default => redirect()->route('user.dashboard'),
-        };
+{
+    \Log::warning('=== DASHBOARD ROUTE ACCESSED ===', [
+        'user' => Auth::check() ? Auth::user()->only(['id', 'name', 'role']) : 'not logged in',
+        'url' => request()->fullUrl()
+    ]);
+    
+    $user = Auth::user();
+    
+    if (!$user) {
+        return redirect()->route('login');
     }
+    
+    \Log::info('Redirecting from dashboard to role dashboard', ['role' => $user->role]);
+    
+    return match ($user->role) {
+        'admin' => redirect()->route('admin.dashboard'),
+        'manager' => redirect()->route('manager.dashboard'),
+        'user' => redirect()->route('user.dashboard'),
+        'security' => redirect()->route('security.dashboard'),
+        'cleaning' => redirect()->route('cleaning.dashboard'),
+        'kantoran' => redirect()->route('kantoran.dashboard'),
+        default => redirect()->route('home'), // JANGAN redirect ke dashboard
+    };
+}
 
     public function adminDashboard()
     {
@@ -119,6 +130,7 @@ class HomeController extends Controller
             ->limit(5)
             ->get();
 
+        \Log::info('=== MANAGER DASHBOARD ACCESSED ===');
         return view('manager.dashboard', compact(
             'absenHariIni',
             'totalTim',
@@ -180,14 +192,14 @@ class HomeController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
+            'no_hp' => 'required|string|unique:users,no_hp', // UBAH: email -> no_hp
             'role' => 'required|in:user,security,cleaning,kantoran',
             'password' => 'required|min:6',
         ]);
 
         User::create([
             'name' => $request->name,
-            'email' => $request->email,
+            'no_hp' => $request->no_hp, // UBAH: email -> no_hp
             'role' => $request->role,
             'password' => Hash::make($request->password),
         ]);
@@ -203,13 +215,13 @@ class HomeController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $id,
+            'no_hp' => 'required|string|unique:users,no_hp,' . $id, // UBAH: email -> no_hp
             'role' => 'required|in:user,security,cleaning,kantoran',
         ]);
 
         $data = [
             'name' => $request->name,
-            'email' => $request->email,
+            'no_hp' => $request->no_hp, // UBAH: email -> no_hp
             'role' => $request->role,
         ];
 

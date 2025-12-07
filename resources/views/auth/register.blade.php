@@ -9,11 +9,11 @@
             <x-input-error :messages="$errors->get('name')" class="mt-2" />
         </div>
 
-        <!-- Email Address -->
+        <!-- No. HP (GANTI DARI EMAIL) -->
         <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            <x-input-label for="no_hp" :value="__('No. HP')" />
+            <x-text-input id="no_hp" class="block mt-1 w-full" type="text" name="no_hp" :value="old('no_hp')" required autocomplete="username" />
+            <x-input-error :messages="$errors->get('no_hp')" class="mt-2" />
         </div>
 
         <!-- Password -->

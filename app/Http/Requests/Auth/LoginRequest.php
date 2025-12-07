@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Hash; // TAMBAHKAN INI
+use App\Models\User; // TAMBAHKAN INI
 
 class LoginRequest extends FormRequest
 {
@@ -27,7 +29,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email'],
+            'no_hp' => ['required', 'string'],
             'password' => ['required', 'string'],
         ];
     }
@@ -41,11 +43,44 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        // HAPUS BAGIAN DEBUG INI atau komentar jika masih butuh debug
+        /*
+        $credentials = $this->only('no_hp', 'password');
+        $remember = $this->boolean('remember');
+        
+        dd([
+            'credentials' => $credentials,
+            'remember' => $remember,
+            'auth_attempt' => Auth::attempt($credentials, $remember),
+            'user_exists' => User::where('no_hp', $credentials['no_hp'])->exists(),
+            'password_match' => function() use ($credentials) {
+                $user = User::where('no_hp', $credentials['no_hp'])->first();
+                return $user ? Hash::check($credentials['password'], $user->password) : false;
+            },
+            'actual_password_match' => function() use ($credentials) {
+                $user = User::where('no_hp', $credentials['no_hp'])->first();
+                if (!$user) return false;
+                
+                $isMatch = Hash::check($credentials['password'], $user->password);
+                
+                // Debug tambahan
+                dd([
+                    'input_password' => $credentials['password'],
+                    'stored_hash' => $user->password,
+                    'hash_check' => $isMatch,
+                    'hash_info' => password_get_info($user->password)
+                ]);
+                
+                return $isMatch;
+            }
+        ]);
+        */
+
+        if (! Auth::attempt($this->only('no_hp', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
+                'no_hp' => trans('auth.failed'),
             ]);
         }
 
@@ -68,7 +103,7 @@ class LoginRequest extends FormRequest
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
         throw ValidationException::withMessages([
-            'email' => trans('auth.throttle', [
+            'no_hp' => trans('auth.throttle', [
                 'seconds' => $seconds,
                 'minutes' => ceil($seconds / 60),
             ]),
@@ -80,6 +115,6 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+        return Str::transliterate(Str::lower($this->string('no_hp')).'|'.$this->ip());
     }
 }
