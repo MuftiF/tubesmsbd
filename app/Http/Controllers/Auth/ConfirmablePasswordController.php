@@ -24,8 +24,9 @@ class ConfirmablePasswordController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        // Ubah validasi menggunakan no_hp
         if (! Auth::guard('web')->validate([
-            'email' => $request->user()->email,
+            'no_hp' => $request->user()->no_hp,
             'password' => $request->password,
         ])) {
             throw ValidationException::withMessages([

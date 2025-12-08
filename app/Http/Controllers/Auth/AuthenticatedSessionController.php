@@ -22,25 +22,30 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
-        $request->authenticate();
-
-        $request->session()->regenerate();
-
-        if ($request->user()->role === 'admin') {
-            return redirect('admin/dashboard');
-        } elseif ($request->user()->role === 'security') {
-            return redirect('security/dashboard');
-        }elseif ($request->user()->role === 'manager') {
-            return redirect('manager/dashboard');
-        }elseif ($request->user()->role === 'cleaning') {
-            return redirect('cleaning/dashboard');
-        }elseif ($request->user()->role === 'kantoran') {
-            return redirect('kantoran/dashboard');
-        } else {
-            return redirect()->intended(route('dashboard'));
+        $validated = $request->validate([
+            'no_hp' => ['required', 'string'],
+            'password' => ['required', 'string'],
+        ]);
+        
+        // Cari user dengan no_hp ATAU name
+        $user = \App\Models\User::where(function($query) use ($request) {
+            $query->where('no_hp', $request->no_hp)
+                ->orWhere('name', $request->no_hp);
+        })->first();
+        
+        if ($user && \Hash::check($request->password, $user->password)) {
+            Auth::login($user, $request->boolean('remember'));
+            $request->session()->regenerate();
+            
+            // Redirect berdasarkan role
+            if ($user->role === 'admin') {
+                return redirect('admin/dashboard');
+            } // ... dan seterusnya
         }
+        
+        return back()->withErrors(['no_hp' => 'Nomor HP/Nama atau password salah.']);
     }
     
     /**

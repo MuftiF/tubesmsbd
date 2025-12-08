@@ -60,9 +60,10 @@ return [
     */
 
     'providers' => [
-         'users' => [
+        'users' => [
         'driver' => 'eloquent',
         'model' => App\Models\User::class,
+        'field' => 'no_hp',
     ],
 
         // 'users' => [
