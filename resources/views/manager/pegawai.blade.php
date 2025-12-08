@@ -22,12 +22,22 @@
         </div>
     @endif
 
+    {{-- VALIDATION ERRORS --}}
+    @if($errors->any())
+        <div class="bg-red-50 border-l-4 border-red-600 text-red-700 px-4 py-3 rounded-lg mb-4 shadow">
+            <ul class="list-disc list-inside">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
     {{-- FORM TAMBAH --}}
     <div class="bg-white rounded-xl shadow-lg p-6 mb-10 border border-gray-100">
         <h2 class="text-xl font-bold text-gray-900 mb-5">Tambah Pegawai Baru</h2>
 
-        <form action="{{ route('manager.pegawai.tambah') }}" method="POST">
+        <form action="{{ route('manager.pegawai.tambah') }}" method="POST" id="tambahForm">
             @csrf
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -35,15 +45,18 @@
                 {{-- Nama --}}
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
-                    <input type="text" name="name" required
+                    <input type="text" name="name" required value="{{ old('name') }}"
                         class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
                 </div>
 
-                {{-- Email --}}
+                {{-- No HP --}}
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                    <input type="email" name="email" required
+                    <label class="block text-sm font-medium text-gray-700 mb-1">No HP</label>
+                    <input type="tel" name="no_hp" required placeholder="Contoh: 081234567890"
+                        pattern="^[0-9]{10,13}$" title="Masukkan 10-13 digit angka"
+                        value="{{ old('no_hp') }}"
                         class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
+                    <p class="text-xs text-gray-500 mt-1">10-13 digit angka (contoh: 081234567890)</p>
                 </div>
 
                 {{-- Role --}}
@@ -52,24 +65,25 @@
                     <select name="role" required
                         class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
                         <option value="">Pilih Role</option>
-                        <option value="user">Pekerja (User)</option>
-                        <option value="security">Security</option>
-                        <option value="cleaning">Cleaning Service</option>
-                        <option value="kantoran">Staff Kantor</option>
+                        <option value="user" {{ old('role') == 'user' ? 'selected' : '' }}>Pekerja (User)</option>
+                        <option value="security" {{ old('role') == 'security' ? 'selected' : '' }}>Security</option>
+                        <option value="cleaning" {{ old('role') == 'cleaning' ? 'selected' : '' }}>Cleaning Service</option>
+                        <option value="kantoran" {{ old('role') == 'kantoran' ? 'selected' : '' }}>Staff Kantor</option>
                     </select>
                 </div>
 
                 {{-- Password --}}
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                    <input type="password" name="password" required
+                    <input type="password" name="password" required minlength="6"
                         class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
+                    <p class="text-xs text-gray-500 mt-1">Minimal 6 karakter</p>
                 </div>
 
             </div>
 
             <div class="mt-5">
-                <button class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-md transition">
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-md transition">
                     Tambah Pegawai
                 </button>
             </div>
@@ -91,7 +105,7 @@
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Nama</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Email</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">No HP</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Role</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Bergabung</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Aksi</th>
@@ -116,9 +130,9 @@
                             </div>
                         </td>
 
-                        {{-- Email --}}
+                        {{-- No HP --}}
                         <td class="px-6 py-4 text-sm text-gray-700">
-                            {{ $p->email }}
+                            {{ $p->no_hp ?? '-' }}
                         </td>
 
                         {{-- Role --}}
@@ -128,7 +142,22 @@
                                 @elseif($p->role=='security') bg-blue-100 text-blue-800
                                 @elseif($p->role=='cleaning') bg-yellow-100 text-yellow-800
                                 @else bg-purple-100 text-purple-800 @endif">
-                                {{ ucfirst($p->role) }}
+                                @switch($p->role)
+                                    @case('user')
+                                        Pekerja
+                                        @break
+                                    @case('security')
+                                        Security
+                                        @break
+                                    @case('cleaning')
+                                        Cleaning Service
+                                        @break
+                                    @case('kantoran')
+                                        Staff Kantor
+                                        @break
+                                    @default
+                                        {{ ucfirst($p->role) }}
+                                @endswitch
                             </span>
                         </td>
 
@@ -189,28 +218,34 @@
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
-                    <input type="text" id="edit_name" name="name" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500">
+                    <input type="text" id="edit_name" name="name" required
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500">
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                    <input type="email" id="edit_email" name="email" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">No HP</label>
+                    <input type="tel" id="edit_no_hp" name="no_hp" required 
+                        pattern="^[0-9]{10,13}$" title="Masukkan 10-13 digit angka"
+                        placeholder="Contoh: 081234567890" 
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500">
+                    <p class="text-xs text-gray-500 mt-1">10-13 digit angka</p>
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Role</label>
-                    <select id="edit_role" name="role" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500">
+                    <select id="edit_role" name="role" required class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500">
                         <option value="user">Pekerja</option>
                         <option value="security">Security</option>
                         <option value="cleaning">Cleaning</option>
-                        <option value="kantoran">Kantoran</option>
+                        <option value="kantoran">Staff Kantor</option>
                     </select>
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Password (Opsional)</label>
-                    <input type="password" id="edit_password" name="password"
+                    <input type="password" id="edit_password" name="password" minlength="6"
                         class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500">
+                    <p class="text-xs text-gray-500 mt-1">Isi hanya jika ingin mengganti password (minimal 6 karakter)</p>
                 </div>
 
             </div>
@@ -231,7 +266,7 @@
 <script>
 function openEditModal(data) {
     document.getElementById('edit_name').value = data.name;
-    document.getElementById('edit_email').value = data.email;
+    document.getElementById('edit_no_hp').value = data.no_hp || '';
     document.getElementById('edit_role').value = data.role;
     document.getElementById('edit_password').value = '';
 
@@ -247,6 +282,59 @@ function closeEditModal() {
 // Close modal by clicking overlay
 document.getElementById('editModal').addEventListener('click', function(e) {
     if (e.target === this) closeEditModal();
+});
+
+// Validasi input No HP hanya angka
+document.addEventListener('DOMContentLoaded', function() {
+    // Validasi form tambah
+    const tambahForm = document.getElementById('tambahForm');
+    const noHpInputTambah = tambahForm.querySelector('input[name="no_hp"]');
+    
+    noHpInputTambah.addEventListener('input', function(e) {
+        // Hanya angka yang diperbolehkan
+        this.value = this.value.replace(/[^0-9]/g, '');
+        
+        // Batasi maksimal 13 digit
+        if (this.value.length > 13) {
+            this.value = this.value.slice(0, 13);
+        }
+    });
+    
+    // Validasi form edit
+    const editNoHpInput = document.getElementById('edit_no_hp');
+    editNoHpInput.addEventListener('input', function(e) {
+        // Hanya angka yang diperbolehkan
+        this.value = this.value.replace(/[^0-9]/g, '');
+        
+        // Batasi maksimal 13 digit
+        if (this.value.length > 13) {
+            this.value = this.value.slice(0, 13);
+        }
+    });
+    
+    // Validasi sebelum submit
+    tambahForm.addEventListener('submit', function(e) {
+        const noHpValue = noHpInputTambah.value;
+        const noHpPattern = /^[0-9]{10,13}$/;
+        
+        if (!noHpPattern.test(noHpValue)) {
+            e.preventDefault();
+            alert('No HP harus terdiri dari 10-13 digit angka.');
+            noHpInputTambah.focus();
+        }
+    });
+    
+    const editForm = document.getElementById('editForm');
+    editForm.addEventListener('submit', function(e) {
+        const noHpValue = editNoHpInput.value;
+        const noHpPattern = /^[0-9]{10,13}$/;
+        
+        if (!noHpPattern.test(noHpValue)) {
+            e.preventDefault();
+            alert('No HP harus terdiri dari 10-13 digit angka.');
+            editNoHpInput.focus();
+        }
+    });
 });
 </script>
 @endsection

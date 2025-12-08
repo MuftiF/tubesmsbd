@@ -43,12 +43,13 @@
         
         <!-- Header -->
         <div class="text-center mb-8">
-            <div class="relative inline-block">
-                <div class="w-24 h-24 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 flex items-center justify-center mx-auto mb-4 shadow-lg">
-                    <i class="fas fa-leaf text-white text-3xl"></i>
-                </div>
-                <div class="absolute -top-2 -right-2 w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center shadow-md">
-                    <i class="fas fa-check text-white text-xs"></i>
+            <div class="inline-block">
+                <div class="w-24 h-24 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 flex items-center justify-center mx-auto mb-4 shadow-lg overflow-hidden border-4 border-white">
+                    <!-- Logo Image -->
+                    <img src="{{ asset('images/Logo 1.jpg') }}" 
+                         alt="Logo Tubes MSBD" 
+                         class="w-full h-full object-cover"
+                         onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNjQgMzJDNjQgMTQuNzcgNTAuMjMgNCAzNiA0UzggMTQuNzcgOCAzMmg4YzAtNi42MyA0LjQzLTEyIDEwLTEyczEwIDUuMzcgMTAgMTJIMzZDNDkuMjMgMzIgNjQgNDUuNzcgNjQgNjRzLTE0Ljc3IDMyLTMyIDMyYy0xNy4yMyAwLTMyLTE0LjIzLTMyLTMyaC04YzAgMTcuMjMgMTQuMjMgMzIgMzIgMzJzMzItMTQuNzcgMzItMzJjMC0xNy4yMy0xNC4yMy0zMi0zMi0zMloiIGZpbGw9IiMwMGI2NDYiLz48L3N2Zz4='">
                 </div>
             </div>
             <h1 class="text-3xl font-bold text-gray-800 mb-2">
@@ -97,8 +98,6 @@
         <!-- Login Form -->
         <form method="POST" action="{{ route('login') }}" id="loginForm" class="space-y-6">
             @csrf
-
-            <!-- <input type="hidden" name="email" id="email_hidden" value="dummy@placeholder.com">    -->
 
             <!-- No HP Field -->
             <div class="space-y-2">
@@ -180,14 +179,6 @@
                         {{ $message }}
                     </p>
                 @enderror
-                <div class="flex items-center justify-between text-xs text-gray-500">
-                    <div id="password_strength" class="hidden">
-                        <i class="fas fa-shield-alt mr-1 text-green-500"></i>
-                        <span id="strength_text"></span>
-                    </div>
-                    <span id="password_length" class="text-gray-400">0 karakter</span>
-                </div>
-            </div>
 
             <!-- Remember Me & Submit -->
             <div class="space-y-4">
@@ -228,6 +219,8 @@
                     Kembali ke Halaman Utama
                 </a>
             </div>
+        </div>
+    </div> <!-- End Main Card -->
 
     <!-- Floating Leaves -->
     <div class="absolute top-10 left-10 w-8 h-8 text-green-400 opacity-20 animate-bounce">
@@ -287,73 +280,47 @@
             }
         }
 
-        // Password Strength Check
-        document.getElementById('password').addEventListener('input', function(e) {
-            const password = e.target.value;
-            const strengthDiv = document.getElementById('password_strength');
-            const strengthText = document.getElementById('strength_text');
-            const lengthSpan = document.getElementById('password_length');
+        // Form submission validation
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            const noHP = document.getElementById('no_hp').value.trim();
+            const password = document.getElementById('password').value.trim();
             
-            // Update length counter
-            lengthSpan.textContent = ${password.length} karakter;
-            
-            if (password.length === 0) {
-                strengthDiv.classList.add('hidden');
-                return;
+            // Cek jika ada input kosong
+            if (!noHP || !password) {
+                e.preventDefault(); // Hentikan submit jika validasi gagal
+                
+                if (!noHP) {
+                    document.getElementById('no_hp').focus();
+                    document.getElementById('no_hp').classList.add('shake');
+                    setTimeout(() => {
+                        document.getElementById('no_hp').classList.remove('shake');
+                    }, 500);
+                }
+                
+                if (!password) {
+                    document.getElementById('password').focus();
+                    document.getElementById('password').classList.add('shake');
+                    setTimeout(() => {
+                        document.getElementById('password').classList.remove('shake');
+                    }, 500);
+                }
+                
+                return false;
             }
             
-            strengthDiv.classList.remove('hidden');
+            // Jika validasi lolos, tampilkan loading
+            const submitText = document.getElementById('submitText');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const submitBtn = document.getElementById('submitBtn');
             
-            let strength = 0;
-            let text = '';
-            let color = '';
+            submitText.classList.add('hidden');
+            loadingSpinner.classList.remove('hidden');
+            submitBtn.disabled = true;
+            submitBtn.classList.remove('hover:-translate-y-0.5');
             
-            // Check password strength
-            if (password.length >= 8) strength++;
-            if (/[A-Z]/.test(password)) strength++;
-            if (/[0-9]/.test(password)) strength++;
-            if (/[^A-Za-z0-9]/.test(password)) strength++;
-            
-            switch(strength) {
-                case 1:
-                    text = 'Lemah';
-                    color = 'text-red-500';
-                    break;
-                case 2:
-                    text = 'Cukup';
-                    color = 'text-yellow-500';
-                    break;
-                case 3:
-                    text = 'Baik';
-                    color = 'text-green-500';
-                    break;
-                case 4:
-                    text = 'Sangat Baik';
-                    color = 'text-emerald-600';
-                    break;
-                default:
-                    text = 'Sangat Lemah';
-                    color = 'text-red-500';
-            }
-            
-            strengthText.textContent = text;
-            strengthText.className = color;
+            // Form akan disubmit secara normal
+            return true;
         });
-
-        // Show Loading on Submit
-        function showLoading() {
-        const submitBtn = document.getElementById('submitBtn');
-        const submitText = document.getElementById('submitText');
-        const loadingSpinner = document.getElementById('loadingSpinner');
-        
-        submitText.classList.add('hidden');
-        loadingSpinner.classList.remove('hidden');
-        submitBtn.classList.remove('hover:-translate-y-0.5');
-        submitBtn.disabled = true; // Nonaktifkan tombol setelah diklik
-        
-        // Biarkan form submit berjalan secara default
-        return true;
-        }
 
         // Auto-hide error message
         document.addEventListener('DOMContentLoaded', function() {
@@ -381,52 +348,10 @@
             
             // Add subtle background animation
             document.body.style.animation = 'gradientShift 10s ease infinite';
-        });
-
-        // Form submission validation - UPDATE INI
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            const noHP = document.getElementById('no_hp').value.trim();
-            const emailHidden = document.getElementById('email_hidden');
             
-            // Buat email dari no_hp
-            if (emailHidden) {
-                emailHidden.value = noHP.replace(/\s+/g, '') + '@placeholder.com';
-            }
-            
-            // Cek jika ada input kosong
-            if (!noHP || !password) {
-                e.preventDefault(); // Hentikan submit jika validasi gagal
-                
-                if (!noHP) {
-                    document.getElementById('no_hp').focus();
-                    document.getElementById('no_hp').classList.add('shake');
-                    setTimeout(() => {
-                        document.getElementById('no_hp').classList.remove('shake');
-                    }, 500);
-                }
-                
-                if (!password) {
-                    document.getElementById('password').focus();
-                    document.getElementById('password').classList.add('shake');
-                    setTimeout(() => {
-                        document.getElementById('password').classList.remove('shake');
-                    }, 500);
-                }
-                
-                return;
-            }
-            
-            // Jika validasi lolos, tampilkan loading
-            const submitText = document.getElementById('submitText');
-            const loadingSpinner = document.getElementById('loadingSpinner');
-            const submitBtn = document.getElementById('submitBtn');
-            
-            submitText.classList.add('hidden');
-            loadingSpinner.classList.remove('hidden');
-            submitBtn.disabled = true;
-            submitBtn.classList.remove('hover:-translate-y-0.5');
-            
-            // Biarkan form submit berjalan (tidak ada e.preventDefault())
+            // Preload logo untuk menghindari flash
+            const logo = new Image();
+            logo.src = "{{ asset('images/Logo 1.jpg') }}";
         });
 
         // Add CSS for gradient animation
