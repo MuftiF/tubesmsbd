@@ -25,20 +25,21 @@ class PasswordResetLinkController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        // Validasi menggunakan no_hp
         $request->validate([
-            'email' => ['required', 'email'],
+            'no_hp' => ['required', 'string'],
         ]);
 
-        // We will send the password reset link to this user. Once we have attempted
-        // to send the link, we will examine the response then see the message we
-        // need to show to the user. Finally, we'll send out a proper response.
+        // Update ini untuk mencari user berdasarkan no_hp
+        // Anda perlu membuat custom Password Broker atau override method
+        
         $status = Password::sendResetLink(
-            $request->only('email')
+            $request->only('no_hp')
         );
 
         return $status == Password::RESET_LINK_SENT
                     ? back()->with('status', __($status))
-                    : back()->withInput($request->only('email'))
-                        ->withErrors(['email' => __($status)]);
+                    : back()->withInput($request->only('no_hp'))
+                        ->withErrors(['no_hp' => __($status)]);
     }
 }

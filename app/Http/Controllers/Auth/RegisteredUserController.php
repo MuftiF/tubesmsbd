@@ -31,13 +31,15 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'no_hp' => ['required', 'string', 'max:20', 'unique:users,no_hp'],
+            'role' => ['required', 'string', 'in:user,security,cleaning,kantoran,manager,admin'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
         $user = User::create([
             'name' => $request->name,
-            'email' => $request->email,
+            'no_hp' => $request->no_hp,
+            'role' => $request->role,
             'password' => Hash::make($request->password),
         ]);
 
@@ -45,6 +47,22 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        // Redirect berdasarkan role
+        return $this->redirectBasedOnRole($user->role);
+    }
+
+    /**
+     * Redirect user based on their role.
+     */
+    private function redirectBasedOnRole(string $role): RedirectResponse
+    {
+        return match($role) {
+            'admin' => redirect('admin/dashboard'),
+            'manager' => redirect('manager/dashboard'),
+            'security' => redirect('security/dashboard'),
+            'cleaning' => redirect('cleaning/dashboard'),
+            'kantoran' => redirect('kantoran/dashboard'),
+            default => redirect()->intended(route('dashboard')),
+        };
     }
 }

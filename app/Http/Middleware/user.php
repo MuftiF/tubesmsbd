@@ -1,23 +1,30 @@
 <?php
 
-namespace App\Http\Middleware;
+namespace App\Models;
 
-use Closure;
-use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
-class User
+class User extends Authenticatable
 {
-    /**
-     * Handle an incoming request.
-     */
-    public function handle(Request $request, Closure $next): Response
-    {
-        if (Auth::check() && Auth::user()->role == 'user') {
-            return $next($request);
-        }
+    use HasFactory, Notifiable;
 
-        return redirect('/');
+    protected $fillable = [
+        'name',
+        'no_hp',
+        'password',
+        'role',
+    ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    // Override method untuk mencari berdasarkan no_hp
+    public function findForPassport($username)
+    {
+        return $this->where('no_hp', $username)->first();
     }
 }

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Attendance;
 use App\Models\User;
+use App\Models\CatatanPanen;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 
@@ -35,9 +36,9 @@ class HomeController extends Controller
             ->whereNotNull('check_in')
             ->count();
 
-        $produksiHariIni = Attendance::whereDate('date', $today->toDateString())
-            ->whereNotNull('palm_weight')
-            ->sum('palm_weight') ?? 0;
+        // Menggunakan model CatatanPanen untuk menghitung produksi
+        $produksiHariIni = CatatanPanen::whereDate('tanggal', $today->toDateString())
+            ->sum('berat_kg') ?? 0;
 
         $rateKehadiran = $totalPegawai > 0 ? round(($hadirHariIni / $totalPegawai) * 100) : 0;
 
@@ -83,7 +84,12 @@ class HomeController extends Controller
             ->whereDate('date', $today->toDateString())
             ->first();
 
-        return view('user.dashboard', compact('absenHariIni'));
+        // Ambil data panen hari ini untuk user
+        $panenHariIni = CatatanPanen::where('id_pegawai', Auth::id())
+            ->whereDate('tanggal', $today->toDateString())
+            ->first();
+
+        return view('user.dashboard', compact('absenHariIni', 'panenHariIni'));
     }
 
     public function managerDashboard()
@@ -95,9 +101,13 @@ class HomeController extends Controller
             ->first();
 
         $totalTim = User::whereIn('role', ['user', 'security', 'cleaning', 'kantoran'])->count();
-        $hadirHariIni = Attendance::whereDate('date', $today->toDateString())->count();
-       $produksiHariIni = \App\Models\CatatanPanen::whereDate('tanggal', $today->toDateString())
-        ->sum('berat_kg') ?? 0; // Mengambil SUM dari 'berat_kg'
+        $hadirHariIni = Attendance::whereDate('date', $today->toDateString())
+            ->whereNotNull('check_in')
+            ->count();
+
+        // Menggunakan model CatatanPanen untuk menghitung produksi
+        $produksiHariIni = CatatanPanen::whereDate('tanggal', $today->toDateString())
+            ->sum('berat_kg') ?? 0;
 
         $totalTerlambat = Attendance::whereDate('date', $today->toDateString())
             ->where('status', 'terlambat')
@@ -180,14 +190,14 @@ class HomeController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
+            'no_hp' => 'required|string|max:20|unique:users,no_hp',
             'role' => 'required|in:user,security,cleaning,kantoran',
             'password' => 'required|min:6',
         ]);
 
         User::create([
             'name' => $request->name,
-            'email' => $request->email,
+            'no_hp' => $request->no_hp,
             'role' => $request->role,
             'password' => Hash::make($request->password),
         ]);
@@ -203,13 +213,13 @@ class HomeController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $id,
+            'no_hp' => 'required|string|max:20|unique:users,no_hp,' . $id,
             'role' => 'required|in:user,security,cleaning,kantoran',
         ]);
 
         $data = [
             'name' => $request->name,
-            'email' => $request->email,
+            'no_hp' => $request->no_hp,
             'role' => $request->role,
         ];
 
@@ -222,125 +232,122 @@ class HomeController extends Controller
         return redirect()->route('manager.pegawai')->with('success', 'Data pegawai berhasil diupdate!');
     }
 
- public function laporanAdmin(Request $request)
-{
-    $today = now('Asia/Jakarta')->startOfDay();
+    public function laporanAdmin(Request $request)
+    {
+        $today = now('Asia/Jakarta')->startOfDay();
 
-    $startDate = $request->start_date
-        ? \Carbon\Carbon::parse($request->start_date)
-        : $today;
+        $startDate = $request->start_date
+            ? Carbon::parse($request->start_date)
+            : $today;
 
-    $endDate = $request->end_date
-        ? \Carbon\Carbon::parse($request->end_date)
-        : $today;
+        $endDate = $request->end_date
+            ? Carbon::parse($request->end_date)
+            : $today;
 
-    // Query utama
-    $attendancesQuery = Attendance::with('user')
-        ->whereBetween('date', [
-            $startDate->toDateString(),
-            $endDate->toDateString()
-        ]);
+        // Query utama
+        $attendancesQuery = Attendance::with('user')
+            ->whereBetween('date', [
+                $startDate->toDateString(),
+                $endDate->toDateString()
+            ]);
 
-    // Filter role
-    if ($request->filled('role')) {
-        $attendancesQuery->whereHas('user', function ($q) use ($request) {
-            $q->where('role', $request->role);
-        });
+        // Filter role
+        if ($request->filled('role')) {
+            $attendancesQuery->whereHas('user', function ($q) use ($request) {
+                $q->where('role', $request->role);
+            });
+        }
+
+        // Statistik utama
+        $totalPegawai = User::count();
+
+        // Menggunakan model CatatanPanen untuk total berat
+        $totalPalmWeight = CatatanPanen::whereBetween('tanggal', [
+                $startDate->toDateString(),
+                $endDate->toDateString()
+            ])
+            ->sum('berat_kg') ?? 0;
+
+        $totalHadir = Attendance::whereBetween('date', [
+                $startDate->toDateString(),
+                $endDate->toDateString()
+            ])
+            ->whereNotNull('check_in')
+            ->distinct('user_id')
+            ->count('user_id');
+
+        $averagePalmWeight = $totalHadir > 0 ? $totalPalmWeight / $totalHadir : 0;
+
+        // Chart: Kehadiran (7 hari terakhir)
+        $chartStartDate = Carbon::parse($endDate)->subDays(6);
+        $dailyAttendance = Attendance::selectRaw('DATE(date) as date, COUNT(DISTINCT user_id) as total')
+            ->whereBetween('date', [
+                $chartStartDate->toDateString(),
+                $endDate->toDateString()
+            ])
+            ->whereNotNull('check_in')
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+
+        // Chart: Produksi Sawit (7 hari terakhir)
+        $dailyPalmWeight = CatatanPanen::selectRaw('DATE(tanggal) as date, SUM(berat_kg) as total_weight')
+            ->whereBetween('tanggal', [$chartStartDate->toDateString(), $endDate->toDateString()])
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+
+        // Produksi per Role (menggunakan CatatanPanen dengan relasi pegawai)
+        $palmWeightByRole = CatatanPanen::with('pegawai')
+            ->whereBetween('tanggal', [
+                $startDate->toDateString(),
+                $endDate->toDateString()
+            ])
+            ->get()
+            ->groupBy('pegawai.role')
+            ->map(function ($items) {
+                return [
+                    'total_weight' => $items->sum('berat_kg'),
+                    'total_workers' => $items->unique('id_pegawai')->count(),
+                    'avg_weight' => $items->unique('id_pegawai')->count() > 0
+                        ? $items->sum('berat_kg') / $items->unique('id_pegawai')->count()
+                        : 0,
+                ];
+            });
+
+        // Top pekerja berdasarkan CatatanPanen
+        $topPerformers = CatatanPanen::with('pegawai')
+            ->whereBetween('tanggal', [
+                $startDate->toDateString(),
+                $endDate->toDateString()
+            ])
+            ->selectRaw('id_pegawai, SUM(berat_kg) as total_weight')
+            ->groupBy('id_pegawai')
+            ->orderByDesc('total_weight')
+            ->limit(5)
+            ->get();
+
+        // Detail tabel
+        $detailedAttendances = $attendancesQuery
+            ->orderBy('date', 'desc')
+            ->orderBy('check_in', 'asc')
+            ->paginate(10)
+            ->appends($request->except('page'));
+
+        return view('admin.laporan', compact(
+            'startDate',
+            'endDate',
+            'totalPegawai',
+            'totalPalmWeight',
+            'averagePalmWeight',
+            'totalHadir',
+            'dailyAttendance',
+            'dailyPalmWeight',
+            'palmWeightByRole',
+            'topPerformers',
+            'detailedAttendances'
+        ));
     }
-
-    // Statistik utama
-    $totalPegawai = User::count();
-
-    $totalPalmWeight = Attendance::whereBetween('date', [
-            $startDate->toDateString(),
-            $endDate->toDateString()
-        ])
-        ->whereNotNull('palm_weight')
-        ->sum('palm_weight') ?? 0;
-
-    $totalHadir = Attendance::whereBetween('date', [
-            $startDate->toDateString(),
-            $endDate->toDateString()
-        ])
-        ->whereNotNull('check_in')
-        ->distinct('user_id')
-        ->count('user_id');
-
-    $averagePalmWeight = $totalHadir > 0 ? $totalPalmWeight / $totalHadir : 0;
-
-    // Chart: Kehadiran
-    $chartStartDate = \Carbon\Carbon::parse($endDate)->subDays(6);
-    $dailyAttendance = Attendance::selectRaw('DATE(date) as date, COUNT(DISTINCT user_id) as total')
-        ->whereBetween('date', [
-            $chartStartDate->toDateString(),
-            $endDate->toDateString()
-        ])
-        ->whereNotNull('check_in')
-        ->groupBy('date')
-        ->orderBy('date')
-        ->get();
-
-    // Chart: Produksi Sawit
-   $dailyPalmWeight = \App\Models\CatatanPanen::selectRaw('DATE(tanggal) as date, SUM(berat_kg) as total_weight')
-        ->whereBetween('tanggal', [$chartStartDate->toDateString(), $endDate->toDateString()])
-        ->groupBy('date')
-        ->orderBy('date')
-        ->get();
-
-    // Produksi per Role
-    $palmWeightByRole = Attendance::with('user')
-        ->whereBetween('date', [
-            $startDate->toDateString(),
-            $endDate->toDateString()
-        ])
-        ->whereNotNull('palm_weight')
-        ->get()
-        ->groupBy('user.role')
-        ->map(function ($items) {
-            return [
-                'total_weight' => $items->sum('palm_weight'),
-                'total_workers' => $items->unique('user_id')->count(),
-                'avg_weight' => $items->unique('user_id')->count() > 0
-                    ? $items->sum('palm_weight') / $items->unique('user_id')->count()
-                    : 0,
-            ];
-        });
-
-    // Top pekerja
-    $topPerformers = Attendance::with('user')
-        ->whereBetween('date', [
-            $startDate->toDateString(),
-            $endDate->toDateString()
-        ])
-        ->whereNotNull('palm_weight')
-        ->selectRaw('user_id, COUNT(*) as total_hadir, SUM(palm_weight) as total_weight')
-        ->groupBy('user_id')
-        ->orderByDesc('total_weight')
-        ->limit(5)
-        ->get();
-
-    // Detail tabel
-    $detailedAttendances = $attendancesQuery
-        ->orderBy('date', 'desc')
-        ->orderBy('check_in', 'asc')
-        ->paginate(10)
-        ->appends($request->except('page'));
-
-    return view('admin.laporan', compact(
-        'startDate',
-        'endDate',
-        'totalPegawai',
-        'totalPalmWeight',
-        'averagePalmWeight',
-        'totalHadir',
-        'dailyAttendance',
-        'dailyPalmWeight',
-        'palmWeightByRole',
-        'topPerformers',
-        'detailedAttendances'
-    ));
-}
-
 
     public function managerHapusPegawai($id)
     {
@@ -352,202 +359,193 @@ class HomeController extends Controller
             return redirect()->route('manager.pegawai')->with('error', 'Tidak dapat menghapus pegawai yang sudah memiliki riwayat absensi!');
         }
 
+        if (CatatanPanen::where('id_pegawai', $id)->exists()) {
+            return redirect()->route('manager.pegawai')->with('error', 'Tidak dapat menghapus pegawai yang sudah memiliki riwayat panen!');
+        }
+
         $pegawai->delete();
 
         return redirect()->route('manager.pegawai')->with('success', 'Pegawai berhasil dihapus!');
     }
 
-public function managerLog(Request $request)
-{
-    // Validasi role
-    if (Auth::user()->role !== 'manager') {
-        return redirect('/');
+    public function managerLog(Request $request)
+    {
+        // Validasi role
+        if (Auth::user()->role !== 'manager') {
+            return redirect('/');
+        }
+
+        $today = now('Asia/Jakarta')->startOfDay();
+        $selectedDate = $request->date
+            ? Carbon::parse($request->date, 'Asia/Jakarta')
+            : $today;
+
+        // Query absensi
+        $query = Attendance::with('user')->whereDate('date', $selectedDate->toDateString());
+
+        // Filter role
+        if ($request->filled('role')) {
+            $query->whereHas('user', fn($q) => $q->where('role', $request->role));
+        }
+
+        // Filter status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Filter nama/no_hp
+        if ($request->filled('search')) {
+            $query->whereHas('user', function ($q) use ($request) {
+                $q->where('name', 'like', "%{$request->search}%")
+                  ->orWhere('no_hp', 'like', "%{$request->search}%");
+            });
+        }
+
+        $attendances = $query->orderBy('check_in', 'desc')
+            ->paginate(10)
+            ->appends($request->except('page'));
+
+        // Statistik
+        $totalPegawai = User::whereIn('role', ['user', 'security', 'cleaning', 'kantoran'])->count();
+        $totalHadir = Attendance::whereDate('date', $selectedDate->toDateString())
+            ->whereNotNull('check_in')
+            ->count();
+        $totalTerlambat = Attendance::whereDate('date', $selectedDate->toDateString())
+            ->where('status', 'terlambat')
+            ->count();
+
+        $pegawaiIdsWithAttendance = Attendance::whereDate('date', $selectedDate->toDateString())
+            ->whereNotNull('check_in')
+            ->pluck('user_id')
+            ->toArray();
+
+        $totalAlpha = User::whereIn('role', ['user', 'security', 'cleaning', 'kantoran'])
+            ->whereNotIn('id', $pegawaiIdsWithAttendance)
+            ->count();
+
+        return view('manager.log', compact(
+            'attendances',
+            'totalPegawai',
+            'totalHadir',
+            'totalTerlambat',
+            'totalAlpha',
+            'selectedDate'
+        ));
     }
 
-    $today = now('Asia/Jakarta')->startOfDay();
-    $selectedDate = $request->date
-        ? Carbon::parse($request->date, 'Asia/Jakarta')
-        : $today;
+    public function laporanManager(Request $request)
+    {
+        if (Auth::user()->role !== 'manager') {
+            return redirect('/');
+        }
 
-    // Query absensi
-    $query = Attendance::with('user')->whereDate('date', $selectedDate->toDateString());
+        $today = now('Asia/Jakarta')->startOfDay();
+        $startDate = $request->start_date ? Carbon::parse($request->start_date) : $today;
+        $endDate = $request->end_date ? Carbon::parse($request->end_date) : $today;
 
-    // Filter role
-    if ($request->filled('role')) {
-        $query->whereHas('user', fn($q) => $q->where('role', $request->role));
-    }
+        // Query dasar untuk detail tabel
+        $attendancesQuery = Attendance::with('user')
+            ->whereBetween('date', [$startDate->toDateString(), $endDate->toDateString()])
+            ->whereHas('user', fn($q) => $q->where('role', 'user'));
 
-    // Filter status
-    if ($request->filled('status')) {
-        $query->where('status', $request->status);
-    }
+        // Filter by role opsional dari UI
+        if ($request->filled('role')) {
+            $attendancesQuery->whereHas('user', fn($q) => $q->where('role', $request->role));
+        }
 
-    // Filter nama/email
-    if ($request->filled('search')) {
-        $query->whereHas('user', function ($q) use ($request) {
-            $q->where('name', 'like', "%{$request->search}%")
-              ->orWhere('email', 'like', "%{$request->search}%");
-        });
-    }
-
-    $attendances = $query->orderBy('check_in', 'desc')
-        ->paginate(10)
-        ->appends($request->except('page'));
-
-    // Statistik
-    // PERBAIKAN: Filter keras role 'user' pada total hadir dan terlambat jika diinginkan
-    $totalPegawai = User::whereIn('role', ['user', 'security', 'cleaning', 'kantoran'])->count();
-    $totalHadir = Attendance::whereDate('date', $selectedDate->toDateString())->whereNotNull('check_in')->count();
-    $totalTerlambat = Attendance::whereDate('date', $selectedDate->toDateString())->where('status', 'terlambat')->count();
-
-    $pegawaiIdsWithAttendance = Attendance::whereDate('date', $selectedDate->toDateString())
-        ->whereNotNull('check_in')
-        ->pluck('user_id')
-        ->toArray();
-
-    $totalAlpha = User::whereIn('role', ['user', 'security', 'cleaning', 'kantoran'])
-        ->whereNotIn('id', $pegawaiIdsWithAttendance)
-        ->count();
-
-    return view('manager.log', compact(
-        'attendances',
-        'totalPegawai',
-        'totalHadir',
-        'totalTerlambat',
-        'totalAlpha',
-        'selectedDate'
-    ));
-}
-
-public function laporanManager(Request $request)
-{
-    if (Auth::user()->role !== 'manager') {
-        return redirect('/');
-    }
-
-    $today = now('Asia/Jakarta')->startOfDay();
-    $startDate = $request->start_date ? Carbon::parse($request->start_date) : $today;
-    $endDate = $request->end_date ? Carbon::parse($request->end_date) : $today;
-
-    // Query dasar untuk detail tabel (Filter Keras: 'user')
-   $attendancesQuery = Attendance::with('user')
-        ->whereBetween('date', [$startDate->toDateString(), $endDate->toDateString()])
-        ->whereHas('user', fn($q) => $q->where('role', 'user'));
+        // Statistik
+        $totalPegawai = User::where('role', 'user')->count();
         
-    // Filter by role opsional dari UI
-    if ($request->filled('role')) {
-        $attendancesQuery->whereHas('user', fn($q) => $q->where('role', $request->role));
+        $totalHadir = Attendance::whereBetween('date', [$startDate->toDateString(), $endDate->toDateString()])
+            ->whereNotNull('check_in')
+            ->whereHas('user', fn($q) => $q->where('role', 'user'))
+            ->distinct('user_id')
+            ->count('user_id');
+
+        // Total berat dari CatatanPanen
+        $totalPalmWeight = CatatanPanen::whereBetween('tanggal', [$startDate->toDateString(), $endDate->toDateString()])
+            ->whereHas('pegawai', fn($q) => $q->where('role', 'user'))
+            ->sum('berat_kg') ?? 0;
+
+        $averagePalmWeight = $totalHadir > 0 ? $totalPalmWeight / $totalHadir : 0;
+
+        // Data chart kehadiran (7 hari terakhir)
+        $chartStartDate = Carbon::parse($endDate)->subDays(6);
+        $dailyAttendance = Attendance::selectRaw('DATE(date) as date, COUNT(DISTINCT user_id) as total')
+            ->whereBetween('date', [$chartStartDate->toDateString(), $endDate->toDateString()])
+            ->whereNotNull('check_in')
+            ->whereHas('user', fn($q) => $q->where('role', 'user'))
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+
+        // Data chart produksi sawit (7 hari terakhir)
+        $dailyPalmWeight = CatatanPanen::selectRaw('DATE(tanggal) as date, SUM(berat_kg) as total_weight')
+            ->whereBetween('tanggal', [$chartStartDate->toDateString(), $endDate->toDateString()])
+            ->whereHas('pegawai', fn($q) => $q->where('role', 'user'))
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+
+        // Produksi per role (menggunakan CatatanPanen)
+        $palmWeightByRole = CatatanPanen::with('pegawai')
+            ->whereBetween('tanggal', [$startDate->toDateString(), $endDate->toDateString()])
+            ->whereHas('pegawai', fn($q) => $q->where('role', 'user'))
+            ->get()
+            ->groupBy('pegawai.role')
+            ->map(fn($items) => [
+                'total_weight' => $items->sum('berat_kg'),
+                'total_workers' => $items->unique('id_pegawai')->count(),
+                'avg_weight' => $items->unique('id_pegawai')->count() > 0
+                    ? $items->sum('berat_kg') / $items->unique('id_pegawai')->count()
+                    : 0,
+            ]);
+
+        // Top pekerja berdasarkan CatatanPanen
+        $topPerformers = CatatanPanen::with('pegawai')
+            ->whereBetween('tanggal', [$startDate->toDateString(), $endDate->toDateString()])
+            ->whereHas('pegawai', fn($q) => $q->where('role', 'user'))
+            ->selectRaw('id_pegawai, SUM(berat_kg) as total_weight')
+            ->groupBy('id_pegawai')
+            ->orderByDesc('total_weight')
+            ->limit(5)
+            ->get();
+
+        // Data tabel detail
+        $detailedAttendances = $attendancesQuery
+            ->orderBy('date', 'desc')
+            ->orderBy('check_in', 'asc')
+            ->paginate(10)
+            ->appends($request->except('page'));
+
+        return view('manager.laporan', compact(
+            'startDate',
+            'endDate',
+            'totalPegawai',
+            'totalHadir',
+            'totalPalmWeight',
+            'averagePalmWeight',
+            'dailyAttendance',
+            'dailyPalmWeight',
+            'palmWeightByRole',
+            'topPerformers',
+            'detailedAttendances'
+        ));
     }
 
-    // Statistik
+    // Method tambahan untuk user
+    public function userRiwayat()
+    {
+        $userId = Auth::id();
+        
+        $attendances = Attendance::where('user_id', $userId)
+            ->orderBy('date', 'desc')
+            ->paginate(10);
 
-    // 1. Total Pegawai (Hanya role 'user')
-    $totalPegawai = User::whereIn('role', ['user'])->count(); // OK
+        $panenHistory = CatatanPanen::where('id_pegawai', $userId)
+            ->orderBy('tanggal', 'desc')
+            ->paginate(10);
 
-    // 2. Total Hadir (Hanya role 'user')
-    $totalHadir = Attendance::whereBetween('date', [$startDate->toDateString(), $endDate->toDateString()])
-        ->whereNotNull('check_in')
-        ->whereHas('user', fn($q) => $q->where('role', 'user')) // OK
-        ->distinct('user_id')
-        ->count('user_id');
-
-    // 3. Total Berat Sawit (Calculation via Attendance model - TIDAK DIFILTER)
-    // BLOK INI HARUS DIHAPUS JIKA CatatanPanen ADALAH SUMBER DATA RESMI
-    // $totalPalmWeight = Attendance::whereBetween('date', [$startDate->toDateString(), $endDate->toDateString()])
-    //     ->whereNotNull('palm_weight')
-    //     ->sum('palm_weight') ?? 0;
-
-    // Data chart kehadiran (7 hari terakhir, difilter ke 'user')
-    $chartStartDate = Carbon::parse($endDate)->subDays(6);
-    $dailyAttendance = Attendance::selectRaw('DATE(date) as date, COUNT(DISTINCT user_id) as total')
-        ->whereBetween('date', [$chartStartDate->toDateString(), $endDate->toDateString()])
-        ->whereNotNull('check_in')
-        ->whereHas('user', fn($q) => $q->where('role', 'user')) // PERBAIKAN: Filter Ditambahkan
-        ->groupBy('date')
-        ->orderBy('date')
-        ->get();
-
-    // Data chart produksi (Masih menggunakan Attendance dan TIDAK DIFILTER)
-    // BLOK INI HARUS DIGANTI MENGGUNAKAN CatatanPanen DAN DIFILTER
-    // $dailyPalmWeight = Attendance::selectRaw('DATE(date) as date, SUM(palm_weight) as total_weight')
-    //     ->whereBetween('date', [$chartStartDate->toDateString(), $endDate->toDateString()])
-    //     ->whereNotNull('palm_weight')
-    //     ->groupBy('date')
-    //     ->orderBy('date')
-    //     ->get();
-
-
-    // --- SUMBER DATA RESMI CatatanPanen DARI SINI ---
-
-    // 4. Query Catatan Panen untuk Total Berat (Memperbaiki Relationship dan Redundansi)
-    $palmWeightQuery = \App\Models\CatatanPanen::whereBetween('tanggal', [$startDate->toDateString(), $endDate->toDateString()]);
-
-    // FILTER KERAS: Hanya ambil catatan panen dari role 'user'
-    $palmWeightQuery->whereHas('pegawai', fn($q) => $q->where('role', 'user')); // <-- PERBAIKAN: Gunakan 'pegawai'
-
-    // Filter role opsional dari UI (jika ada)
-    if ($request->filled('role')) {
-        $palmWeightQuery->whereHas('pegawai', fn($q) => $q->where('role', $request->role)); // <-- OK
+        return view('user.riwayat', compact('attendances', 'panenHistory'));
     }
-
-    $totalPalmWeight = $palmWeightQuery->sum('berat_kg') ?? 0; // <-- Hapus Redundansi dan Bug
-
-    // 5. Rata-rata Berat Sawit
-    $averagePalmWeight = $totalHadir > 0 ? $totalPalmWeight / $totalHadir : 0; // OK (Menggunakan $totalPalmWeight yang benar)
-    
-    // 6. Chart Produksi Sawit (Menggunakan CatatanPanen dan Filtered)
-    $dailyPalmWeight = \App\Models\CatatanPanen::selectRaw('DATE(tanggal) as date, SUM(berat_kg) as total_weight')
-        ->whereBetween('tanggal', [$chartStartDate->toDateString(), $endDate->toDateString()])
-        ->whereHas('pegawai', fn($q) => $q->where('role', 'user')) // <-- PERBAIKAN: Menggunakan CatatanPanen dan 'pegawai'
-        ->groupBy('date')
-        ->orderBy('date')
-        ->get();
-
-    // Produksi per role (Menggunakan Attendance. Harus difilter)
-    $palmWeightByRole = Attendance::with('user')
-        ->whereBetween('date', [$startDate->toDateString(), $endDate->toDateString()])
-        ->whereNotNull('palm_weight')
-        ->whereHas('user', fn($q) => $q->where('role', 'user')) // <-- PERBAIKAN: Filter Ditambahkan
-        ->get()
-        ->groupBy('user.role')
-        ->map(fn($items) => [
-            'total_weight' => $items->sum('palm_weight'),
-            'total_workers' => $items->unique('user_id')->count(),
-            'avg_weight' => $items->unique('user_id')->count() > 0
-                ? $items->sum('palm_weight') / $items->unique('user_id')->count()
-                : 0,
-        ]);
-
-    // Top pekerja (Difilter keras ke 'user')
-    $topPerformers = Attendance::with('user')
-        ->whereBetween('date', [$startDate->toDateString(), $endDate->toDateString()])
-        ->whereNotNull('palm_weight')
-        ->whereHas('user', fn($q) => $q->where('role', 'user')) // <-- PERBAIKAN: Filter Ditambahkan
-        ->selectRaw('user_id, COUNT(*) as total_hadir, SUM(palm_weight) as total_weight')
-        ->groupBy('user_id')
-        ->orderByDesc('total_weight')
-        ->limit(5)
-        ->get();
-
-    // Data tabel detail
-    $detailedAttendances = $attendancesQuery
-        ->orderBy('date', 'desc')
-        ->orderBy('check_in', 'asc')
-        ->paginate(10)
-        ->appends($request->except('page'));
-
-    return view('manager.laporan', compact(
-        'startDate',
-        'endDate',
-        'totalPegawai',
-        'totalHadir',
-        'totalPalmWeight',
-        'averagePalmWeight',
-        'dailyAttendance',
-        'dailyPalmWeight',
-        'palmWeightByRole',
-        'topPerformers',
-        'detailedAttendances'
-    ));
-}
 }
