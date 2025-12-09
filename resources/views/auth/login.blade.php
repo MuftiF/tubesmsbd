@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .gradient-bg {
-            background: linear-gradient(135deg, #00b646 0%, #009933 100%);
+            background: linear-gradient(135deg, #edededff 0%, #edededff 100%);
         }
         .input-focus:focus {
             box-shadow: 0 0 0 3px rgba(0, 182, 70, 0.2);
@@ -49,7 +49,7 @@
                     <img src="{{ asset('images/Logo 1.jpg') }}" 
                          alt="Logo Tubes MSBD" 
                          class="w-full h-full object-cover"
-                         onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNjQgMzJDNjQgMTQuNzcgNTAuMjMgNCAzNiA0UzggMTQuNzcgOCAzMmg4YzAtNi42MyA0LjQzLTEyIDEwLTEyczEwIDUuMzcgMTAgMTJIMzZDNDkuMjMgMzIgNjQgNDUuNzcgNjQgNjRzLTE0Ljc3IDMyLTMyIDMyYy0xNy4yMyAwLTMyLTE0LjIzLTMyLTMyaC04YzAgMTcuMjMgMTQuMjMgMzIgMzIgMzJzMzItMTQuNzcgMzItMzJjMC0xNy4yMy0xNC4yMy0zMi0zMi0zMloiIGZpbGw9IiMwMGI2NDYiLz48L3N2Zz4='">
+                         onerror="this.onerror=null; this.src='data:image/svg+xml;ba se64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNjQgMzJDNjQgMTQuNzcgNTAuMjMgNCAzNiA0UzggMTQuNzcgOCAzMmg4YzAtNi42MyA0LjQzLTEyIDEwLTEyczEwIDUuMzcgMTAgMTJIMzZDNDkuMjMgMzIgNjQgNDUuNzcgNjQgNjRzLTE0Ljc3IDMyLTMyIDMyYy0xNy4yMyAwLTMyLTE0LjIzLTMyLTMyaC04YzAgMTcuMjMgMTQuMjMgMzIgMzIgMzJzMzItMTQuNzcgMzItMzJjMC0xNy4yMy0xNC4yMy0zMi0zMi0zMloiIGZpbGw9IiMwMGI2NDYiLz48L3N2Zz4='">
                 </div>
             </div>
             <h1 class="text-3xl font-bold text-gray-800 mb-2">
@@ -118,7 +118,7 @@
                         autofocus 
                         autocomplete="tel"
                         class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all duration-300 outline-none input-focus @error('no_hp') border-red-500 @enderror"
-                        placeholder="Contoh: 081234567890 atau Hasbi Zahy Rabani"
+                        placeholder="Masukkan username/No HP"
                         oninput="validateNoHP(this)"
                     >
                     <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -149,8 +149,6 @@
                     @if (Route::has('password.request'))
                         <a href="{{ route('password.request') }}" 
                            class="text-xs text-green-600 hover:text-green-800 hover:underline transition-colors">
-                            <i class="fas fa-key mr-1"></i>
-                            Lupa password?
                         </a>
                     @endif
                 </div>

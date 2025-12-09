@@ -48,7 +48,7 @@
                 <input 
                     type="text" 
                     id="searchInput" 
-                    placeholder="Cari nama atau email pegawai..." 
+                    placeholder="Cari nama atau nomor HP pegawai..." 
                     class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
                 >
             </div>
@@ -86,7 +86,7 @@
                     <tr class="text-gray-600 uppercase text-xs">
                         <th class="px-6 py-3 text-left">No</th>
                         <th class="px-6 py-3 text-left">Nama</th>
-                        <th class="px-6 py-3 text-left">Email</th>
+                        <th class="px-6 py-3 text-left">No HP</th>
                         <th class="px-6 py-3 text-left">Role</th>
                         <th class="px-6 py-3 text-left">Bergabung</th>
                         <th class="px-6 py-3 text-left">Status</th>
@@ -109,7 +109,13 @@
                             </div>
                         </td>
 
-                        <td class="px-6 py-4 text-gray-600">{{ $emp->email }}</td>
+                        <td class="px-6 py-4 text-gray-600">
+                            @if(!empty($emp->phone) || !empty($emp->no_hp))
+                                {{ $emp->phone ?? $emp->no_hp }}
+                            @else
+                                <span class="text-gray-400">-</span>
+                            @endif
+                        </td>
 
                         <td class="px-6 py-4">
                             <span class="px-3 py-1 rounded-full text-xs font-semibold
@@ -173,10 +179,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
         rows.forEach(row => {
             const name  = row.querySelector('.font-medium.text-gray-900')?.textContent.toLowerCase() || '';
-            const email = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+            const phone = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
             const r     = row.dataset.role;
 
-            const matchSearch = name.includes(search) || email.includes(search);
+            const matchSearch = name.includes(search) || phone.includes(search);
             const matchRole   = !role || r === role;
 
             row.style.display = (matchSearch && matchRole) ? '' : 'none';

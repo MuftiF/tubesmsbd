@@ -28,7 +28,7 @@
 
             <div class="text-center">
                 <div class="w-14 h-14 bg-orange-50 border border-orange-100 rounded-full flex items-center justify-center mx-auto shadow-sm">
-                    <span class="text-2xl"></span>
+                    <span class="text-2xl">🧹</span>
                 </div>
                 <p class="text-sm text-gray-500 mt-2">Area Selesai</p>
                 <p class="font-bold text-gray-800 text-lg">3/5</p>

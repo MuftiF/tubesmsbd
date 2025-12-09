@@ -84,15 +84,17 @@
 
   <!-- NAVBAR -->
   <header id="site-header" class="fixed top-0 inset-x-0 z-40 border-b border-emerald-100 bg-white/90 backdrop-blur">
-   <div class="max-w-6xl mx-auto flex items-center justify-between px-4 sm:px-6 py-3 md:py-3.5">
-  <a href="#home" class="flex items-center gap-3 group">
-    <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center ring-2 ring-emerald-200 group-hover:ring-emerald-500 transition shadow-sm overflow-hidden">
-      <img 
-        src="Logo 1.jpg" 
-        alt="Logo PT Sipirok Indah"
-        class="w-full h-full object-cover"
-        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-      />
+    <div class="max-w-6xl mx-auto flex items-center justify-between px-4 sm:px-6 py-3 md:py-3.5">
+
+        <!-- Logo -->
+        <a href="#home" class="flex items-center gap-3 group">
+            <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center ring-2 ring-emerald-200 group-hover:ring-emerald-500 transition shadow-sm overflow-hidden">
+                <img 
+                    src="{{ asset('images/Logo 1.jpg') }}" 
+                    alt="Logo PT Sipirok Indah"
+                    class="w-full h-full object-contain"
+                    onerror="this.onerror=null; this.src='{{ asset('images/default-logo.png') }}';"
+                />
       <span class="text-emerald-700 font-bold text-lg hidden">SI</span>
     </div>
     <div class="flex flex-col leading-tight">
@@ -108,8 +110,8 @@
       <nav class="hidden md:flex items-center gap-7 text-sm font-medium" aria-label="Main navigation">
         <a href="#home" class="text-gray-600 hover:text-emerald-700 transition">Beranda</a>
         <a href="#tentang" class="text-gray-600 hover:text-emerald-700 transition">Tentang</a>
-        <a href="#layanan" class="text-gray-600 hover:text-emerald-700 transition">Layanan</a>
         <a href="#aktivitas" class="text-gray-600 hover:text-emerald-700 transition">Aktivitas</a>
+        <a href="#layanan" class="text-gray-600 hover:text-emerald-700 transition">Layanan</a>
         <a href="#kontak" class="text-gray-600 hover:text-emerald-700 transition">Kontak</a>
       </nav>
 

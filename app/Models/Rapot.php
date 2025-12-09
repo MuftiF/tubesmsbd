@@ -9,7 +9,7 @@ class Rapot extends Model
 {
     use HasFactory;
 
-    protected $table = 'rapots'; // pastikan nama tabel sesuai
+    protected $table = 'rapot'; // pakai nama tabel rapot
 
     protected $fillable = [
         'id_user',

@@ -148,7 +148,7 @@
 
     </div>
 
-    <!-- TOP PERFORMERS -->
+    <!-- TOP PERFORMERS
     <div class="grid grid-cols-1 gap-8 mb-10">
 
         <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
@@ -158,7 +158,6 @@
             <div class="space-y-4">
 
                 @foreach($topPerformers as $index => $p)
-
                 <div class="flex justify-between items-center p-4 rounded-lg border border-gray-200 bg-gray-50">
                     <div class="flex items-center gap-4">
 
@@ -170,8 +169,9 @@
                         </div>
 
                         <div>
-                            <p class="font-semibold text-gray-800">{{ $p->user->name }}</p>
-                            <p class="text-sm text-gray-500">{{ number_format($p->total_weight,1) }} kg • {{ $p->total_hadir }} hari</p>
+                  
+                            <p class="font-semibold text-gray-800">{{ $p->user?->name ?? 'Nama Tidak Diketahui' }}</p>
+                            <p class="text-sm text-gray-500">{{ number_format($p->total_weight,1) }} kg • {{ $p->total_hadir ?? 0 }} hari</p>
                         </div>
 
                     </div>
@@ -183,7 +183,6 @@
                         {{ $index==0?'Top':($index==1?'Excellent':'Good') }}
                     </span>
                 </div>
-
                 @endforeach
 
             </div>
@@ -193,7 +192,7 @@
             @endif
         </div>
 
-    </div>
+    </div> -->
 
     <!-- TABLE -->
     <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100 mb-10">
@@ -221,10 +220,13 @@
                     @foreach($detailedAttendances as $a)
                     <tr class="border-b hover:bg-gray-50">
                         <td class="px-4 py-3 text-gray-700">{{ \Carbon\Carbon::parse($a->date)->format('d M Y') }}</td>
-                        <td class="px-4 py-3 font-medium text-gray-900">{{ $a->user->name }}</td>
+                        
+                        <!-- PERBAIKAN DI SINI: Gunakan null-safe operator -->
+                        <td class="px-4 py-3 font-medium text-gray-900">{{ $a->user?->name ?? 'Nama Tidak Diketahui' }}</td>
+                        
                         <td class="px-4 py-3">
                             <span class="px-2 py-1 rounded-full bg-blue-100 text-blue-600 text-xs capitalize">
-                                {{ $a->user->role }}
+                                {{ $a->user?->role ?? 'unknown' }}
                             </span>
                         </td>
                         <td class="px-4 py-3 text-gray-700">{{ $a->check_in ? \Carbon\Carbon::parse($a->check_in)->format('H:i'):'-' }}</td>

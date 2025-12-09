@@ -6,25 +6,21 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('announcements', function (Blueprint $table) {
-    $table->id();
-    $table->string('judul');
-    $table->text('isi');
-    $table->enum('target', ['public', 'user', 'all'])->default('all');
-    $table->enum('status', ['active', 'inactive'])->default('active');
-    $table->timestamps();
-    });
-
+        // TAMBAHKAN INI: Cek dulu apakah tabel sudah ada
+        if (!Schema::hasTable('announcements')) {
+            Schema::create('announcements', function (Blueprint $table) {
+                $table->id();
+                $table->string('judul');
+                $table->text('isi');
+                $table->enum('target', ['public', 'user', 'all'])->default('all');
+                $table->enum('status', ['active', 'inactive'])->default('active');
+                $table->timestamps();
+            });
+        }
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('announcements');
