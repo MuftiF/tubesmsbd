@@ -10,6 +10,12 @@ use App\Models\CatatanPanen;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\SheetAbsenExport;
+use App\Exports\RekapSemuaExport;
+
+
 
 class HomeController extends Controller
 {
@@ -699,6 +705,38 @@ class HomeController extends Controller
 
         return redirect()->route('user.dashboard')->with('success', 'Absen berhasil!');
     }
+
+public function exportAllCsv()
+{
+    $from = request('from');
+    $to   = request('to');
+
+    return Excel::download(
+        new RekapSemuaExport($from, $to),
+        "rekap_semua_{$from}_{$to}.xlsx"
+    );
+}
+
+public function exportAllCsvAllTime()
+{
+    return Excel::download(
+        new RekapSemuaExport(), // tanpa from dan to -> semua data
+        "rekap_semua_data.xlsx"
+    );
+}
+
+public function exportSheetAbsen()
+{
+    $from = request('from');
+    $to   = request('to');
+
+    return Excel::download(
+        new SheetAbsenAggregateExport($from, $to),
+        "rekap_absen_per_pegawai_{$from}_{$to}.xlsx"
+    );
+}
+
+
 
     // Method untuk input panen
     public function userInputPanen(Request $request)

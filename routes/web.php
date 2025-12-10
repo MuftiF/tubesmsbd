@@ -183,4 +183,14 @@ Route::prefix('admin')->group(function () {
 
 });
 
+Route::get('/export/all', [HomeController::class, 'exportAllCsv'])->name('export.all');
+
+Route::get('/export/all-data', [HomeController::class, 'exportAllCsvAllTime'])
+    ->name('export.all.everything');
+
+Route::get('/export-sheet-absen', [HomeController::class, 'exportSheetAbsen'])
+    ->name('export.sheet.absen');
+
+
+
 });
