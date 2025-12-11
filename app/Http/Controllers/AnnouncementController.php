@@ -18,8 +18,8 @@ class AnnouncementController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'judul' => 'required',
-            'isi' => 'required',
+            'judul' => 'required|string|max:255',
+            'isi' => 'required|string',
         ]);
 
         $announcement = Announcement::create([
@@ -27,8 +27,8 @@ class AnnouncementController extends Controller
             'isi' => $request->isi,
         ]);
 
-        // Event broadcast jika ada
-        event(new NewAnnouncementEvent($announcement));
+        // Untuk development, gunakan broadcast() bukan event() untuk hindari queue
+        broadcast(new NewAnnouncementEvent($announcement))->toOthers();
 
         return back()->with('success', 'Pengumuman berhasil ditambahkan!');
     }
@@ -49,35 +49,35 @@ class AnnouncementController extends Controller
     }
 
     // =================== MANAGER ===================
-    // Halaman manajer melihat + buat pengumuman
-public function indexManager()
-{
-    $announcements = Announcement::latest()->get();
-    return view('pengumuman.manager', compact('announcements'));
-}
+    public function indexManager()
+    {
+        $announcements = Announcement::latest()->get();
+        return view('pengumuman.manager', compact('announcements'));
+    }
 
-// Simpan pengumuman dari manager
-public function storeManager(Request $request)
-{
-    $request->validate([
-        'judul' => 'required',
-        'isi' => 'required',
-    ]);
+    public function storeManager(Request $request)
+    {
+        $request->validate([
+            'judul' => 'required|string|max:255',
+            'isi' => 'required|string',
+        ]);
 
-    Announcement::create([
-        'judul' => $request->judul,
-        'isi' => $request->isi,
-    ]);
+        $announcement = Announcement::create([
+            'judul' => $request->judul,
+            'isi' => $request->isi,
+        ]);
 
-    return back()->with('success', 'Pengumuman berhasil ditambahkan!');
-}
+        // Broadcast juga untuk manager
+        broadcast(new NewAnnouncementEvent($announcement))->toOthers();
 
-// Hapus pengumuman oleh manager
-public function destroyManager($id)
-{
-    $announcement = Announcement::findOrFail($id);
-    $announcement->delete();
+        return back()->with('success', 'Pengumuman berhasil ditambahkan!');
+    }
 
-    return back()->with('success', 'Pengumuman berhasil dihapus.');
-}
+    public function destroyManager($id)
+    {
+        $announcement = Announcement::findOrFail($id);
+        $announcement->delete();
+
+        return back()->with('success', 'Pengumuman berhasil dihapus.');
+    }
 }

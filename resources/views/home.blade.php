@@ -6,7 +6,6 @@
   <title>PT Sipirok Indah — Solusi Hijau Berkelanjutan</title>
   <meta name="description" content="PT Sipirok Indah: solusi energi terbarukan, konsultasi lingkungan, dan pengelolaan limbah berkelanjutan yang berfokus pada dampak nyata dan keberlanjutan.">
 
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -15,66 +14,66 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
-    :root{
-      --green-primary:#059669;
-      --green-dark:#065f46;
-      --green-light:#d1fae5;
-      --brand-shadow:0 18px 40px rgba(5, 150, 105, 0.15);
+    :root {
+      --green-primary: #059669;
+      --green-dark: #065f46;
+      --green-light: #d1fae5;
+      --brand-shadow: 0 18px 40px rgba(5, 150, 105, 0.15);
     }
 
-    html,body{
-      height:100%;
+    html, body {
+      height: 100%;
     }
 
-    body{
-      font-family:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-      background: radial-gradient(circle at top left,#f0fdf4 0,#f9fafb 52%,#ecfdf5 100%);
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top left, #f0fdf4 0, #f9fafb 52%, #ecfdf5 100%);
     }
 
-    .focus-ring:focus{
-      outline:3px solid rgba(5, 150, 105, 0.2);
-      outline-offset:3px;
+    .focus-ring:focus {
+      outline: 3px solid rgba(5, 150, 105, 0.2);
+      outline-offset: 3px;
     }
 
-    .reveal{
-      opacity:0;
-      transform:translateY(12px);
-      transition:opacity .5s ease,transform .5s ease;
-    }
-    .reveal.visible{
-      opacity:1;
-      transform:none;
+    .reveal {
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity .5s ease, transform .5s ease;
     }
 
-    header{
-      transition:background-color .25s ease,box-shadow .25s ease,backdrop-filter .25s ease;
-    }
-    header.compact{
-      background-color:rgba(255,255,255,0.92);
-      backdrop-filter:blur(10px);
-      box-shadow:0 12px 30px rgba(15,23,42,0.08);
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
     }
 
-    .chart-h{
-      height:320px;
+    header {
+      transition: background-color .25s ease, box-shadow .25s ease, backdrop-filter .25s ease;
     }
 
-    /* Card hover lembut */
-    .card-soft{
-      transition:transform .22s ease,box-shadow .22s ease,background-color .22s ease;
+    header.compact {
+      background-color: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
     }
-    .card-soft:hover{
-      transform:translateY(-4px);
-      box-shadow:var(--brand-shadow);
-      background-color:#f9fafb;
+
+    .chart-h {
+      height: 320px;
     }
-    
-    /* Gradient hijau yang lebih harmonis */
+
+    .card-soft {
+      transition: transform .22s ease, box-shadow .22s ease, background-color .22s ease;
+    }
+
+    .card-soft:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--brand-shadow);
+      background-color: #f9fafb;
+    }
+
     .green-gradient {
       background: linear-gradient(135deg, #059669 0%, #10b981 100%);
     }
-    
-    /* Background pattern hijau yang sangat subtle */
+
     .green-pattern {
       background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23059669' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
     }
@@ -85,27 +84,27 @@
   <!-- NAVBAR -->
   <header id="site-header" class="fixed top-0 inset-x-0 z-40 border-b border-emerald-100 bg-white/90 backdrop-blur">
     <div class="max-w-6xl mx-auto flex items-center justify-between px-4 sm:px-6 py-3 md:py-3.5">
+      <!-- Logo -->
+      <a href="#home" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center ring-2 ring-emerald-200 group-hover:ring-emerald-500 transition shadow-sm overflow-hidden">
+          <img 
+            src="{{ asset('images/Logo 1.jpg') }}" 
+            alt="Logo PT Sipirok Indah"
+            class="w-full h-full object-contain"
+            onerror="this.onerror=null; this.src='{{ asset('images/default-logo.png') }}';"
+          >
+          <span class="text-emerald-700 font-bold text-lg hidden">SI</span>
+        </div>
+        <div class="flex flex-col leading-tight">
+          <span class="font-semibold text-base sm:text-lg text-emerald-800 group-hover:text-emerald-900 transition">
+            PT Sipirok Indah
+          </span>
+          <span class="text-[11px] sm:text-xs text-emerald-600 tracking-wide">
+            Sustainable Plantation & Energy
+          </span>
+        </div>
+      </a>
 
-        <!-- Logo -->
-        <a href="#home" class="flex items-center gap-3 group">
-            <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center ring-2 ring-emerald-200 group-hover:ring-emerald-500 transition shadow-sm overflow-hidden">
-                <img 
-                    src="{{ asset('images/Logo 1.jpg') }}" 
-                    alt="Logo PT Sipirok Indah"
-                    class="w-full h-full object-contain"
-                    onerror="this.onerror=null; this.src='{{ asset('images/default-logo.png') }}';"
-                />
-      <span class="text-emerald-700 font-bold text-lg hidden">SI</span>
-    </div>
-    <div class="flex flex-col leading-tight">
-      <span class="font-semibold text-base sm:text-lg text-emerald-800 group-hover:text-emerald-900 transition">
-        PT Sipirok Indah
-      </span>
-      <span class="text-[11px] sm:text-xs text-emerald-600 tracking-wide">
-        Sustainable Plantation & Energy
-      </span>
-    </div>
-  </a>
       <!-- Desktop Nav -->
       <nav class="hidden md:flex items-center gap-7 text-sm font-medium" aria-label="Main navigation">
         <a href="#home" class="text-gray-600 hover:text-emerald-700 transition">Beranda</a>
@@ -145,7 +144,6 @@
   </header>
 
   <main class="pt-20 md:pt-24">
-
     <!-- HERO -->
     <section id="home" class="relative">
       <div class="max-w-6xl mx-auto px-4 sm:px-6">
@@ -188,50 +186,49 @@
           <!-- Illustration / Stats -->
           <div class="reveal">
             <div class="relative group">
-              <div class="rounded-2xl bg-white shadow-[var(--brand-shadow)] p-5 border border-emerald-100 cursor-pointer">
-                <p class="text-xs font-semibold text-emerald-700 mb-2">Ringkasan Produksi Mingguan</p>
-                <div class="flex items-baseline justify-between mb-4">
-                  <div>
-                    <p class="text-[11px] text-slate-500">Total panen minggu ini</p>
-                    <p class="text-2xl font-extrabold text-slate-900">1.120
-                      <span class="text-base font-semibold text-slate-500"> ton</span>
-                    </p>
-                  </div>
-                  <div class="text-right">
-                    <p class="text-[11px] text-emerald-600 flex items-center justify-end gap-1">
-                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                      +8.4% dari minggu lalu
-                    </p>
-                    <p class="text-[11px] text-slate-500">Stabil & bertumbuh</p>
+              <div class="rounded-2xl bg-white/80 backdrop-blur-lg shadow-xl border border-emerald-100 p-5 cursor-pointer transition-all duration-500 ease-[cubic-bezier(.4,0,.2,1)] hover:shadow-2xl hover:shadow-emerald-200/70 hover:-translate-y-1 hover:scale-[1.02]">
+                <div class="reveal">
+                  <div class="relative group">
+                    <div class="rounded-2xl bg-white/80 backdrop-blur-lg shadow-xl border border-emerald-100 p-5 cursor-pointer transition-all duration-500 ease-[cubic-bezier(.4,0,.2,1)] hover:shadow-2xl hover:shadow-emerald-200/70 hover:-translate-y-1 hover:scale-[1.02]">
+                      <!-- HEADER -->
+                      <p class="text-xs font-semibold text-emerald-700 mb-2 tracking-wide group-hover:text-emerald-600 transition-colors duration-300">
+                        Ringkasan Aktivitas Lapangan
+                      </p>
+                      <div class="flex items-baseline justify-between mb-4">
+                        <div>
+                          <p class="text-[11px] text-slate-500">Status Mingguan</p>
+                          <p class="text-2xl font-extrabold text-slate-900 transition-all duration-300 group-hover:text-emerald-700">
+                            Stabil
+                            <span class="text-base font-semibold text-slate-500 ml-1">operasional normal</span>
+                          </p>
+                        </div>
+                        <div class="text-right">
+                          <p class="text-[11px] text-emerald-600 flex items-center justify-end gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                            Tidak ada kendala
+                          </p>
+                          <p class="text-[11px] text-slate-500">Aktivitas berjalan lancar</p>
+                        </div>
+                      </div>
+                      <div class="grid grid-cols-3 gap-3 text-[11px] select-none">
+                        <div class="p-3 rounded-xl bg-emerald-50 transition-all duration-300 group-hover:bg-emerald-100/80">
+                          <p class="text-slate-500 mb-1">Monitoring kebun</p>
+                          <p class="text-base font-semibold text-slate-900">Dilaksanakan</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-emerald-50 transition-all duration-300 group-hover:bg-emerald-100/80">
+                          <p class="text-slate-500 mb-1">Kondisi lapangan</p>
+                          <p class="text-base font-semibold text-slate-900">Baik</p>
+                        </div>
+                        <!-- BOX 3 -->
+                        <div class="p-3 rounded-xl bg-emerald-50 transition-all duration-300 group-hover:bg-emerald-100/80">
+                          <p class="text-slate-500 mb-1">Peralatan & mesin</p>
+                          <p class="text-base font-semibold text-slate-900">Terawat</p>
+                        </div>
+                      </div>
+                      <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-emerald-300/10 via-transparent to-emerald-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                    </div>
                   </div>
                 </div>
-
-                <div class="grid grid-cols-3 gap-3 text-[11px]">
-                  <div class="p-3 rounded-xl bg-emerald-50">
-                    <p class="text-slate-500 mb-1">Kebun aktif</p>
-                    <p class="text-base font-semibold text-slate-900">12 lokasi</p>
-                  </div>
-                  <div class="p-3 rounded-xl bg-emerald-50">
-                    <p class="text-slate-500 mb-1">Tingkat pemanfaatan</p>
-                    <p class="text-base font-semibold text-slate-900">87%</p>
-                  </div>
-                  <div class="p-3 rounded-xl bg-emerald-50">
-                    <p class="text-slate-500 mb-1">Emisi ditekan</p>
-                    <p class="text-base font-semibold text-slate-900">−21%</p>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Tooltip Fixed -->
-              <div class="absolute right-0 bottom-0 translate-x-6 translate-y-6 w-40 rounded-2xl 
-                          bg-slate-900 text-slate-100 p-4 shadow-2xl opacity-0 scale-95
-                          transition-all duration-300 ease-out pointer-events-none
-                          group-hover:opacity-100 group-hover:scale-100 hidden sm:block">
-                <p class="text-[11px] text-emerald-300 mb-1">Status hari ini</p>
-                <p class="text-sm font-semibold mb-2">Operasional Normal</p>
-                <p class="text-[11px] text-slate-300">
-                  Cuaca mendukung, aktivitas panen & pengolahan berjalan sesuai jadwal.
-                </p>
               </div>
             </div>
           </div>
@@ -242,7 +239,6 @@
     <!-- TENTANG -->
     <section id="tentang" class="py-14 md:py-20">
       <div class="max-w-6xl mx-auto px-4 sm:px-6">
-
         <!-- Heading -->
         <div class="text-center mb-10 reveal">
           <p class="text-xs font-semibold text-emerald-600 tracking-wide uppercase">Tentang Kami</p>
@@ -257,7 +253,6 @@
 
         <!-- Cards -->
         <div class="grid md:grid-cols-3 gap-7 items-start">
-
           <!-- Visi -->
           <div class="bg-white border border-emerald-100 rounded-2xl p-7 card-soft reveal h-full">
             <h3 class="font-semibold text-slate-900 mb-4 flex items-center gap-2">
@@ -298,7 +293,6 @@
               <li>Keberlanjutan sebagai prioritas utama.</li>
             </ul>
           </div>
-
         </div>
       </div>
     </section>
@@ -306,7 +300,6 @@
     <!-- PROGRAM & AKTIVITAS -->
     <section id="aktivitas" class="py-14 md:py-20 bg-white">
       <div class="max-w-6xl mx-auto px-4 sm:px-6">
-
         <div class="text-center mb-12 reveal">
           <p class="text-xs font-semibold text-emerald-600 tracking-wide uppercase">Program & Aktivitas</p>
           <h2 class="text-2xl md:text-3xl font-bold text-slate-900 mt-1">
@@ -319,7 +312,6 @@
         </div>
 
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-
           <!-- Produk Yang Dihasilkan -->
           <div class="bg-emerald-50 border border-emerald-100 rounded-2xl p-6 card-soft reveal">
             <h3 class="font-semibold text-slate-900 text-lg mb-2">Produk Yang Dihasilkan</h3>
@@ -364,7 +356,6 @@
               infrastruktur desa seperti akses jalan umum di Desa Sibargot dan wilayah sekitar kebun.
             </p>
           </div>
-
         </div>
       </div>
     </section>
@@ -549,7 +540,6 @@
         </div>
       </div>
     </section>
-
   </main>
 
   <!-- FOOTER -->
@@ -629,7 +619,6 @@
       const yearEl = document.getElementById('year');
       if(yearEl) yearEl.textContent = new Date().getFullYear();
     })();
-
   </script>
 </body>
 </html>
