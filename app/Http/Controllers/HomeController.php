@@ -83,21 +83,63 @@ class HomeController extends Controller
         ));
     }
 
-    public function userDashboard()
-    {
-        $today = now('Asia/Jakarta')->startOfDay();
+   public function userDashboard()
+{
+    $user = Auth::user();
+    $today = Carbon::today('Asia/Jakarta');
 
-        $absenHariIni = Attendance::where('user_id', Auth::id())
-            ->whereDate('date', $today->toDateString())
+    // Ambil absensi hari ini
+    $absenHariIni = Attendance::where('user_id', $user->id)
+        ->whereDate('date', $today)
+        ->first();
+
+    // Hitung total kehadiran bulan ini
+    $monthlyCount = Attendance::where('user_id', $user->id)
+        ->whereMonth('date', now('Asia/Jakarta')->month)
+        ->whereYear('date', now('Asia/Jakarta')->year)
+        ->count();
+
+    // Default nilai panen
+    $monthlyPalmWeight = 0;
+    $averageDailyPalmWeight = 0;
+    $todayPalmWeight = 0;
+
+    // Jika pekerja sawit, hitung panennya
+    if ($user->role == 'user') {
+
+        // Total berat sawit bulan ini
+        $monthlyPalmWeight = CatatanPanen::where('id_pegawai', $user->id)
+            ->whereMonth('tanggal', now('Asia/Jakarta')->month)
+            ->whereYear('tanggal', now('Asia/Jakarta')->year)
+            ->sum('berat_kg') ?? 0;
+
+        // Panen hari ini
+        $panenHariIni = CatatanPanen::where('id_pegawai', $user->id)
+            ->whereDate('tanggal', $today)
             ->first();
 
-        // Ambil data panen hari ini untuk user
-        $panenHariIni = CatatanPanen::where('id_pegawai', Auth::id())
-            ->whereDate('tanggal', $today->toDateString())
-            ->first();
+        if ($panenHariIni) {
+            $todayPalmWeight = $panenHariIni->berat_kg;
+        }
 
-        return view('user.dashboard', compact('absenHariIni', 'panenHariIni'));
+        // Hitung rata-rata panen
+        if ($monthlyCount > 0 && $monthlyPalmWeight > 0) {
+            $averageDailyPalmWeight = $monthlyPalmWeight / $monthlyCount;
+        }
     }
+
+    return view('user.dashboard', [
+        'absenHariIni' => $absenHariIni,
+        'monthlyCount' => $monthlyCount,
+        'monthlyPalmWeight' => $monthlyPalmWeight,
+        'averageDailyPalmWeight' => $averageDailyPalmWeight,
+        'todayPalmWeight' => $todayPalmWeight,
+        'panenHariIni' => $todayPalmWeight // VARIABEL PENTING YANG SEBELUMNYA TIDAK ADA
+    ]);
+}
+
+
+
 
     public function managerDashboard()
     {

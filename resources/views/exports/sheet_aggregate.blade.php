@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <style>
     table {
         border-collapse: collapse;
@@ -27,6 +28,9 @@
 </style>
 
 <table>
+=======
+<table border="1" cellspacing="0" cellpadding="4">
+>>>>>>> 15a965b40eda1800edd7bafa05bcd892de044a4f
     <thead>
         <tr>
             <th>Nama Pegawai</th>
@@ -46,7 +50,11 @@
         @foreach($users as $u)
             @php
                 $total_tandan = 0;
+<<<<<<< HEAD
                 $total_berat = 0;
+=======
+                $total_berat  = 0;
+>>>>>>> 15a965b40eda1800edd7bafa05bcd892de044a4f
             @endphp
 
             <tr>
@@ -55,6 +63,7 @@
                 <td>{{ $u->no_hp }}</td>
 
                 @foreach($dates as $d)
+<<<<<<< HEAD
                     @php
                         $mark = '';
 
@@ -87,6 +96,32 @@
 
                 <td>{{ $total_tandan }}</td>
                 <td>{{ number_format($total_berat, 2) }}</td>
+=======
+
+                    @php
+                        $mark = '';
+                        $key = $u->id . '-' . $d;
+
+                        // CEK PANEN (HADIR PANEN)
+                        if(isset($panen[$key])) {
+                            $row = $panen[$key][0];
+                            $mark = 'H';
+                            $total_tandan += (int) $row->jumlah_tandan;
+                            $total_berat  += (float) $row->berat_kg;
+                        }
+
+                        // CEK ABSENSI (HADIR / TERLAMBAT)
+                        if(!$mark && isset($absensi[$key])) {
+                            $mark = 'T';
+                        }
+                    @endphp
+
+                    <td style="text-align:center">{{ $mark }}</td>
+                @endforeach
+
+                <td>{{ $total_tandan }}</td>
+                <td>{{ $total_berat }}</td>
+>>>>>>> 15a965b40eda1800edd7bafa05bcd892de044a4f
             </tr>
         @endforeach
     </tbody>
