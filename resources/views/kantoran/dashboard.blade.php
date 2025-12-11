@@ -13,30 +13,28 @@
     </div>
 
     {{-- STATS --}}
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
 
-        <div class="bg-white shadow-md rounded-xl p-6 border-l-4 border-indigo-500 text-center">
-            <p class="text-3xl font-bold text-indigo-600">8</p>
-            <p class="text-gray-600 text-sm mt-1">Total Staf</p>
-        </div>
-
-        <div class="bg-white shadow-md rounded-xl p-6 border-l-4 border-green-500 text-center">
-            <p class="text-3xl font-bold text-green-600">7</p>
-            <p class="text-gray-600 text-sm mt-1">Hadir Hari Ini</p>
-        </div>
-
-        <div class="bg-white shadow-md rounded-xl p-6 border-l-4 border-blue-500 text-center">
-            <p class="text-3xl font-bold text-blue-600">15</p>
-            <p class="text-gray-600 text-sm mt-1">Dokumen Masuk</p>
-        </div>
-
-        <div class="bg-white shadow-md rounded-xl p-6 border-l-4 border-yellow-500 text-center">
-            <p class="text-3xl font-bold text-yellow-600">3</p>
-            <p class="text-gray-600 text-sm mt-1">Meeting Hari Ini</p>
-        </div>
-
+    <div class="bg-white shadow-md rounded-xl p-6 border-l-4 border-indigo-500 flex flex-col items-center">
+        <div class="text-4xl mb-2"></div>
+        <p class="text-3xl font-bold text-indigo-600 leading-none">8</p>
+        <p class="text-gray-600 text-sm mt-1">Total Staf</p>
     </div>
 
+    <div class="bg-white shadow-md rounded-xl p-6 border-l-4 border-green-500 flex flex-col items-center">
+        <div class="text-4xl mb-2"></div>
+        <p class="text-3xl font-bold text-green-600 leading-none">7</p>
+        <p class="text-gray-600 text-sm mt-1">Hadir Bulan Ini</p>
+    </div>
+
+    <div class="bg-white shadow-md rounded-xl p-6 border-l-4 border-blue-500 flex flex-col items-center">
+        <div class="text-4xl mb-2"></div>
+        <p class="text-3xl font-bold text-blue-600 leading-none">15</p>
+        <p class="text-gray-600 text-sm mt-1">Dokumen Masuk</p>
+    </div>
+
+</div>
+</div>
     {{-- MAIN GRID --}}
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
@@ -67,10 +65,11 @@
 
             <div class="grid grid-cols-2 gap-4">
 
-                <a href="{{ route('manager.laporan') }}"
+                {{-- RIWAYAT ABSEN (baru) --}}
+                <a href="{{ route('attendance.history') }}"
                     class="bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-lg text-center shadow-md font-semibold transform hover:scale-[1.02] transition">
                     <div class="text-2xl mb-2"></div>
-                    <p class="text-sm">Laporan</p>
+                    <p class="text-sm">Riwayat Absen</p>
                 </a>
 
                 <a href="{{ route('attendance.index') }}"
