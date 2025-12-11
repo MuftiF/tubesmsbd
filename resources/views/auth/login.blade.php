@@ -45,11 +45,10 @@
         <div class="text-center mb-8">
             <div class="inline-block">
                 <div class="w-24 h-24 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 flex items-center justify-center mx-auto mb-4 shadow-lg overflow-hidden border-4 border-white">
-                    <!-- Logo Image -->
-                    <img src="{{ asset('images/Logo 1.jpg') }}" 
-                         alt="Logo Tubes MSBD" 
-                         class="w-full h-full object-cover"
-                         onerror="this.onerror=null; this.src='data:image/svg+xml;ba se64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNjQgMzJDNjQgMTQuNzcgNTAuMjMgNCAzNiA0UzggMTQuNzcgOCAzMmg4YzAtNi42MyA0LjQzLTEyIDEwLTEyczEwIDUuMzcgMTAgMTJIMzZDNDkuMjMgMzIgNjQgNDUuNzcgNjQgNjRzLTE0Ljc3IDMyLTMyIDMyYy0xNy4yMyAwLTMyLTE0LjIzLTMyLTMyaC04YzAgMTcuMjMgMTQuMjMgMzIgMzIgMzJzMzItMTQuNzcgMzItMzJjMC0xNy4yMy0xNC4yMy0zMi0zMi0zMloiIGZpbGw9IiMwMGI2NDYiLz48L3N2Zz4='">
+                <img src="{{ asset('images/Logo 1.jpg') }}" 
+                    alt="Logo Tubes MSBD" 
+                    class="w-full h-full object-contain p-2 bg-white"
+                    onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNjQgMzJDNjQgMTQuNzcgNTAuMjMgNCAzNiA0UzggMTQuNzcgOCAzMmg4YzAtNi42MyA0LjQzLTEyIDEwLTEyczEwIDUuMzcgMTAgMTJIMzZDNDkuMjMgMzIgNjQgNDUuNzcgNjQgNjRzLTE0Ljc3IDMyLTMyIDMyYy0xNy4yMyAwLTMyLTE4LjIzLTMyLTMyaC04YzAgMTcuMjMgMTQuMjMgMzIgMzIgMzJzMzItMTQuNzcgMzItMzJjMC0xNy4yMy0xNC4yMy0zMi0zMi0zMloiIGZpbGw9IiMwMGI2NDYiLz48L3N2Zz4='">
                 </div>
             </div>
             <h1 class="text-3xl font-bold text-gray-800 mb-2">
