@@ -9,14 +9,12 @@
             <h1 class="text-3xl font-bold text-gray-900">
                 {{ Auth::user()->role == 'user' ? 'Sistem Absensi Pekerja Sawit' : 'Sistem Absensi Pegawai' }}
             </h1>
-            <p class="text-gray-500 mt-1">
-                Kelola kehadiran dan aktivitas kerja Anda
-            </p>
+            <p class="text-gray-500 mt-1">Kelola kehadiran dan aktivitas kerja Anda</p>
         </div>
 
-        <div class="bg-white shadow-sm rounded-xl px-5 py-4 border border-gray-100">
+        <div class="bg-white shadow rounded-xl px-5 py-4 border">
             <p class="text-lg font-semibold text-gray-800">{{ Auth::user()->name }}</p>
-            <p class="text-sm text-gray-500">{{ ucfirst(Auth::user()->role) }}</p>
+            <p class="text-sm text-gray-500 capitalize">{{ Auth::user()->role }}</p>
         </div>
     </div>
 
@@ -24,7 +22,7 @@
     <div class="grid grid-cols-1 md:grid-cols-4 gap-5 mb-10">
 
         {{-- Status hari ini --}}
-        <div class="bg-white shadow-sm rounded-xl p-5 border border-gray-100">
+        <div class="bg-white shadow rounded-xl p-5 border">
             <p class="text-gray-500">Status Hari Ini</p>
             <h2 class="text-2xl font-bold text-indigo-600 mt-1">
                 {{ $attendanceToday ? ($attendanceToday->check_out ? 'Selesai' : 'Sedang Bekerja') : 'Belum Masuk' }}
@@ -32,121 +30,134 @@
         </div>
 
         {{-- Kehadiran bulan ini --}}
-        <div class="bg-white shadow-sm rounded-xl p-5 border border-gray-100">
+        <div class="bg-white shadow rounded-xl p-5 border">
             <p class="text-gray-500">Total Kehadiran Bulan Ini</p>
             <h2 class="text-2xl font-bold text-green-600 mt-1">{{ $monthlyCount }}</h2>
         </div>
 
-        {{-- Peran khusus pekerja sawit --}}
+        {{-- Statistik pekerja sawit --}}
         @if(Auth::user()->role == 'user')
-        <div class="bg-white shadow-sm rounded-xl p-5 border border-gray-100">
-            <p class="text-gray-500">Total Sawit Bulan Ini</p>
-            <h2 class="text-2xl font-bold text-yellow-600 mt-1">{{ number_format($monthlyPalmWeight,1) }} kg</h2>
-        </div>
 
-        <div class="bg-white shadow-sm rounded-xl p-5 border border-gray-100">
-            <p class="text-gray-500">Rata-rata per Hari</p>
-            <h2 class="text-2xl font-bold text-orange-600 mt-1">
-                {{ $monthlyCount > 0 ? number_format($monthlyPalmWeight / $monthlyCount,1) : 0 }} kg
-            </h2>
-        </div>
+            {{-- Total panen bulan ini --}}
+            <div class="bg-white shadow rounded-xl p-5 border">
+                <p class="text-gray-500">Total Sawit Bulan Ini</p>
+                <h2 class="text-2xl font-bold text-yellow-600 mt-1">
+                    {{ number_format($monthlyPalmWeight, 1) }} kg
+                </h2>
+            </div>
+
+            {{-- Rata-rata panen --}}
+            <div class="bg-white shadow rounded-xl p-5 border">
+                <p class="text-gray-500">Rata-rata per Hari</p>
+                <h2 class="text-2xl font-bold text-orange-600 mt-1">
+                    {{ $monthlyCount > 0 ? number_format($monthlyPalmWeight / $monthlyCount, 1) : 0 }} kg
+                </h2>
+            </div>
+
         @else
-        {{-- Role non-user --}}
-        <div class="bg-white shadow-sm rounded-xl p-5 border border-gray-100">
-            <p class="text-gray-500">Jam Kerja Hari Ini</p>
-            <h2 class="text-2xl font-bold text-purple-600 mt-1">
-                @if($attendanceToday && $attendanceToday->check_out)
-                    {{ $attendanceToday->check_in->diffInHours($attendanceToday->check_out) }} jam
-                @else
-                    -
-                @endif
-            </h2>
-        </div>
+
+            {{-- Role non-sawit --}}
+            <div class="bg-white shadow rounded-xl p-5 border">
+                <p class="text-gray-500">Jam Kerja Hari Ini</p>
+                <h2 class="text-2xl font-bold text-purple-600 mt-1">
+                    @if($attendanceToday && $attendanceToday->check_out)
+                        {{ $attendanceToday->check_in->diffInHours($attendanceToday->check_out) }} jam
+                    @else
+                        -
+                    @endif
+                </h2>
+            </div>
         @endif
+
     </div>
 
     {{-- TAB MENU --}}
     <div class="flex justify-center gap-3 mb-8">
-
-        <button onclick="showTab('today')" id="tab-today"
-            class="px-6 py-3 rounded-lg font-semibold transition shadow-sm
-            bg-indigo-600 text-white">
+        <button id="tab-today"
+            onclick="showTab('today')"
+            class="px-6 py-3 rounded-lg font-semibold bg-indigo-600 text-white shadow">
             Hari Ini
         </button>
 
-        <button onclick="showTab('absen')" id="tab-absen"
-            class="px-6 py-3 rounded-lg font-semibold transition shadow-sm
-            bg-white border border-gray-200 text-gray-600 hover:bg-gray-100">
+        <button id="tab-absen"
+            onclick="showTab('absen')"
+            class="px-6 py-3 rounded-lg font-semibold bg-white border text-gray-600 hover:bg-gray-100 shadow">
             Absensi
         </button>
-
     </div>
 
     {{-- TAB: HARI INI --}}
-    <div id="today" class="tab-content bg-white shadow-sm rounded-xl p-8 border border-gray-200">
+    <div id="today" class="tab-content bg-white shadow rounded-xl p-8 border">
 
-        <h3 class="text-2xl font-bold text-gray-800 mb-6 pb-3 border-b">Status Kehadiran Hari Ini</h3>
+        <h3 class="text-2xl font-bold text-gray-800 mb-6 pb-3 border-b">
+            Status Kehadiran Hari Ini
+        </h3>
 
         @if($attendanceToday)
 
-        {{-- GRID --}}
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-            {{-- CHECK IN --}}
-            <div class="bg-green-50 rounded-lg p-6 border border-green-200">
-                <h4 class="text-lg font-bold text-green-700 mb-3">Check In</h4>
-                <p class="text-gray-700"><b>Waktu:</b> {{ $attendanceToday->check_in->format('H:i:s') }}</p>
-                <p class="text-gray-700 mt-2">
-                    <b>Status:</b>
-                    <span class="px-3 py-1 rounded-full text-sm font-semibold 
-                        {{ $attendanceToday->status == 'tepat waktu' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
-                        {{ ucfirst($attendanceToday->status) }}
-                    </span>
-                </p>
-            </div>
+                {{-- CHECK IN --}}
+                <div class="bg-green-50 rounded-lg p-6 border border-green-200">
+                    <h4 class="text-lg font-bold text-green-700 mb-3">Check In</h4>
+                    <p class="text-gray-700 mb-2">
+                        <b>Waktu:</b> {{ $attendanceToday->check_in->format('H:i:s') }}
+                    </p>
+                    <p class="text-gray-700">
+                        <b>Status:</b>
+                        <span class="px-3 py-1 rounded-full text-sm font-semibold
+                            {{ $attendanceToday->status == 'tepat waktu' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
+                            {{ ucfirst($attendanceToday->status) }}
+                        </span>
+                    </p>
+                </div>
 
-            {{-- CHECK OUT --}}
-            <div class="bg-blue-50 rounded-lg p-6 border border-blue-200">
-                <h4 class="text-lg font-bold text-blue-700 mb-3">Check Out</h4>
+                {{-- CHECK OUT --}}
+                <div class="bg-blue-50 rounded-lg p-6 border border-blue-200">
+                    <h4 class="text-lg font-bold text-blue-700 mb-3">Check Out</h4>
 
-                @if($attendanceToday->check_out)
-                    <p class="text-gray-700"><b>Waktu:</b> {{ $attendanceToday->check_out->format('H:i:s') }}</p>
-
-                    {{-- ROLE USER --}}
-                    @if(Auth::user()->role == 'user')
-                        <p class="text-gray-700 mt-2"><b>Berat Sawit:</b>
-                            <span class="text-2xl font-bold text-green-600">
-                                {{ number_format($attendanceToday->palm_weight,1) }} kg
-                            </span>
+                    @if($attendanceToday->check_out)
+                        <p class="text-gray-700 mb-2">
+                            <b>Waktu:</b> {{ $attendanceToday->check_out->format('H:i:s') }}
                         </p>
 
-                        @if($attendanceToday->checkout_photo_path)
-                        <img src="{{ asset('storage/' . $attendanceToday->checkout_photo_path) }}"
-                             class="w-40 rounded-lg border mt-4 shadow">
-                        @endif
-                    @endif
+                        {{-- PEKERJA SAWIT --}}
+                        @if(Auth::user()->role == 'user')
+                            <p class="text-gray-700 mt-2">
+                                <b>Berat Sawit:</b>
+                                <span class="text-2xl font-bold text-green-600">
+                                    {{ number_format($todayPalmWeight,1) }} kg
+                                </span>
+                            </p>
 
-                @else
-                    <p class="text-gray-600">Belum melakukan check out</p>
-                @endif
+                            @if($attendanceToday->checkout_photo_path)
+                                <img src="{{ asset('storage/' . $attendanceToday->checkout_photo_path) }}"
+                                     class="w-40 rounded-lg border mt-4 shadow">
+                            @endif
+
+                        @endif
+
+                    @else
+                        <p class="text-gray-600">Belum melakukan check out</p>
+                    @endif
+                </div>
             </div>
-        </div>
 
         @else
 
-        {{-- Belum absen --}}
-        <div class="text-center py-16">
-            <div class="text-6xl mb-4">📌</div>
-            <p class="text-xl font-semibold text-gray-700">Belum ada absensi hari ini</p>
-        </div>
+            <div class="text-center py-16">
+                <div class="text-6xl mb-4">📌</div>
+                <p class="text-xl font-semibold text-gray-700">
+                    Belum ada absensi hari ini
+                </p>
+            </div>
 
         @endif
 
     </div>
 
-
     {{-- TAB: ABSEN --}}
-    <div id="absen" class="tab-content hidden bg-white shadow-sm rounded-xl p-8 border border-gray-200">
+    <div id="absen" class="tab-content hidden bg-white shadow rounded-xl p-8 border">
 
         <h3 class="text-2xl font-bold text-gray-800 mb-6 pb-3 border-b">
             {{ !$attendanceToday ? 'Check In' : (!$attendanceToday->check_out ? 'Check Out' : 'Selesai') }}
@@ -154,12 +165,15 @@
 
         {{-- JAM --}}
         <div class="text-center bg-indigo-600 text-white py-6 rounded-xl mb-8 shadow">
-            <p class="text-sm opacity-80">{{ \Carbon\Carbon::parse($serverTime)->translatedFormat('l, d F Y') }}</p>
+            <p class="text-sm opacity-80">
+                {{ \Carbon\Carbon::parse($serverTime)->translatedFormat('l, d F Y') }}
+            </p>
             <h2 id="realtimeClock" class="text-4xl font-bold mt-1">00:00:00</h2>
         </div>
 
-        {{-- CEK FORM --}}
+        {{-- FORM --}}
         @if(!$attendanceToday)
+
             {{-- CHECK IN --}}
             <form action="{{ route('attendance.store') }}" method="POST">
                 @csrf
@@ -169,11 +183,13 @@
             </form>
 
         @elseif(!$attendanceToday->check_out)
+
             {{-- CHECK OUT --}}
-            <form action="{{ route('attendance.checkout') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+            <form action="{{ route('attendance.checkout') }}" method="POST"
+                enctype="multipart/form-data" class="space-y-6">
                 @csrf
 
-                {{-- ROLE USER --}}
+                {{-- PEKERJA SAWIT --}}
                 @if(Auth::user()->role == 'user')
 
                     <div>
@@ -184,7 +200,7 @@
                     <div>
                         <label class="font-semibold text-gray-700">Berat Sawit (kg) *</label>
                         <input type="number" step="0.1" min="0" name="palm_weight"
-                               class="w-full border rounded-lg p-3 mt-2">
+                               class="w-full border rounded-lg p-3 mt-2" required>
                     </div>
 
                     <div>
@@ -194,7 +210,7 @@
 
                 @else
 
-                    {{-- ROLE SECURITY / CLEANING / KANTOR --}}
+                    {{-- NON PEKERJA SAWIT --}}
                     <div>
                         <label class="font-semibold text-gray-700">Foto Bukti Pekerjaan *</label>
                         <input type="file" name="checkout_photo" required class="w-full border rounded-lg p-3 mt-2">
@@ -214,7 +230,7 @@
             </form>
 
         @else
-            {{-- SELESAI --}}
+
             <div class="text-center py-16">
                 <div class="text-6xl mb-4">🎉</div>
                 <p class="text-xl font-bold text-indigo-700">Absensi Hari Ini Selesai</p>
@@ -226,8 +242,7 @@
 
 </div>
 
-
-{{-- SCRIPT --}}
+{{-- SCRIPT JAM --}}
 <script>
 function showTab(tab) {
     document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
@@ -240,13 +255,15 @@ function showTab(tab) {
 }
 
 let currentTime = new Date("{{ $serverTime }}");
+
 function updateClock() {
-    currentTime.setSeconds(currentTime.getSeconds()+1);
+    currentTime.setSeconds(currentTime.getSeconds() + 1);
     const h = String(currentTime.getHours()).padStart(2,'0');
     const m = String(currentTime.getMinutes()).padStart(2,'0');
     const s = String(currentTime.getSeconds()).padStart(2,'0');
     document.getElementById('realtimeClock').textContent = `${h}:${m}:${s}`;
 }
+
 setInterval(updateClock, 1000);
 updateClock();
 
