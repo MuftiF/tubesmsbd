@@ -45,7 +45,7 @@
             class="bg-white rounded-xl shadow-xl p-6">
             @csrf
 
-            <h3 class="text-lg font-bold text-gray-800 mb-4 text-center">Absen Masuk</h3>
+            <h3 class="text-lg font-bold text-gray-800 mb-4 text-center">Dokumentasi Lapangan</h3>
 
             <!-- MULTIPLE FOTO -->
             <label class="font-semibold text-gray-700">Upload Foto</label>
@@ -77,7 +77,7 @@
             class="bg-white rounded-xl shadow-xl p-6">
             @csrf
 
-            <h3 class="text-lg font-bold text-gray-800 mb-4 text-center">Absen Pulang</h3>
+            <h3 class="text-lg font-bold text-gray-800 mb-4 text-center">Dokumentasi Lapangan</h3>
 
                         <!-- MULTIPLE FOTO -->
             <label class="font-semibold text-gray-700">Upload Foto</label>
@@ -112,7 +112,7 @@
             <button type="submit"
                 class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-xl transition duration-200 transform hover:scale-105 flex items-center justify-center">
                 <span class="text-xl mr-2"></span>
-                AMBIL FOTO & ABSEN PULANG
+                UPLOAD FOTO
             </button>
         </form>
 

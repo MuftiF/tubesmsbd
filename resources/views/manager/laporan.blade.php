@@ -38,7 +38,7 @@
                     <option value="user" {{ request('role') == 'user' ? 'selected' : '' }}>Kebun & Panen</option>
                     <option value="security" {{ request('role') == 'security' ? 'selected' : '' }}>Security</option>
                     <option value="cleaning" {{ request('role') == 'cleaning' ? 'selected' : '' }}>Cleaning</option>
-                    <option value="kantoran" {{ request('role') == 'kantoran' ? 'selected' : '' }}>Administrasi</option>
+                    <option value="kantoran" {{ request('role') == 'kantoran' ? 'selected' : '' }}>Kantoran</option>
                 </select>
             </div>
         </div>
@@ -211,7 +211,7 @@
                             @case('user') Kebun @break
                             @case('security') Security @break
                             @case('cleaning') Cleaning @break
-                            @case('kantoran') Administrasi @break
+                            @case('kantoran') Kantoran @break
                             @default {{ $role }}
                         @endswitch
                     </h4>
@@ -288,7 +288,7 @@
                                     'user' => 'Kebun & Panen',
                                     'security' => 'Security',
                                     'cleaning' => 'Cleaning',
-                                    'kantoran' => 'Administrasi',
+                                    'kantoran' => 'Kantoran',
                                     default => $attendance->user->role
                                 };
                             @endphp

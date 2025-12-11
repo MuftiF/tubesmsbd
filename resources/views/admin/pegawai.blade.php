@@ -33,7 +33,7 @@
         </div>
 
         <div class="bg-white shadow-md rounded-xl p-5 border border-gray-100 text-center">
-            <p class="text-sm text-gray-500">Administrasi</p>
+            <p class="text-sm text-gray-500">Kantoran</p>
             <h3 class="text-3xl font-bold text-red-600 mt-1">{{ $pegawai->where('role','kantoran')->count() }}</h3>
         </div>
 
@@ -64,7 +64,7 @@
                     <option value="user">Kebun & Panen</option>
                     <option value="security">Security</option>
                     <option value="cleaning">Cleaning</option>
-                    <option value="kantoran">Administrasi</option>
+                    <option value="kantoran">Kantoran</option>
                 </select>
             </div>
 

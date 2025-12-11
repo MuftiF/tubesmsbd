@@ -38,7 +38,7 @@ class HomeController extends Controller
     {
         $today = now('Asia/Jakarta')->startOfDay();
 
-        $totalPegawai = User::count();
+        $totalPegawai = User::whereNotIn('role', ['admin', 'manager'])->count();
         $hadirHariIni = Attendance::whereDate('date', $today->toDateString())
             ->whereNotNull('check_in')
             ->count();
@@ -201,7 +201,7 @@ class HomeController extends Controller
                     ->whereDate('attendances.date', $today->toDateString());
             })
             ->whereDate('catatan_panen.tanggal', $today->toDateString())
-            ->whereIn('users.role', ['user', 'security', 'cleaning', 'kantoran'])
+            ->where('users.role', 'user')
             ->groupBy('users.id', 'users.name', 'users.role')
             ->orderBy('total_produksi', 'desc')
             ->limit(5)
@@ -219,7 +219,7 @@ class HomeController extends Controller
                 ->join('users', 'attendances.user_id', '=', 'users.id')
                 ->whereDate('attendances.date', $today->toDateString())
                 ->whereNotNull('attendances.check_in')
-                ->whereIn('users.role', ['user', 'security', 'cleaning', 'kantoran'])
+                ->where('users.role', 'user')
                 ->orderBy('attendances.check_in', 'asc')
                 ->limit(5)
                 ->get();
@@ -404,7 +404,7 @@ class HomeController extends Controller
         }
 
         // Statistik utama
-        $totalPegawai = User::count();
+        $totalPegawai = User::whereNotIn('role', ['admin', 'manager'])->count();
 
         // Menggunakan model CatatanPanen untuk total berat
         $totalPalmWeight = CatatanPanen::whereBetween('tanggal', [
