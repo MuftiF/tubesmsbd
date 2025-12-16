@@ -6,27 +6,26 @@
     <!-- HEADER -->
     <div class="text-center mb-10">
         <h1 class="text-4xl font-bold text-gray-900 tracking-tight">Laporan Manager - Hasil Panen Sawit</h1>
-        <p class="text-gray-500 text-sm mt-2">Dashboard analisis produktivitas dan kehadiran tim Anda</p>
+        <p class="text-gray-500 text-sm mt-2">Dashboard analisis produktivitas dan kehadiran pekerja sawit (Manager View)</p>
     </div>
 
     <!-- FILTER BOX -->
+    <!-- PERUBAHAN: Ganti route('admin.laporan') menjadi route('manager.laporan') -->
     <form method="GET" action="{{ route('manager.laporan') }}" 
         class="bg-white rounded-xl shadow-lg p-6 border border-gray-100 mb-10">
 
-        <h3 class="text-lg font-semibold text-gray-800 mb-4">Filter Laporan Manager</h3>
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Filter Laporan</h3>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
                 <label class="text-sm font-medium text-gray-600">Dari Tanggal</label>
-                <input type="date" name="start_date" 
-                       value="{{ request('start_date', $startDate->format('Y-m-d')) }}"
+                <input type="date" name="start_date" value="{{ request('start_date', $startDate) }}"
                     class="mt-1 w-full border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500">
             </div>
 
             <div>
                 <label class="text-sm font-medium text-gray-600">Sampai Tanggal</label>
-                <input type="date" name="end_date" 
-                       value="{{ request('end_date', $endDate->format('Y-m-d')) }}"
+                <input type="date" name="end_date" value="{{ request('end_date', $endDate) }}"
                     class="mt-1 w-full border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500">
             </div>
 
@@ -35,23 +34,32 @@
                 <select name="role"
                     class="mt-1 w-full border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500">
                     <option value="">Semua Role</option>
-                    <option value="user" {{ request('role') == 'user' ? 'selected' : '' }}>Kebun & Panen</option>
-                    <option value="security" {{ request('role') == 'security' ? 'selected' : '' }}>Security</option>
-                    <option value="cleaning" {{ request('role') == 'cleaning' ? 'selected' : '' }}>Cleaning</option>
-                    <option value="kantoran" {{ request('role') == 'kantoran' ? 'selected' : '' }}>Kantoran</option>
+                    <option value="user" {{ request('role')=='user' ? 'selected':'' }}>Kebun & Panen</option>
+                    <option value="security" {{ request('role')=='security' ? 'selected':'' }}>Security</option>
+                    <option value="cleaning" {{ request('role')=='cleaning' ? 'selected':'' }}>Cleaning</option>
+                    <option value="kantoran" {{ request('role')=='kantoran' ? 'selected':'' }}>Kantoran</option>
                 </select>
             </div>
         </div>
 
+        <!-- FILTER DATA TYPE -->
+        <div class="mt-4">
+            <label class="text-sm font-medium text-gray-600">Tampilkan Data</label>
+            <select name="data_type" class="mt-1 w-full border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500">
+                <option value="today" {{ request('data_type', 'today') == 'today' ? 'selected' : '' }}>Hari Ini Saja</option>
+                <option value="all" {{ request('data_type') == 'all' ? 'selected' : '' }}>Semua Data (Berdasarkan Filter Tanggal)</option>
+            </select>
+        </div>
+
         <div class="flex gap-3 mt-6">
-            <button type="submit" 
-                class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold shadow transition duration-200">
+            <button class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold shadow transition">
                 Terapkan Filter
             </button>
 
+            <!-- PERUBAHAN: Ganti route('admin.laporan') menjadi route('manager.laporan') -->
             <a href="{{ route('manager.laporan') }}"
-                class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg font-semibold shadow transition duration-200">
-                Reset Filter
+                class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg font-semibold shadow transition">
+                Reset
             </a>
         </div>
     </form>
@@ -59,400 +67,341 @@
     @php
         $selectedRole = request('role');
         $hasPalmAccess = !$selectedRole || $selectedRole == 'user';
-        $showPalmStats = $hasPalmAccess;
-        $showPalmTable = $hasPalmAccess; // Menentukan apakah menampilkan kolom produksi di tabel
+        $dataType = request('data_type', 'today');
+        $todayDate = \Carbon\Carbon::now()->translatedFormat('l, d F Y');
     @endphp
+
+    <!-- RINGKASAN HARI INI -->
+    @if($dataType == 'today' && $hasPalmAccess)
+    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl shadow-md p-6 border border-blue-100 mb-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm text-blue-600 font-medium">Ringkasan Hari Ini</p>
+                <h3 class="text-2xl font-bold text-gray-800 mt-1">{{ $todayDate }}</h3>
+            </div>
+            <div class="grid grid-cols-3 gap-4">
+                <div class="text-center">
+                    <p class="text-xs text-gray-500">Hadir</p>
+                    <p class="text-xl font-bold text-green-600">{{ $todayAttendanceCount ?? 0 }}</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-xs text-gray-500">Panen</p>
+                    <p class="text-xl font-bold text-yellow-600">{{ number_format($todayPalmWeight ?? 0, 1) }} kg</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-xs text-gray-500">Rata-rata</p>
+                    <p class="text-xl font-bold text-blue-600">
+                        @php
+                            $avgToday = ($todayAttendanceCount > 0 && $todayPalmWeight > 0) 
+                                ? number_format($todayPalmWeight / $todayAttendanceCount, 1) 
+                                : 0;
+                        @endphp
+                        {{ $avgToday }} kg/orang
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
 
     <!-- SUMMARY CARDS -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
 
-        <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-blue-500">
-            <p class="text-sm text-gray-500 font-medium">Total Pegawai</p>
-            <p class="text-3xl font-bold text-blue-700 mt-2">{{ $totalPegawai }}</p>
-            <p class="text-xs text-gray-400 mt-1">Semua tim Anda</p>
+        <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100 text-center">
+            <p class="text-sm text-gray-500">Total Tim</p>
+            <p class="text-3xl font-bold text-blue-700 mt-1">{{ $totalPegawai }}</p>
         </div>
 
-        @if($showPalmStats)
-        <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-green-500">
-            <p class="text-sm text-gray-500 font-medium">Total Berat Sawit</p>
-            <p class="text-3xl font-bold text-green-700 mt-2">
-                {{ number_format($totalPalmWeight, 1) . ' kg' }}
+        <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100 text-center">
+            <p class="text-sm text-gray-500">Total Berat Sawit</p>
+            <p class="text-3xl font-bold text-green-700 mt-1">
+                {{ $hasPalmAccess ? number_format($totalPalmWeight,1).' kg' : '-' }}
             </p>
-            <p class="text-xs text-gray-400 mt-1">Produksi total</p>
         </div>
 
-        <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-yellow-500">
-            <p class="text-sm text-gray-500 font-medium">Rata-rata Panen</p>
-            <p class="text-3xl font-bold text-yellow-600 mt-2">
-                {{ number_format($averagePalmWeight, 1) . ' kg' }}
+        <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100 text-center">
+            <p class="text-sm text-gray-500">Rata-rata Panen</p>
+            <p class="text-3xl font-bold text-yellow-600 mt-1">
+                {{ $hasPalmAccess ? number_format($averagePalmWeight,1).' kg' : '-' }}
             </p>
-            <p class="text-xs text-gray-400 mt-1">Per pekerja</p>
-        </div>
-        @else
-        <!-- Kartu placeholder untuk role non-user -->
-        <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-green-500">
-            <p class="text-sm text-gray-500 font-medium">Jumlah Hadir</p>
-            <p class="text-3xl font-bold text-green-700 mt-2">{{ $totalHadir }}</p>
-            <p class="text-xs text-gray-400 mt-1">Pegawai aktif</p>
         </div>
 
-        <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-yellow-500">
-            <p class="text-sm text-gray-500 font-medium">Rate Kehadiran</p>
-            <p class="text-3xl font-bold text-yellow-600 mt-2">
-                {{ $totalPegawai > 0 ? round(($totalHadir / $totalPegawai) * 100) : 0 }}%
-            </p>
-            <p class="text-xs text-gray-400 mt-1">Persentase hadir</p>
-        </div>
-        @endif
-
-        <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-orange-500">
-            <p class="text-sm text-gray-500 font-medium">Kehadiran</p>
-            <p class="text-3xl font-bold text-orange-600 mt-2">{{ $totalHadir }}</p>
-            <p class="text-xs text-gray-400 mt-1">Pegawai hadir</p>
+        <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100 text-center">
+            <p class="text-sm text-gray-500">Total Kehadiran</p>
+            <p class="text-3xl font-bold text-orange-600 mt-1">{{ $totalHadir }}</p>
         </div>
 
     </div>
 
-    <!-- CHARTS SECTION -->
+    <!-- CHARTS -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
 
-        @if($showPalmStats && $dailyPalmWeight->count())
+        @if($hasPalmAccess)
         <!-- PANEN HARIAN -->
         <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold text-gray-800">Hasil Panen 7 Hari Terakhir</h3>
-                <span class="text-sm text-gray-500">{{ $startDate->format('d M') }} - {{ $endDate->format('d M') }}</span>
-            </div>
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Hasil Panen 7 Hari Terakhir</h3>
 
+            @if($dailyPalmWeight->count())
             <div class="space-y-3">
                 @php $maxWeight = $dailyPalmWeight->max('total_weight'); @endphp
 
                 @foreach($dailyPalmWeight as $daily)
                 <div>
                     <div class="flex justify-between text-sm text-gray-600 mb-1">
-                        <span class="font-medium">{{ \Carbon\Carbon::parse($daily->date)->format('d M') }}</span>
-                        <span class="font-bold text-green-700">{{ number_format($daily->total_weight, 1) }} kg</span>
+                        <span>{{ \Carbon\Carbon::parse($daily->date)->format('d M Y') }}</span>
+                        <span>{{ number_format($daily->total_weight,1) }} kg</span>
                     </div>
                     <div class="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
-                        <div class="bg-gradient-to-r from-green-500 to-emerald-600 h-full rounded-full transition-all duration-500"
-                            style="width: {{ $maxWeight > 0 ? ($daily->total_weight/$maxWeight*100) : 0 }}%">
-                        </div>
-                    </div>
-                </div>
-                @endforeach
-            </div>
-        </div>
-        @elseif($showPalmStats)
-        <!-- PANEN HARIAN - EMPTY STATE -->
-        <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold text-gray-800">Hasil Panen 7 Hari Terakhir</h3>
-                <span class="text-sm text-gray-500">{{ $startDate->format('d M') }} - {{ $endDate->format('d M') }}</span>
-            </div>
-            <div class="h-48 flex flex-col items-center justify-center text-gray-400">
-                <svg class="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                </svg>
-                <p>Tidak ada data panen</p>
-                <p class="text-sm mt-1">Pada periode yang dipilih</p>
-            </div>
-        </div>
-        @else
-
-        @endif
-
-        <!-- KEHADIRAN HARIAN -->
-        <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold text-gray-800">Kehadiran 7 Hari Terakhir</h3>
-                <span class="text-sm text-gray-500">{{ $startDate->format('d M') }} - {{ $endDate->format('d M') }}</span>
-            </div>
-
-            @if($dailyAttendance->count())
-            <div class="space-y-3">
-                @foreach($dailyAttendance as $daily)
-                <div>
-                    <div class="flex justify-between text-sm text-gray-600 mb-1">
-                        <span class="font-medium">{{ \Carbon\Carbon::parse($daily->date)->format('d M') }}</span>
-                        <span class="font-bold text-blue-700">{{ $daily->total }} pekerja</span>
-                    </div>
-                    <div class="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
-                        <div class="bg-gradient-to-r from-blue-500 to-indigo-600 h-full rounded-full transition-all duration-500"
-                            style="width: {{ $totalPegawai > 0 ? ($daily->total/$totalPegawai*100) : 0 }}%">
+                        <div class="bg-green-600 h-full rounded-full"
+                            style="width: {{ $maxWeight > 0 ? ($daily->total_weight/$maxWeight*100):0 }}%">
                         </div>
                     </div>
                 </div>
                 @endforeach
             </div>
             @else
-            <div class="h-48 flex flex-col items-center justify-center text-gray-400">
-                <svg class="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5 1.75a.75.75 0 00-1.5 0v2.5a.75.75 0 001.5 0v-2.5z"></path>
-                </svg>
-                <p>Tidak ada data kehadiran</p>
-                <p class="text-sm mt-1">Pada periode yang dipilih</p>
+            <div class="h-40 flex items-center justify-center text-gray-400">Tidak ada data panen</div>
+            @endif
+        </div>
+        @endif
+
+        <!-- KEHADIRAN HARIAN -->
+        <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Kehadiran 7 Hari Terakhir</h3>
+
+            @if($dailyAttendance->count())
+            <div class="space-y-3">
+
+                @foreach($dailyAttendance as $daily)
+                <div>
+                    <div class="flex justify-between text-sm text-gray-600 mb-1">
+                        <span>{{ \Carbon\Carbon::parse($daily->date)->format('d M Y') }}</span>
+                        <span>{{ $daily->total }} pekerja</span>
+                    </div>
+                    <div class="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
+                        <div class="bg-blue-600 h-full rounded-full"
+                            style="width: {{ $totalPegawai>0 ? ($daily->total/$totalPegawai*100):0 }}%">
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+
             </div>
+            @else
+            <div class="h-40 flex items-center justify-center text-gray-400">Tidak ada data kehadiran</div>
             @endif
         </div>
 
     </div>
 
-    <!-- PER ROLE SECTION - Hanya tampil jika filter Semua Role atau User -->
-    @if($showPalmStats && $palmWeightByRole && $palmWeightByRole->count())
-    <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100 mb-10">
-        <h3 class="text-lg font-bold text-gray-800 mb-4">Produksi Sawit</h3>
-        
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            @foreach($palmWeightByRole as $role => $data)
-            <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                <div class="flex items-center justify-between mb-2">
-                    <h4 class="font-semibold text-gray-800 capitalize">
-                        @switch($role)
-                            @case('user') Kebun @break
-                            @case('security') Security @break
-                            @case('cleaning') Cleaning @break
-                            @case('kantoran') Kantoran @break
-                            @default {{ $role }}
-                        @endswitch
-                    </h4>
-                    <span class="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800">
-                        {{ $data['total_workers'] ?? 0 }} orang
-                    </span>
-                </div>
-                
-                <p class="text-2xl font-bold text-green-700 mb-1">
-                    {{ number_format($data['total_weight'] ?? 0, 1) }} kg
-                </p>
-                
-                <div class="flex justify-between text-sm text-gray-500">
-                    <span>Rata-rata:</span>
-                    <span class="font-medium">{{ number_format($data['avg_weight'] ?? 0, 1) }} kg</span>
-                </div>
-            </div>
-            @endforeach
-        </div>
-    </div>
-    @endif
-
-    <!-- DETAIL TABLE -->
+    <!-- TABLE - DETAIL KEHADIRAN & PANEN -->
     <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100 mb-10">
 
-        <div class="flex justify-between items-center mb-6">
-            <h3 class="text-lg font-bold text-gray-800">Detail Laporan</h3>
-            <div class="text-sm text-gray-500">
-                Menampilkan {{ $detailedAttendances->count() }} dari {{ $detailedAttendances->total() }} data
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-bold text-gray-800">
+                @if($dataType == 'today')
+                Detail Kehadiran & Panen Hari Ini
+                @else
+                Detail Kehadiran & Panen
+                @endif
+            </h3>
+            
+            @if($dataType == 'today')
+            <div class="text-sm text-gray-500 bg-blue-50 px-3 py-1 rounded-lg">
+                {{ $todayDate }}
             </div>
+            @else
+            <div class="text-sm text-gray-500 bg-gray-50 px-3 py-1 rounded-lg">
+                Periode: {{ \Carbon\Carbon::parse($startDate)->format('d M Y') }} - {{ \Carbon\Carbon::parse($endDate)->format('d M Y') }}
+            </div>
+            @endif
         </div>
 
         @if($detailedAttendances->count())
-        <div class="overflow-x-auto rounded-lg border border-gray-200">
-            <table class="w-full text-left">
-                <thead class="bg-gray-100">
-                    <tr class="text-gray-700 text-sm">
-                        <th class="px-4 py-3 font-medium">Tanggal</th>
-                        <th class="px-4 py-3 font-medium">Nama Pegawai</th>
-                        <th class="px-4 py-3 font-medium">Role</th>
-                        <th class="px-4 py-3 font-medium">Jam Masuk</th>
-                        <th class="px-4 py-3 font-medium">Jam Keluar</th>
-                        @if($showPalmTable)
-                        <th class="px-4 py-3 font-medium">Produksi (kg)</th>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-gray-100 text-gray-700 text-sm border-b">
+                        @if($dataType == 'all')
+                        <th class="px-4 py-3">Tanggal</th>
                         @endif
-                        <!-- Kolom Status dihapus dari sini -->
-                        <th class="px-4 py-3 font-medium">Aksi</th>
+                        <th class="px-4 py-3">Nama</th>
+                        <th class="px-4 py-3">Role</th>
+                        <th class="px-4 py-3">Check In</th>
+                        <th class="px-4 py-3">Check Out</th>
+                        <th class="px-4 py-3">Berat Panen</th>
+                        <th class="px-4 py-3">Keterangan</th>
+                        <th class="px-4 py-3">Status</th>
+                        <th class="px-4 py-3">Foto Panen</th>
                     </tr>
                 </thead>
 
-                <tbody class="text-sm divide-y divide-gray-200">
-                    @foreach($detailedAttendances as $attendance)
-                    <tr class="hover:bg-gray-50 transition-colors">
-                        <td class="px-4 py-3">
-                            <span class="font-medium text-gray-700">
-                                {{ \Carbon\Carbon::parse($attendance->date)->format('d/m/Y') }}
-                            </span>
-                        </td>
-                        <td class="px-4 py-3">
-                            <div class="font-semibold text-gray-900">{{ $attendance->user->name ?? 'N/A' }}</div>
-                            <div class="text-xs text-gray-500">{{ $attendance->user->no_hp ?? '-' }}</div>
-                        </td>
-                        <td class="px-4 py-3">
-                            @php
-                                $roleColor = match($attendance->user->role ?? 'user') {
-                                    'user' => 'bg-green-100 text-green-800',
-                                    'security' => 'bg-blue-100 text-blue-800',
-                                    'cleaning' => 'bg-purple-100 text-purple-800',
-                                    'kantoran' => 'bg-indigo-100 text-indigo-800',
-                                    default => 'bg-gray-100 text-gray-800'
-                                };
-                                
-                                $roleName = match($attendance->user->role ?? 'user') {
-                                    'user' => 'Kebun & Panen',
-                                    'security' => 'Security',
-                                    'cleaning' => 'Cleaning',
-                                    'kantoran' => 'Kantoran',
-                                    default => $attendance->user->role
-                                };
-                            @endphp
-                            <span class="px-2 py-1 rounded-full text-xs font-medium {{ $roleColor }} capitalize">
-                                {{ $roleName }}
-                            </span>
-                        </td>
-                        <td class="px-4 py-3">
-                            @if($attendance->check_in)
-                                <span class="font-medium text-gray-900">
-                                    {{ \Carbon\Carbon::parse($attendance->check_in)->format('H:i') }}
+                <tbody class="text-sm">
+                    @foreach($detailedAttendances as $a)
+                        @php
+                            // Ambil data panen berdasarkan attendance
+                            $panen = \App\Models\CatatanPanen::where('id_pegawai', $a->user_id)
+                                ->whereDate('tanggal', $a->date)
+                                ->first();
+                        @endphp
+                        
+                        <tr class="border-b hover:bg-gray-50">
+                            @if($dataType == 'all')
+                            <td class="px-4 py-3 text-gray-700">{{ \Carbon\Carbon::parse($a->date)->format('d M Y') }}</td>
+                            @endif
+                            
+                            <!-- NAMA -->
+                            <td class="px-4 py-3 font-medium text-gray-900">{{ $a->user?->name ?? 'Nama Tidak Diketahui' }}</td>
+                            
+                            <!-- ROLE -->
+                            <td class="px-4 py-3">
+                                <span class="px-2 py-1 rounded-full bg-blue-100 text-blue-600 text-xs capitalize">
+                                    {{ $a->user?->role ?? 'unknown' }}
                                 </span>
-                            @else
+                            </td>
+                            
+                            <!-- CHECK IN -->
+                            <td class="px-4 py-3 text-gray-700">
+                                @if($a->check_in)
+                                    <div class="flex flex-col">
+                                        <span class="font-semibold">{{ \Carbon\Carbon::parse($a->check_in)->format('H:i') }}</span>
+                                        @if($a->check_in_location)
+                                        <span class="text-xs text-gray-400 truncate max-w-[120px]" title="{{ $a->check_in_location }}">
+                                            {{ Str::limit($a->check_in_location, 20) }}
+                                        </span>
+                                        @endif
+                                    </div>
+                                @else
+                                    <span class="text-gray-400">-</span>
+                                @endif
+                            </td>
+                            
+                            <!-- CHECK OUT -->
+                            <td class="px-4 py-3 text-gray-700">
+                                @if($a->check_out)
+                                    <div class="flex flex-col">
+                                        <span class="font-semibold">{{ \Carbon\Carbon::parse($a->check_out)->format('H:i') }}</span>
+                                        @if($a->check_out_location)
+                                        <span class="text-xs text-gray-400 truncate max-w-[120px]" title="{{ $a->check_out_location }}">
+                                            {{ Str::limit($a->check_out_location, 20) }}
+                                        </span>
+                                        @endif
+                                    </div>
+                                @else
+                                    <span class="text-yellow-500 font-medium text-sm">Belum Checkout</span>
+                                @endif
+                            </td>
+                            
+                            <!-- BERAT PANEN -->
+                            <td class="px-4 py-3">
+                                @if($hasPalmAccess && $panen && $panen->berat_kg)
+                                    <div class="font-semibold text-green-700">{{ number_format($panen->berat_kg, 1) }} kg</div>
+                                @else
+                                    <span class="text-gray-400">-</span>
+                                @endif
+                            </td>
+                            
+                            <!-- KETERANGAN PANEN -->
+                            <td class="px-4 py-3 text-gray-700">
+                                @if($panen && $panen->keterangan)
+                                    <span class="text-xs">{{ $panen->keterangan }}</span>
+                                @else
+                                    <span class="text-gray-400">-</span>
+                                @endif
+                            </td>
+                            
+                            <!-- STATUS ABSENSI -->
+                            <td class="px-4 py-3">
+                                @if($a->status == 'tepat waktu')
+                                <span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs">Tepat Waktu</span>
+                                @elseif($a->status == 'terlambat')
+                                <span class="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs">Terlambat</span>
+                                @elseif($a->status == 'cuti')
+                                <span class="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs">Cuti</span>
+                                @else
+                                <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">Belum Absen</span>
+                                @endif
+                            </td>
+                            
+                            <!-- FOTO PANEN -->
+                            <td class="px-4 py-3">
+                                @if($panen && $panen->foto_panen)
+                                <a href="{{ asset('storage/'.$panen->foto_panen) }}" 
+                                    target="_blank" 
+                                    class="inline-flex items-center gap-1 text-blue-600 hover:underline text-sm">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    Lihat
+                                </a>
+                                @else
                                 <span class="text-gray-400">-</span>
-                            @endif
-                        </td>
-                        <td class="px-4 py-3">
-                            @if($attendance->check_out)
-                                <span class="font-medium text-gray-900">
-                                    {{ \Carbon\Carbon::parse($attendance->check_out)->format('H:i') }}
-                                </span>
-                            @else
-                                <span class="text-gray-400">Belum checkout</span>
-                            @endif
-                        </td>
-                        
-                        @if($showPalmTable)
-                        <td class="px-4 py-3">
-                            @php
-                                $produksi = \App\Models\CatatanPanen::where('id_pegawai', $attendance->user_id)
-                                    ->whereDate('tanggal', $attendance->date)
-                                    ->sum('berat_kg');
-                            @endphp
-                            <span class="font-bold {{ $produksi > 0 ? 'text-green-700' : 'text-gray-500' }}">
-                                {{ $produksi > 0 ? number_format($produksi, 1) . ' kg' : '-' }}
-                            </span>
-                        </td>
-                        @endif
-                        
-                        <!-- Kolom Status dihapus dari sini juga -->
-                        <td class="px-4 py-3">
-                            @if($attendance->checkout_photo_path)
-                            <a href="{{ asset('storage/'.$attendance->checkout_photo_path) }}" 
-                               target="_blank" 
-                               class="inline-flex items-center px-3 py-1 bg-blue-50 text-blue-700 rounded-lg text-sm font-medium hover:bg-blue-100 transition">
-                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                </svg>
-                                Lihat Foto
-                            </a>
-                            @else
-                            <span class="text-gray-400">-</span>
-                            @endif
-                        </td>
-                    </tr>
+                                @endif
+                            </td>
+                        </tr>
                     @endforeach
                 </tbody>
             </table>
         </div>
 
-        <div class="mt-6 flex items-center justify-between">
-            <div class="text-sm text-gray-500">
-                Halaman {{ $detailedAttendances->currentPage() }} dari {{ $detailedAttendances->lastPage() }}
-            </div>
-            <div>
-                {{ $detailedAttendances->links() }}
+        <!-- SUMMARY TABLE -->
+        <div class="mt-6 bg-blue-50 p-4 rounded-lg">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-sm text-gray-600">
+                        @if($dataType == 'today')
+                        Total Kehadiran Hari Ini: 
+                        <span class="font-bold text-blue-700">{{ $detailedAttendances->total() }} orang</span>
+                        @else
+                        Total Data: 
+                        <span class="font-bold text-blue-700">{{ $detailedAttendances->total() }} data</span>
+                        @endif
+                    </p>
+                    <p class="text-xs text-gray-500 mt-1">
+                        Data diupdate terakhir: {{ now()->format('H:i') }}
+                    </p>
+                </div>
+                
+                @if($dataType == 'today' && $detailedAttendances->total() > 0)
+                <div class="text-right">
+                    <p class="text-sm text-gray-600">
+                        Belum Checkout: 
+                        <span class="font-bold text-yellow-600">
+                            {{ $detailedAttendances->whereNull('check_out')->count() }} orang
+                        </span>
+                    </p>
+                </div>
+                @endif
             </div>
         </div>
 
+        <div class="mt-4">
+            {{ $detailedAttendances->links() }}
+        </div>
+
         @else
-        <div class="h-64 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-xl">
-            <svg class="w-20 h-20 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        <!-- TIDAK ADA DATA -->
+        <div class="h-60 flex flex-col items-center justify-center text-gray-400">
+            @if($dataType == 'today')
+            <svg class="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" 
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-            <p class="text-lg text-gray-500 font-medium mb-2">Tidak ada data laporan</p>
-            <p class="text-sm text-gray-400">Coba gunakan filter yang berbeda atau periode waktu lain</p>
+            <p class="text-lg font-medium mb-1">Belum ada absensi hari ini</p>
+            <p class="text-sm">Data kehadiran akan muncul setelah pekerja melakukan check-in</p>
+            @else
+            <svg class="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" 
+                      d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <p class="text-lg font-medium mb-1">Tidak ada data untuk periode ini</p>
+            <p class="text-sm">Coba ubah filter tanggal atau role untuk melihat data</p>
+            @endif
         </div>
         @endif
 
     </div>
 
 </div>
-
-<!-- JavaScript untuk interaktivitas -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Auto-submit filter jika tanggal berubah
-    const startDateInput = document.querySelector('input[name="start_date"]');
-    const endDateInput = document.querySelector('input[name="end_date"]');
-    
-    [startDateInput, endDateInput].forEach(input => {
-        if (input) {
-            input.addEventListener('change', function() {
-                if (startDateInput.value && endDateInput.value) {
-                    // Validasi: start date tidak boleh lebih besar dari end date
-                    if (new Date(startDateInput.value) > new Date(endDateInput.value)) {
-                        alert('Tanggal mulai tidak boleh lebih besar dari tanggal akhir!');
-                        startDateInput.value = '';
-                        endDateInput.value = '';
-                        return;
-                    }
-                    // Auto submit setelah 1 detik
-                    setTimeout(() => {
-                        document.querySelector('form').submit();
-                    }, 1000);
-                }
-            });
-        }
-    });
-    
-    // Highlight row yang di-hover
-    const tableRows = document.querySelectorAll('tbody tr');
-    tableRows.forEach(row => {
-        row.addEventListener('mouseenter', function() {
-            this.style.backgroundColor = '#f9fafb';
-        });
-        row.addEventListener('mouseleave', function() {
-            this.style.backgroundColor = '';
-        });
-    });
-});
-</script>
-
-<style>
-/* Custom scrollbar untuk tabel */
-.overflow-x-auto::-webkit-scrollbar {
-    height: 6px;
-}
-
-.overflow-x-auto::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 10px;
-}
-
-.overflow-x-auto::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
-    border-radius: 10px;
-}
-
-.overflow-x-auto::-webkit-scrollbar-thumb:hover {
-    background: #a1a1a1;
-}
-
-/* Smooth transitions */
-.bg-gradient-to-r {
-    transition: width 0.5s ease-in-out;
-}
-
-/* Responsive table */
-@media (max-width: 768px) {
-    table {
-        font-size: 0.875rem;
-    }
-    
-    .px-4 {
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
-    }
-    
-    .py-3 {
-        padding-top: 0.5rem;
-        padding-bottom: 0.5rem;
-    }
-}
-</style>
 @endsection

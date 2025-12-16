@@ -61,7 +61,12 @@
                 <p class="text-gray-500">Jam Kerja Hari Ini</p>
                 <h2 class="text-2xl font-bold text-purple-600 mt-1">
                     @if($attendanceToday && $attendanceToday->check_out)
-                        {{ $attendanceToday->check_in->diffInHours($attendanceToday->check_out) }} jam
+                        @php
+                            $totalMinutes = $attendanceToday->check_in->diffInMinutes($attendanceToday->check_out);
+                            $hours = floor($totalMinutes / 60);
+                            $minutes = $totalMinutes % 60;
+                        @endphp
+                        {{ $hours }} jam {{ $minutes }} menit
                     @else
                         -
                     @endif
@@ -120,10 +125,25 @@
                         <p class="text-gray-700 mb-2">
                             <b>Waktu:</b> {{ $attendanceToday->check_out->format('H:i:s') }}
                         </p>
+                        
+                        {{-- INFO JAM KERJA UNTUK NON-SAWIT --}}
+                        @if(Auth::user()->role != 'user')
+                            <p class="text-gray-700 mt-3">
+                                <b>Jam Kerja:</b>
+                                @php
+                                    $totalMinutes = $attendanceToday->check_in->diffInMinutes($attendanceToday->check_out);
+                                    $hours = floor($totalMinutes / 60);
+                                    $minutes = $totalMinutes % 60;
+                                @endphp
+                                <span class="text-xl font-bold text-purple-600">
+                                    {{ $hours }} jam {{ $minutes }} menit
+                                </span>
+                            </p>
+                        @endif
 
                         {{-- PEKERJA SAWIT --}}
                         @if(Auth::user()->role == 'user')
-                            <p class="text-gray-700 mt-2">
+                            <p class="text-gray-700 mt-3">
                                 <b>Berat Sawit:</b>
                                 <span class="text-2xl font-bold text-green-600">
                                     {{ number_format($todayPalmWeight,1) }} kg

@@ -20,12 +20,23 @@
         <form action="{{ route('manager.log') }}" method="GET">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
 
-                {{-- Date --}}
+                {{-- Date Filter with Today Option --}}
                 <div>
                     <label class="block mb-2 text-sm font-medium text-gray-700">Tanggal</label>
-                    <input type="date" name="date"
+                    <select name="date_filter" 
+                            id="date_filter" 
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:outline-none mb-2">
+                        <option value="today" {{ request('date_filter') == 'today' ? 'selected' : '' }}>Hari Ini</option>
+                        <option value="custom" {{ request('date_filter') == 'custom' || request('date') ? 'selected' : '' }}>Pilih Tanggal</option>
+                        <option value="all" {{ request('date_filter') == 'all' ? 'selected' : '' }}>Semua Tanggal</option>
+                    </select>
+                    
+                    <input type="date" 
+                           name="date" 
+                           id="custom_date"
                            value="{{ request('date', date('Y-m-d')) }}"
-                           class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:outline-none">
+                           class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:outline-none {{ request('date_filter') != 'custom' && request('date_filter') != 'all' ? 'hidden' : '' }}"
+                           {{ request('date_filter') == 'custom' ? '' : 'disabled' }}>
                 </div>
 
                 {{-- Role --}}
@@ -85,17 +96,17 @@
 
         <div class="bg-white shadow-md rounded-xl p-6 text-center border-l-4 border-green-500">
             <p class="text-2xl font-bold text-green-600">{{ $totalHadir }}</p>
-            <p class="text-gray-600 text-sm mt-1">Hadir Hari Ini</p>
+            <p class="text-gray-600 text-sm mt-1">Hadir {{ request('date_filter') == 'all' ? 'Total' : 'Hari Ini' }}</p>
         </div>
 
         <div class="bg-white shadow-md rounded-xl p-6 text-center border-l-4 border-yellow-500">
             <p class="text-2xl font-bold text-yellow-600">{{ $totalTerlambat }}</p>
-            <p class="text-gray-600 text-sm mt-1">Terlambat</p>
+            <p class="text-gray-600 text-sm mt-1">Terlambat {{ request('date_filter') == 'all' ? 'Total' : 'Hari Ini' }}</p>
         </div>
 
         <div class="bg-white shadow-md rounded-xl p-6 text-center border-l-4 border-red-500">
             <p class="text-2xl font-bold text-red-600">{{ $totalAlpha }}</p>
-            <p class="text-gray-600 text-sm mt-1">Alpha</p>
+            <p class="text-gray-600 text-sm mt-1">Alpha {{ request('date_filter') == 'all' ? 'Total' : 'Hari Ini' }}</p>
         </div>
     </div>
 
@@ -105,7 +116,11 @@
         {{-- Table header --}}
         <div class="flex justify-between items-center mb-6">
             <h3 class="text-xl font-bold text-gray-800">
-                Log Absensi – {{ \Carbon\Carbon::parse(request('date'))->translatedFormat('d F Y') }}
+                @if(request('date_filter') == 'all')
+                    Log Absensi – Semua Tanggal
+                @else
+                    Log Absensi – {{ \Carbon\Carbon::parse($displayDate)->translatedFormat('d F Y') }}
+                @endif
             </h3>
 
             <p class="text-sm text-gray-500">
@@ -122,6 +137,7 @@
                         <tr>
                             <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Nama</th>
                             <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Role</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Tanggal</th>
                             <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Masuk</th>
                             <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Pulang</th>
                             <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Status</th>
@@ -148,6 +164,13 @@
                                     @elseif($attendance->user->role=='cleaning') bg-yellow-100 text-yellow-800
                                     @else bg-purple-100 text-purple-800 @endif">
                                     {{ ucfirst($attendance->user->role) }}
+                                </span>
+                            </td>
+
+                            {{-- Date --}}
+                            <td class="px-4 py-3">
+                                <span class="text-sm text-gray-600">
+                                    {{ \Carbon\Carbon::parse($attendance->attendance_date)->translatedFormat('d/m/Y') }}
                                 </span>
                             </td>
 
@@ -218,7 +241,7 @@
         @else
 
             <div class="text-center py-16">
-                <div class="text-5xl mb-3 text-gray-400">📊</div>
+                <div class="text-5xl mb-3 text-gray-400"></div>
                 <h3 class="text-lg font-semibold text-gray-600 mb-1">Tidak ada data absensi</h3>
                 <p class="text-gray-500 text-sm">
                     Tidak ditemukan data untuk tanggal atau filter yang dipilih.
@@ -229,4 +252,27 @@
     </div>
 
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const dateFilter = document.getElementById('date_filter');
+    const customDate = document.getElementById('custom_date');
+    
+    function toggleDateInput() {
+        if (dateFilter.value === 'custom') {
+            customDate.classList.remove('hidden');
+            customDate.disabled = false;
+        } else {
+            customDate.classList.add('hidden');
+            customDate.disabled = true;
+        }
+    }
+    
+    // Initialize on page load
+    toggleDateInput();
+    
+    // Add event listener
+    dateFilter.addEventListener('change', toggleDateInput);
+});
+</script>
 @endsection

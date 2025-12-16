@@ -36,9 +36,16 @@
         </div>
 
         <div class="bg-white rounded-xl shadow p-5 border-l-4 border-yellow-500">
-            <p class="text-gray-600">Rata-rata Jam Kerja</p>
+            <p class="text-gray-600">Jam Kerja Hari Ini</p>
             <h2 class="text-xl font-bold text-orange-600 mt-1">
-                {{ $averageHours ? number_format($averageHours, 1).' jam' : '-' }}
+                @if($attendanceToday && $attendanceToday->check_in && $attendanceToday->check_out)
+                    @php
+                        $hours = $attendanceToday->check_out->diffInMinutes($attendanceToday->check_in) / 60;
+                    @endphp
+                    {{ number_format($hours, 2) }} jam
+                @else
+                    -
+                @endif
             </h2>
         </div>
 
@@ -75,6 +82,15 @@
                     <b class="capitalize">{{ $attendanceToday->status ?? '-' }}</b>
                 </li>
 
+                @if ($attendanceToday->check_in && $attendanceToday->check_out)
+                <li>Jam Kerja:
+                    @php
+                        $hours = $attendanceToday->check_out->diffInMinutes($attendanceToday->check_in) / 60;
+                    @endphp
+                    <b>{{ number_format($hours, 2) }} jam</b>
+                </li>
+                @endif
+
                 @if ($attendanceToday->photo_path)
                 <li class="mt-4">
                     <img src="{{ asset('storage/'.$attendanceToday->photo_path) }}"
@@ -84,13 +100,11 @@
             </ul>
 
         @else
-
             <div class="text-center p-8 text-gray-500">
                 <div class="text-5xl mb-3"></div>
                 <p class="font-semibold">Anda belum melakukan absensi hari ini</p>
                 <p>Klik tab <b class="text-indigo-600">Absen</b> untuk mulai check in</p>
             </div>
-
         @endif
 
     </div>
@@ -165,7 +179,6 @@
 
     </div>
 </div>
-
 
 {{-- SCRIPT TAB + JAM --}}
 <script>

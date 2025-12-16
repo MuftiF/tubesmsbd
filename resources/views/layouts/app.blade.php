@@ -27,22 +27,52 @@
             <!-- NAV LINKS DESKTOP -->
             <div class="hidden md:flex space-x-4 items-center">
                 @auth
-                    @if(Auth::user()->role == 'admin')
-                        <a href="{{ route('admin.dashboard') }}" class="text-gray-600 font-semibold hover:text-blue-600">Admin</a>
-                        <a href="{{ route('admin.pegawai') }}" class="text-gray-600 font-semibold hover:text-blue-600">Pegawai</a>
-                        <a href="{{ route('admin.laporan') }}" class="text-gray-600 font-semibold hover:text-blue-600">Laporan</a>
-                        <a href="{{ route('admin.rapot.index') }}" class="text-gray-600 font-semibold hover:text-blue-600">Rapot</a>
-                        <a href="{{ route('admin.pengumuman') }}" class="text-gray-600 font-semibold hover:text-blue-600">Pengumuman</a>
-                    @elseif(Auth::user()->role == 'manager')
-                        <a href="{{ route('manager.dashboard') }}" class="text-gray-600 font-semibold hover:text-blue-600">Manager</a>
-                        <a href="{{ route('manager.laporan') }}" class="text-gray-600 font-semibold hover:text-blue-600">Laporan</a>
-                        <a href="{{ route('pengumuman.user') }}" class="text-gray-600 font-semibold hover:text-blue-600">Pengumuman</a>
-                    @elseif(Auth::user()->role == 'user')
-                        <a href="{{ route('user.dashboard') }}" class="text-gray-600 font-semibold hover:text-blue-600">Pekerja</a>
-                        <a href="{{ route('attendance.history') }}" class="text-gray-600 font-semibold hover:text-blue-600">Riwayat</a>
-                        <a href="{{ route('rapot.user') }}" class="text-gray-600 font-semibold hover:text-blue-600">Rapot</a>
-                        <a href="{{ route('pengumuman.user') }}" class="text-gray-600 font-semibold hover:text-blue-600">Pengumuman</a>
-                    @endif
+                    @switch(Auth::user()->role)
+                        @case('admin')
+                            <a href="{{ route('admin.dashboard') }}" class="text-gray-600 font-semibold hover:text-blue-600">Admin</a>
+                            <a href="{{ route('admin.pegawai') }}" class="text-gray-600 font-semibold hover:text-blue-600">Pegawai</a>
+                            <a href="{{ route('admin.laporan') }}" class="text-gray-600 font-semibold hover:text-blue-600">Laporan</a>
+                            <a href="{{ route('admin.rapot.index') }}" class="text-gray-600 font-semibold hover:text-blue-600">Rapot</a>
+                            <a href="{{ route('admin.pengumuman') }}" class="text-gray-600 font-semibold hover:text-blue-600">Pengumuman</a>
+                            @break
+                            
+                        @case('manager')
+                            <a href="{{ route('manager.dashboard') }}" class="text-gray-600 font-semibold hover:text-blue-600">Manager</a>
+                            <a href="{{ route('manager.laporan') }}" class="text-gray-600 font-semibold hover:text-blue-600">Laporan</a>
+                            <a href="{{ route('pengumuman.user') }}" class="text-gray-600 font-semibold hover:text-blue-600">Pengumuman</a>
+                            @break
+                            
+                        @case('user')
+                            <a href="{{ route('user.dashboard') }}" class="text-gray-600 font-semibold hover:text-blue-600">Pekerja</a>
+                            <a href="{{ route('attendance.history') }}" class="text-gray-600 font-semibold hover:text-blue-600">Riwayat</a>
+                            <a href="{{ route('rapot.user') }}" class="text-gray-600 font-semibold hover:text-blue-600">Rapot</a>
+                            <a href="{{ route('pengumuman.user') }}" class="text-gray-600 font-semibold hover:text-blue-600">Pengumuman</a>
+                            @break
+                            
+                        @case('security')
+                            <a href="{{ route('security.dashboard') }}" class="text-gray-600 font-semibold hover:text-blue-600">Security</a>
+                            <a href="{{ route('attendance.history') }}" class="text-gray-600 font-semibold hover:text-blue-600">Riwayat</a>
+                            <a href="{{ route('rapot.user') }}" class="text-gray-600 font-semibold hover:text-blue-600">Rapot</a>
+                            <a href="{{ route('pengumuman.user') }}" class="text-gray-600 font-semibold hover:text-blue-600">Pengumuman</a>
+                            @break
+                            
+                        @case('cleaning')
+                            <a href="{{ route('cleaning.dashboard') }}" class="text-gray-600 font-semibold hover:text-blue-600">Cleaning</a>
+                            <a href="{{ route('attendance.history') }}" class="text-gray-600 font-semibold hover:text-blue-600">Riwayat</a>
+                            <a href="{{ route('rapot.user') }}" class="text-gray-600 font-semibold hover:text-blue-600">Rapot</a>
+                            <a href="{{ route('pengumuman.user') }}" class="text-gray-600 font-semibold hover:text-blue-600">Pengumuman</a>
+                            @break
+                            
+                        @case('kantoran')
+                            <a href="{{ route('kantoran.dashboard') }}" class="text-gray-600 font-semibold hover:text-blue-600">Kantoran</a>
+                            <a href="{{ route('attendance.history') }}" class="text-gray-600 font-semibold hover:text-blue-600">Riwayat</a>
+                            <a href="{{ route('rapot.user') }}" class="text-gray-600 font-semibold hover:text-blue-600">Rapot</a>
+                            <a href="{{ route('pengumuman.user') }}" class="text-gray-600 font-semibold hover:text-blue-600">Pengumuman</a>
+                            @break
+                            
+                        @default
+                            <a href="{{ route('dashboard') }}" class="text-gray-600 font-semibold hover:text-blue-600">Dashboard</a>
+                    @endswitch
                 @endauth
             </div>
 
@@ -75,22 +105,53 @@
             </div>
 
             @auth
-                @if(Auth::user()->role == 'admin')
-                    <a href="{{ route('admin.dashboard') }}" class="text-gray-600 font-semibold hover:text-blue-600">Admin</a>
-                    <a href="{{ route('admin.pegawai') }}" class="text-gray-600 font-semibold hover:text-blue-600">Pegawai</a>
-                    <a href="{{ route('admin.laporan') }}" class="text-gray-600 font-semibold hover:text-blue-600">Laporan</a>
-                    <a href="{{ route('admin.rapot.index') }}" class="text-gray-600 font-semibold hover:text-blue-600">Rapot</a>
-                    <a href="{{ route('admin.pengumuman') }}" class="text-gray-600 font-semibold hover:text-blue-600">Pengumuman</a>
-                @elseif(Auth::user()->role == 'manager')
-                    <a href="{{ route('manager.dashboard') }}" class="text-gray-600 font-semibold hover:text-blue-600">Manager</a>
-                    <a href="{{ route('manager.laporan') }}" class="text-gray-600 font-semibold hover:text-blue-600">Laporan</a>
-                    <a href="{{ route('pengumuman.user') }}" class="text-gray-600 font-semibold hover:text-blue-600">Pengumuman</a>
-                @elseif(Auth::user()->role == 'user')
-                    <a href="{{ route('user.dashboard') }}" class="text-gray-600 font-semibold hover:text-blue-600">Pekerja</a>
-                    <a href="{{ route('attendance.history') }}" class="text-gray-600 font-semibold hover:text-blue-600">Riwayat</a>
-                    <a href="{{ route('rapot.user') }}" class="text-gray-600 font-semibold hover:text-blue-600">Rapot</a>
-                    <a href="{{ route('pengumuman.user') }}" class="text-gray-600 font-semibold hover:text-blue-600">Pengumuman</a>
-                @endif
+                @switch(Auth::user()->role)
+                    @case('admin')
+                        <a href="{{ route('admin.dashboard') }}" class="text-gray-600 font-semibold hover:text-blue-600">Admin</a>
+                        <a href="{{ route('admin.pegawai') }}" class="text-gray-600 font-semibold hover:text-blue-600">Pegawai</a>
+                        <a href="{{ route('admin.laporan') }}" class="text-gray-600 font-semibold hover:text-blue-600">Laporan</a>
+                        <a href="{{ route('admin.rapot.index') }}" class="text-gray-600 font-semibold hover:text-blue-600">Rapot</a>
+                        <a href="{{ route('admin.pengumuman') }}" class="text-gray-600 font-semibold hover:text-blue-600">Pengumuman</a>
+                        @break
+                        
+                    @case('manager')
+                        <a href="{{ route('manager.dashboard') }}" class="text-gray-600 font-semibold hover:text-blue-600">Manager</a>
+                        <a href="{{ route('manager.laporan') }}" class="text-gray-600 font-semibold hover:text-blue-600">Laporan</a>
+                        <a href="{{ route('pengumuman.user') }}" class="text-gray-600 font-semibold hover:text-blue-600">Pengumuman</a>
+                        @break
+                        
+                    @case('user')
+                        <a href="{{ route('user.dashboard') }}" class="text-gray-600 font-semibold hover:text-blue-600">Pekerja</a>
+                        <a href="{{ route('attendance.history') }}" class="text-gray-600 font-semibold hover:text-blue-600">Riwayat</a>
+                        <a href="{{ route('rapot.user') }}" class="text-gray-600 font-semibold hover:text-blue-600">Rapot</a>
+                        <a href="{{ route('pengumuman.user') }}" class="text-gray-600 font-semibold hover:text-blue-600">Pengumuman</a>
+                        @break
+                        
+                    @case('security')
+                        <a href="{{ route('security.dashboard') }}" class="text-gray-600 font-semibold hover:text-blue-600">Security</a>
+                        <a href="{{ route('attendance.history') }}" class="text-gray-600 font-semibold hover:text-blue-600">Riwayat</a>
+                        <a href="{{ route('rapot.user') }}" class="text-gray-600 font-semibold hover:text-blue-600">Rapot</a>
+                        <a href="{{ route('pengumuman.user') }}" class="text-gray-600 font-semibold hover:text-blue-600">Pengumuman</a>
+                        @break
+                        
+                    @case('cleaning')
+                        <a href="{{ route('cleaning.dashboard') }}" class="text-gray-600 font-semibold hover:text-blue-600">Cleaning</a>
+                        <a href="{{ route('attendance.history') }}" class="text-gray-600 font-semibold hover:text-blue-600">Riwayat</a>
+                        <a href="{{ route('rapot.user') }}" class="text-gray-600 font-semibold hover:text-blue-600">Rapot</a>
+                        <a href="{{ route('pengumuman.user') }}" class="text-gray-600 font-semibold hover:text-blue-600">Pengumuman</a>
+                        @break
+                        
+                    @case('kantoran')
+                        <a href="{{ route('kantoran.dashboard') }}" class="text-gray-600 font-semibold hover:text-blue-600">Kantoran</a>
+                        <a href="{{ route('attendance.history') }}" class="text-gray-600 font-semibold hover:text-blue-600">Riwayat</a>
+                        <a href="{{ route('rapot.user') }}" class="text-gray-600 font-semibold hover:text-blue-600">Rapot</a>
+                        <a href="{{ route('pengumuman.user') }}" class="text-gray-600 font-semibold hover:text-blue-600">Pengumuman</a>
+                        @break
+                        
+                    @default
+                        <a href="{{ route('dashboard') }}" class="text-gray-600 font-semibold hover:text-blue-600">Dashboard</a>
+                @endswitch
+                
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
                     <button class="w-full bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-semibold mt-4">Logout</button>

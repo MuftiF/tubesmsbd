@@ -13,33 +13,25 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@gmail.com',
-            'role' => 'user',
-            'email_verified_at' => now(),
+        // User tunggal
+        User::create([
+            'name'     => 'Test User',
+            'role'     => 'user',
             'password' => Hash::make('password123'),
-            'remember_token' => \Illuminate\Support\Str::random(10),
         ]);
 
-        // Atau untuk multiple users
+        // Multiple users
         $users = [
             [
-                'name' => 'Admin User',
-                'email' => 'admin@gmail.com',
-                'role' => 'admin',
-                'email_verified_at' => now(),
+                'name'     => 'Admin User',
+                'role'     => 'admin',
                 'password' => Hash::make('admin123'),
-                'remember_token' => \Illuminate\Support\Str::random(10),
             ],
             [
-                'name' => 'Regular User',
-                'email' => 'user@gmail.com',
-                'role' => 'user',
-                'email_verified_at' => now(),
+                'name'     => 'Regular User',
+                'role'     => 'user',
                 'password' => Hash::make('user1234'),
-                'remember_token' => \Illuminate\Support\Str::random(10),
-            ]
+            ],
         ];
 
         foreach ($users as $user) {

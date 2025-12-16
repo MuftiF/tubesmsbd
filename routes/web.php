@@ -13,14 +13,12 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 
-
 // ======================================================================
 // PUBLIC ROUTES
 // ======================================================================
-Route::get('/', fn() => view('welcome'));
+Route::get('/', fn() => view('welcome'))->name('welcome');
 Route::get('/home', fn() => view('home'))->name('home');
 Route::get('/login-pegawai', fn() => view('login-pegawai'))->name('login.pegawai');
-
 
 // ======================================================================
 // AUTH ROUTES (GUEST)
@@ -39,21 +37,23 @@ Route::middleware('guest')->group(function () {
     Route::post('reset-password', [NewPasswordController::class, 'store'])->name('password.store');
 });
 
-
 // ======================================================================
 // AUTH ROUTES (AUTHENTICATED)
 // ======================================================================
 Route::middleware('auth')->group(function () {
-
+    // ======================================================================
+    // AUTH UTILITIES
+    // ======================================================================
     Route::get('confirm-password', [ConfirmablePasswordController::class, 'show'])->name('password.confirm');
     Route::post('confirm-password', [ConfirmablePasswordController::class, 'store']);
 
     Route::put('password', [PasswordController::class, 'update'])->name('password.update');
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
-    // Dashboard otomatis berdasarkan role
+    // ======================================================================
+    // DASHBOARD
+    // ======================================================================
     Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
-
 
     // ======================================================================
     // PROFILE
@@ -61,7 +61,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
 
     // ======================================================================
     // ATTENDANCE
@@ -71,9 +70,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/attendance/checkout', [AttendanceController::class, 'checkout'])->name('attendance.checkout');
     Route::get('/attendance/history', [AttendanceController::class, 'history'])->name('attendance.history');
 
-
     // ======================================================================
-    // USER ROUTES
+    // USER DASHBOARDS (BASED ON ROLE)
     // ======================================================================
     Route::prefix('user')->group(function () {
         Route::get('/dashboard', [HomeController::class, 'userDashboard'])->name('user.dashboard');
@@ -92,7 +90,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/dashboard', [HomeController::class, 'kantoranDashboard'])->name('kantoran.dashboard');
     });
 
-
     // ======================================================================
     // MANAGER ROUTES
     // ======================================================================
@@ -101,96 +98,99 @@ Route::middleware('auth')->group(function () {
         Route::get('/laporan', [HomeController::class, 'laporanManager'])->name('manager.laporan');
         Route::get('/log', [HomeController::class, 'managerLog'])->name('manager.log');
 
+        // Pegawai Management
         Route::get('/pegawai', [HomeController::class, 'managerPegawai'])->name('manager.pegawai');
         Route::post('/pegawai', [HomeController::class, 'managerTambahPegawai'])->name('manager.pegawai.tambah');
         Route::put('/pegawai/{id}', [HomeController::class, 'managerUpdatePegawai'])->name('manager.pegawai.update');
         Route::delete('/pegawai/{id}', [HomeController::class, 'managerHapusPegawai'])->name('manager.pegawai.hapus');
 
-        Route::get('/pengumuman', [AnnouncementController::class, 'indexManager'])->name('manager.pengumuman.index');
+        // Pengumuman Management
+        Route::get('/pengumuman', [AnnouncementController::class, 'indexManager'])->name('manager.pengumuman');
         Route::post('/pengumuman', [AnnouncementController::class, 'storeManager'])->name('manager.pengumuman.store');
         Route::delete('/pengumuman/{id}', [AnnouncementController::class, 'destroyManager'])->name('manager.pengumuman.delete');
     });
 
-
     // ======================================================================
     // ADMIN ROUTES
     // ======================================================================
-    Route::prefix('admin')->group(function () {
-        Route::get('/dashboard', [HomeController::class, 'adminDashboard'])->name('admin.dashboard');
-        Route::get('/pegawai', [HomeController::class, 'kelolaPegawai'])->name('admin.pegawai');
-        Route::get('/laporan', [HomeController::class, 'laporanAdmin'])->name('admin.laporan');
+    Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function () {
+        // Dashboard & Laporan
+        Route::get('/dashboard', [HomeController::class, 'adminDashboard'])->name('dashboard');
+        Route::get('/pegawai', [HomeController::class, 'kelolaPegawai'])->name('pegawai');
+        Route::get('/laporan', [HomeController::class, 'laporanAdmin'])->name('laporan');
 
-        // Rapot Admin
-        Route::get('/rapot', [RapotController::class, 'indexAdmin'])->name('admin.rapot.index');
-        Route::post('/rapot/generate/{user}', [RapotController::class, 'generate'])->name('admin.rapot.generate');
-        Route::post('/rapot/generate/pdf/{id}', [RapotController::class, 'generatePDF'])->name('admin.rapot.generate.pdf');
-        Route::post('/rapot/generate/excel/{id}', [RapotController::class, 'generateExcel'])->name('admin.rapot.generate.excel');
+        // ======================================================================
+        // RAPOT MANAGEMENT - ROUTE YANG BENAR
+        // ======================================================================
+        Route::prefix('rapot')->name('rapot.')->group(function () {
+            // List pegawai untuk evaluasi
+            Route::get('/', [RapotController::class, 'index'])->name('index');
+            
+            // Form evaluasi kinerja
+            Route::get('/evaluasi/{user}', [RapotController::class, 'create'])->name('evaluasi.create');
+            
+            // Simpan evaluasi kinerja - GUNAKAN 'store' bukan 'storeEvaluasi'
+            Route::post('/evaluasi/{user}', [RapotController::class, 'store'])->name('evaluasi.store');
+            
+            // Tampilkan detail evaluasi
+            Route::get('/evaluasi/show/{rapot}', [RapotController::class, 'showEvaluasi'])->name('evaluasi.show');
+            
+            // Generate rapot otomatis (standar)
+            Route::post('/generate/{user}', [RapotController::class, 'generateRapot'])->name('generate');
+            
+            // Detail rapot umum
+            Route::get('/{rapot}', [RapotController::class, 'show'])->name('show');
+            
+            // Edit rapot
+            Route::get('/{rapot}/edit', [RapotController::class, 'edit'])->name('edit');
+            
+            // Update rapot
+            Route::put('/{rapot}', [RapotController::class, 'update'])->name('update');
+            
+            // Hapus rapot
+            Route::delete('/{rapot}', [RapotController::class, 'destroy'])->name('delete');
+            
+            // Export PDF
+            Route::get('/{rapot}/export-pdf', [RapotController::class, 'exportPDF'])->name('export.pdf');
+        });
 
-        // Pengumuman Admin
-        Route::get('/pengumuman', [AnnouncementController::class, 'indexAdmin'])->name('admin.pengumuman');
-        Route::post('/pengumuman', [AnnouncementController::class, 'store'])->name('admin.pengumuman.store');
-        Route::delete('/pengumuman/{id}', [AnnouncementController::class, 'destroy'])->name('admin.pengumuman.delete');
+        // ======================================================================
+        // PENGUMUMAN MANAGEMENT
+        // ======================================================================
+        Route::prefix('pengumuman')->name('pengumuman.')->group(function () {
+            Route::get('/', [AnnouncementController::class, 'indexAdmin'])->name('index');
+            Route::post('/', [AnnouncementController::class, 'store'])->name('store');
+            Route::delete('/{id}', [AnnouncementController::class, 'destroy'])->name('delete');
+        });
+        
+        // Alias untuk route admin.pengumuman
+        Route::get('/pengumuman', [AnnouncementController::class, 'indexAdmin'])->name('pengumuman');
     });
 
-
     // ======================================================================
-    // USER RAPOT & PENGUMUMAN
+    // SHARED USER ROUTES (Semua user bisa akses)
     // ======================================================================
-    Route::get('/rapot', [RapotController::class, 'indexUser'])->name('rapot.user');
+    
+    // RAPOT USER
+    Route::get('/rapot-saya', [RapotController::class, 'indexUser'])->name('rapot.saya');
+    Route::get('/rapot-user', [RapotController::class, 'indexUser'])->name('rapot.user');
+    
+    // Detail rapot untuk user
+    Route::get('/rapot/{rapot}', [RapotController::class, 'show'])->name('rapot.show');
+    Route::get('/rapot-evaluasi/{rapot}', [RapotController::class, 'showEvaluasi'])->name('rapot.evaluasi.show');
+    
+    // PENGUMUMAN USER
     Route::get('/pengumuman', [AnnouncementController::class, 'showToUsers'])->name('pengumuman.user');
 
-
     // ======================================================================
-    // MANAGER PENGUMUMAN (ROLE VALIDATION)
+    // EXPORT ROUTES (Admin only)
     // ======================================================================
-    Route::middleware(['role:manager'])->group(function () {
-        Route::get('/manager/pengumuman', [AnnouncementController::class, 'indexManager'])->name('manager.pengumuman.index');
-        Route::post('/manager/pengumuman', [AnnouncementController::class, 'storeManager'])->name('manager.pengumuman.store');
-        Route::delete('/manager/pengumuman/{id}', [AnnouncementController::class, 'destroyManager'])->name('manager.pengumuman.delete');
+    Route::middleware(['admin'])->prefix('export')->group(function () {
+        Route::get('/all', [HomeController::class, 'exportAllCsv'])->name('export.all');
+        Route::get('/all-data', [HomeController::class, 'exportAllCsvAllTime'])->name('export.all.everything');
+        Route::get('/sheet-absen', [HomeController::class, 'exportSheetAbsen'])->name('export.sheet.absen');
     });
 
-
-    // ======================================================================
-    // RAPOT ADVANCED ROUTES
-    // ======================================================================
-    Route::get('/my-rapot', [RapotController::class, 'indexUser'])->name('rapot.user');
-
-    Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function () {
-        Route::get('/rapot', [RapotController::class, 'indexAdmin'])->name('rapot.index');
-        Route::post('/rapot/generate', [RapotController::class, 'generate'])->name('rapot.generate');
-        Route::post('/rapot/generate-batch', [RapotController::class, 'generateBatch'])->name('rapot.generate.batch');
-
-        Route::get('/rapot/{rapot}', [RapotController::class, 'show'])->name('rapot.show');
-        Route::get('/rapot/{rapot}/edit', [RapotController::class, 'edit'])->name('rapot.edit');
-
-        Route::put('/rapot/{rapot}', [RapotController::class, 'update'])->name('rapot.update');
-        Route::delete('/rapot/{rapot}', [RapotController::class, 'destroy'])->name('rapot.delete');
-
-        Route::get('/rapot/{rapot}/export-pdf', [RapotController::class, 'exportPDF'])->name('rapot.export.pdf');
-        Route::get('/rapot/{rapot}/export-excel', [RapotController::class, 'exportExcel'])->name('rapot.export.excel');
-        Route::get('/rapot/export-all', [RapotController::class, 'exportAllExcel'])->name('rapot.export.all');
-
-        Route::post('/rapot/{rapot}/regenerate', [RapotController::class, 'regenerate'])->name('rapot.regenerate');
-    });
-    
-    // Routes untuk generate rapor
-Route::prefix('admin')->group(function () {
-    Route::get('/rapot', [RapotController::class, 'index'])->name('admin.rapot.index');
-    Route::post('/rapot/generate/{user}', [RapotController::class, 'generate'])->name('admin.rapot.generate');
-    Route::get('/rapot/download/{filename}', [RapotController::class, 'download'])->name('admin.rapot.download');
-    Route::get('/rapot/view/{filename}', [RapotController::class, 'view'])->name('admin.rapot.view');
-    Route::get('/admin/rapot', [RapotController::class, 'index'])->name('rapot.index');
-
-});
-
-Route::get('/export/all', [HomeController::class, 'exportAllCsv'])->name('export.all');
-
-Route::get('/export/all-data', [HomeController::class, 'exportAllCsvAllTime'])
-    ->name('export.all.everything');
-
-Route::get('/export-sheet-absen', [HomeController::class, 'exportSheetAbsen'])
-    ->name('export.sheet.absen');
-
-
-
+    // routes/web.php
+Route::get('/test-perhitungan', [RapotController::class, 'testPerhitungan']);
 });

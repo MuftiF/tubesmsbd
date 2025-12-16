@@ -8,17 +8,25 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // TAMBAHKAN INI: Cek dulu apakah tabel sudah ada
-        if (!Schema::hasTable('announcements')) {
-            Schema::create('announcements', function (Blueprint $table) {
-                $table->id();
-                $table->string('judul');
-                $table->text('isi');
-                $table->enum('target', ['public', 'user', 'all'])->default('all');
-                $table->enum('status', ['active', 'inactive'])->default('active');
-                $table->timestamps();
-            });
-        }
+        Schema::create('announcements', function (Blueprint $table) {
+            $table->id();
+            $table->string('judul');
+            $table->text('isi');
+
+            // target audience
+            $table->string('target')->default('all'); // public | user | all
+
+            // status announcement
+            $table->string('status')->default('active'); // active | inactive
+
+            // pembuat announcement
+            $table->foreignId('created_by')
+                  ->nullable()
+                  ->constrained('users')
+                  ->nullOnDelete();
+
+            $table->timestamps();
+        });
     }
 
     public function down(): void
