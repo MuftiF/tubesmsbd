@@ -183,9 +183,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/pengumuman', [AnnouncementController::class, 'showToUsers'])->name('pengumuman.user');
 
     // ======================================================================
-    // EXPORT ROUTES (Admin only)
+    // EXPORT ROUTES (Admin & Manager only)
     // ======================================================================
-    Route::middleware(['admin'])->prefix('export')->group(function () {
+    Route::middleware(['auth'])->prefix('export')->group(function () {
+        // Cek hak akses akan dilakukan di Controller
         Route::get('/all', [HomeController::class, 'exportAllCsv'])->name('export.all');
         Route::get('/all-data', [HomeController::class, 'exportAllCsvAllTime'])->name('export.all.everything');
         Route::get('/sheet-absen', [HomeController::class, 'exportSheetAbsen'])->name('export.sheet.absen');

@@ -1056,35 +1056,80 @@ class HomeController extends Controller
         return redirect()->route('user.dashboard')->with('success', 'Absen berhasil!');
     }
 
-    public function exportAllCsv()
-    {
-        $from = request('from');
-        $to   = request('to');
-
-        return Excel::download(
-            new RekapSemuaExport($from, $to),
-            "rekap_semua_{$from}_{$to}.xlsx"
-        );
+public function exportAllCsv()
+{
+    // Cek apakah user adalah admin atau manager
+    $user = Auth::user();
+    if (!in_array($user->role, ['admin', 'manager'])) {
+        abort(403, 'Unauthorized action.');
     }
 
-    public function exportAllCsvAllTime()
-    {
-        return Excel::download(
-            new RekapSemuaExport(),
-            "rekap_semua_data.xlsx"
-        );
+    $from = request('from');
+    $to   = request('to');
+
+    // Validasi tanggal
+    if (!$from || !$to) {
+        return redirect()->back()->with('error', 'Harap pilih tanggal mulai dan tanggal akhir');
     }
 
-    public function exportSheetAbsen()
-    {
-        $from = request('from');
-        $to   = request('to');
-
-        return Excel::download(
-            new SheetAbsenExport($from, $to),
-            "rekap_absen_per_pegawai_{$from}_{$to}.xlsx"
-        );
+    try {
+        \Carbon\Carbon::parse($from);
+        \Carbon\Carbon::parse($to);
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', 'Format tanggal tidak valid');
     }
+
+    return Excel::download(
+        new \App\Exports\RekapSemuaExport($from, $to),
+        "rekap_semua_{$from}_{$to}.xlsx"
+    );
+}
+
+public function exportAllCsvAllTime()
+{
+    // Cek apakah user adalah admin atau manager
+    $user = Auth::user();
+    if (!in_array($user->role, ['admin', 'manager'])) {
+        abort(403, 'Unauthorized action.');
+    }
+
+    // Ambil tanggal pertama dan terakhir dari database
+    $firstAttendance = \App\Models\Attendance::min('date');
+    $lastAttendance = \App\Models\Attendance::max('date');
+    
+    $firstPanen = \App\Models\CatatanPanen::min('tanggal');
+    $lastPanen = \App\Models\CatatanPanen::max('tanggal');
+    
+    $from = min($firstAttendance, $firstPanen) ?: now()->subMonth()->format('Y-m-d');
+    $to = max($lastAttendance, $lastPanen) ?: now()->format('Y-m-d');
+
+    return Excel::download(
+        new \App\Exports\RekapSemuaExport($from, $to),
+        "rekap_semua_data.xlsx"
+    );
+}
+
+public function exportSheetAbsen()
+{
+    // Cek apakah user adalah admin atau manager
+    $user = Auth::user();
+    if (!in_array($user->role, ['admin', 'manager'])) {
+        abort(403, 'Unauthorized action.');
+    }
+
+    $from = request('from');
+    $to   = request('to');
+
+    // Validasi tanggal
+    if (!$from || !$to) {
+        return redirect()->back()->with('error', 'Harap pilih tanggal mulai dan tanggal akhir');
+    }
+
+    return Excel::download(
+        new \App\Exports\SheetAbsenExport($from, $to),
+        "rekap_absen_per_pegawai_{$from}_{$to}.xlsx"
+    );
+}
 
     public function userInputPanen(Request $request)
     {

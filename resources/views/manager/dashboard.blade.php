@@ -189,31 +189,36 @@
     </div>
 
     {{-- EXPORT DATA --}}
-    <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100 mb-10">
-        <h3 class="text-lg font-semibold text-gray-800 mb-4">Export Data Semua Aktivitas</h3>
-        <form action="{{ route('export.all') }}" method="GET"
-              class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
-            <div>
-                <label class="text-sm font-medium text-gray-700">Dari Tanggal</label>
-                <input type="date" name="from" required
-                       class="w-full mt-1 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            </div>
-            <div>
-                <label class="text-sm font-medium text-gray-700">Sampai Tanggal</label>
-                <input type="date" name="to" required
-                       class="w-full mt-1 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            </div>
+<div class="bg-white rounded-xl shadow-md p-6 border border-gray-100 mb-10">
+    <h3 class="text-lg font-semibold text-gray-800 mb-4">Export Data Semua Aktivitas</h3>
+    
+    {{-- OPTION 1: Gunakan route umum --}}
+    <form action="{{ route('export.all') }}" method="GET"
+          class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+        <div>
+            <label class="text-sm font-medium text-gray-700">Dari Tanggal</label>
+            <input type="date" name="from" required
+                   value="{{ date('Y-m-d', strtotime('-1 week')) }}"
+                   class="w-full mt-1 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <div>
+            <label class="text-sm font-medium text-gray-700">Sampai Tanggal</label>
+            <input type="date" name="to" required
+                   value="{{ date('Y-m-d') }}"
+                   class="w-full mt-1 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <div class="flex flex-col gap-2">
             <button type="submit"
                 class="bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg px-4 py-3 shadow-sm transform hover:scale-[1.03] transition">
                 📥 Export CSV
             </button>
             <a href="{{ route('export.all.everything') }}"
-                class="w-full bg-gray-700 hover:bg-gray-800 text-white font-semibold rounded-lg px-4 py-3 shadow-sm transform hover:scale-[1.02] transition text-center">
-                    Export Semua Data (All Time)
-                </a>
-
-        </form>
-    </div>
+                class="bg-gray-700 hover:bg-gray-800 text-white font-semibold rounded-lg px-4 py-3 shadow-sm transform hover:scale-[1.02] transition text-center">
+                Export Semua Data (All Time)
+            </a>
+        </div>
+    </form>
+</div>
 
     {{-- TEAM ACTIVITY --}}
     <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
