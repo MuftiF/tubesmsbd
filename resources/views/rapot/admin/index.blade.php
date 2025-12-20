@@ -121,10 +121,6 @@
                                class="px-2 py-1 text-gray-500 hover:text-blue-600">
                                 Lihat
                             </a>
-                            <a href="{{ route('admin.rapot.export.pdf', $rapot->id) }}"
-                               class="px-2 py-1 text-gray-500 hover:text-red-600">
-                                PDF
-                            </a>
                         </div>
                     </div>
                     <div class="mt-2 text-xs text-gray-400 flex justify-between">

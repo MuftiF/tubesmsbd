@@ -35,6 +35,42 @@
         </div>
     </div>
 
+    <!-- PESAN SUKSES (TAMPIL SETELAH UPLOAD) -->
+    @if(session('success'))
+    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-xl mb-6 shadow" id="successMessage">
+        <div class="flex items-center">
+            <div class="py-1">
+                <svg class="fill-current h-6 w-6 text-green-500 mr-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <path d="M10 20a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm-1-11.414l-3.293-3.293-1.414 1.414L9 10.414l6.707-6.707-1.414-1.414L9 10.586z"/>
+                </svg>
+            </div>
+            <div>
+                <p class="font-bold">Berhasil!</p>
+                <p class="text-sm">{{ session('success') }}</p>
+                @if(session('photos_count'))
+                <p class="text-sm mt-1">
+                    📸 {{ session('photos_count') }} foto telah diunggah
+                    @if(session('photos_count') == 1)
+                        ({{ session('photo_names')[0] }})
+                    @else
+                        <span class="block mt-1 text-xs">
+                            @foreach(session('photo_names') as $photo)
+                                • {{ $photo }}<br>
+                            @endforeach
+                        </span>
+                    @endif
+                </p>
+                @endif
+            </div>
+            <div class="ml-auto">
+                <button type="button" onclick="document.getElementById('successMessage').remove()">
+                    <span class="text-green-700 text-xl">&times;</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    @endif
+
     <!-- ACTION BUTTONS -->
     <div class="space-y-4">
 
@@ -42,28 +78,65 @@
         <!-- BELUM CHECK IN -->
 
         <form action="{{ route('attendance.store') }}" method="POST" enctype="multipart/form-data"
-            class="bg-white rounded-xl shadow-xl p-6">
+            class="bg-white rounded-xl shadow-xl p-6" id="uploadForm">
             @csrf
 
             <h3 class="text-lg font-bold text-gray-800 mb-4 text-center">Dokumentasi Lapangan</h3>
 
             <!-- MULTIPLE FOTO -->
-            <label class="font-semibold text-gray-700">Upload Foto</label>
-            <p class="text-sm text-gray-500 mb-2">Boleh satu, boleh lebih. Tidak wajib banyak.</p>
+            <div class="mb-6">
+                <label class="font-semibold text-gray-700 block mb-2">Upload Foto</label>
+                <p class="text-sm text-gray-500 mb-4">Boleh satu, boleh lebih. Maksimal 5 foto. Ukuran maksimal 2MB per foto.</p>
+                
+                <!-- PREVIEW FOTO -->
+                <div class="grid grid-cols-3 gap-2 mb-4" id="photoPreview">
+                    <!-- Foto akan muncul di sini -->
+                </div>
 
-            <input type="file" 
-                   name="photos[]" 
-                   multiple 
-                   accept="image/*"
-                   class="w-full mb-4 border border-gray-300 rounded-lg p-2">
+                <!-- INPUT FILE DENGAN STYLING -->
+                <div class="relative border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-blue-400 transition-colors duration-200" 
+                     onclick="document.getElementById('photosInput').click()">
+                    <p class="text-gray-600 font-medium">Klik untuk memilih foto</p>
+                    <p class="text-sm text-gray-500 mt-1">atau drag & drop</p>
+                    <p class="text-xs text-gray-400 mt-2">Format: JPG, PNG, JPEG</p>
+                </div>
 
-            @error('photos') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
-            @error('photos.*') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
+                <input type="file" 
+                       id="photosInput"
+                       name="photos[]" 
+                       multiple 
+                       accept="image/*"
+                       class="hidden"
+                       onchange="previewPhotos(event)">
+                
+                <!-- COUNTER -->
+                <div class="text-right mt-2">
+                    <span id="fileCounter" class="text-sm text-gray-500">0 foto terpilih</span>
+                </div>
+
+                @error('photos') 
+                    <p class="text-red-600 text-sm mt-2">{{ $message }}</p> 
+                @enderror
+                @error('photos.*') 
+                    <p class="text-red-600 text-sm mt-2">{{ $message }}</p> 
+                @enderror
+            </div>
+
+            <!-- LOADING INDICATOR -->
+            <div id="loading" class="hidden mb-4">
+                <div class="flex items-center justify-center space-x-2">
+                    <div class="w-4 h-4 bg-blue-600 rounded-full animate-bounce"></div>
+                    <div class="w-4 h-4 bg-blue-600 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                    <div class="w-4 h-4 bg-blue-600 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                </div>
+                <p class="text-center text-blue-600 mt-2">Mengunggah foto...</p>
+            </div>
 
             <button type="submit"
+                id="submitBtn"
                 class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-xl shadow-lg transition duration-200 transform hover:scale-105 flex items-center justify-center">
-                <span class="text-xl mr-2"></span>
-                ABSEN MASUK
+                <span class="text-xl mr-2">📤</span>
+                Kirim Foto
             </button>
         </form>
 
@@ -74,32 +147,58 @@
         <!-- SUDAH CHECK IN BELUM CHECK OUT -->
 
         <form action="{{ route('attendance.store') }}" method="POST" enctype="multipart/form-data"
-            class="bg-white rounded-xl shadow-xl p-6">
+            class="bg-white rounded-xl shadow-xl p-6" id="uploadForm2">
             @csrf
 
             <h3 class="text-lg font-bold text-gray-800 mb-4 text-center">Dokumentasi Lapangan</h3>
 
-                        <!-- MULTIPLE FOTO -->
-            <label class="font-semibold text-gray-700">Upload Foto</label>
-            <p class="text-sm text-gray-500 mb-2">Boleh satu, boleh lebih. Tidak wajib banyak.</p>
+            <!-- MULTIPLE FOTO -->
+            <div class="mb-6">
+                <label class="font-semibold text-gray-700 block mb-2">Upload Foto</label>
+                <p class="text-sm text-gray-500 mb-4">Boleh satu, boleh lebih. Maksimal 5 foto. Ukuran maksimal 2MB per foto.</p>
+                
+                <!-- PREVIEW FOTO -->
+                <div class="grid grid-cols-3 gap-2 mb-4" id="photoPreview2">
+                    <!-- Foto akan muncul di sini -->
+                </div>
 
-            <input type="file" 
-                name="photos[]" 
-                multiple 
-                accept="image/*"
-                class="w-full mb-4 border border-gray-300 rounded-lg p-2">
+                <!-- INPUT FILE DENGAN STYLING -->
+                <div class="relative border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-yellow-400 transition-colors duration-200" 
+                     onclick="document.getElementById('photosInput2').click()">
+                    <div class="text-4xl mb-2 text-gray-400"></div>
+                    <p class="text-gray-600 font-medium">Klik untuk memilih foto</p>
+                    <p class="text-sm text-gray-500 mt-1">atau drag & drop</p>
+                    <p class="text-xs text-gray-400 mt-2">Format: JPG, PNG, JPEG</p>
+                </div>
 
-            @error('photos') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
-            @error('photos.*') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
+                <input type="file" 
+                       id="photosInput2"
+                       name="photos[]" 
+                       multiple 
+                       accept="image/*"
+                       class="hidden"
+                       onchange="previewPhotos2(event)">
+                
+                <!-- COUNTER -->
+                <div class="text-right mt-2">
+                    <span id="fileCounter2" class="text-sm text-gray-500">0 foto terpilih</span>
+                </div>
 
+                @error('photos') 
+                    <p class="text-red-600 text-sm mt-2">{{ $message }}</p> 
+                @enderror
+                @error('photos.*') 
+                    <p class="text-red-600 text-sm mt-2">{{ $message }}</p> 
+                @enderror
+            </div>
 
             <!-- DESKRIPSI -->
-            <div class="mt-4">
+            <div class="mt-6">
                 <label class="font-semibold text-gray-700">Deskripsi (Opsional)</label>
                 <textarea 
                     name="description"
                     rows="3"
-                    class="w-full border border-gray-300 rounded-lg p-3 mt-1 focus:ring focus:ring-blue-300"
+                    class="w-full border border-gray-300 rounded-lg p-3 mt-1 focus:ring focus:ring-yellow-300"
                     placeholder="Contoh: Lokasi patroli, kondisi area, atau catatan tambahan..."
                 ></textarea>
 
@@ -108,10 +207,20 @@
                 @enderror
             </div>
 
+            <!-- LOADING INDICATOR -->
+            <div id="loading2" class="hidden mt-4">
+                <div class="flex items-center justify-center space-x-2">
+                    <div class="w-4 h-4 bg-yellow-500 rounded-full animate-bounce"></div>
+                    <div class="w-4 h-4 bg-yellow-500 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                    <div class="w-4 h-4 bg-yellow-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                </div>
+                <p class="text-center text-yellow-600 mt-2">Mengunggah foto...</p>
+            </div>
 
             <button type="submit"
-                class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-xl transition duration-200 transform hover:scale-105 flex items-center justify-center">
-                <span class="text-xl mr-2"></span>
+                id="submitBtn2"
+                class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-xl transition duration-200 transform hover:scale-105 flex items-center justify-center mt-4">
+                <span class="text-xl mr-2">📤</span>
                 UPLOAD FOTO
             </button>
         </form>
@@ -122,7 +231,7 @@
         @if(isset($absenHariIni) && $absenHariIni->check_out)
         <!-- SUDAH SELESAI -->
         <div class="bg-green-50 border border-green-200 rounded-xl p-6 text-center shadow">
-            <div class="text-5xl mb-2"></div>
+            <div class="text-5xl mb-2">✅</div>
             <h3 class="text-xl font-bold text-green-800">Absensi Selesai</h3>
             <p class="text-green-600">Terima kasih atas dedikasi Anda hari ini!</p>
             <a href="{{ route('attendance.history') }}"
@@ -154,4 +263,165 @@
     </div>
 
 </div>
+
+<script>
+// Fungsi untuk preview foto (form pertama)
+function previewPhotos(event) {
+    const preview = document.getElementById('photoPreview');
+    const counter = document.getElementById('fileCounter');
+    const files = event.target.files;
+    
+    // Hapus preview sebelumnya
+    preview.innerHTML = '';
+    
+    // Batasi maksimal 5 foto
+    const maxFiles = 5;
+    const selectedFiles = files.length > maxFiles ? Array.from(files).slice(0, maxFiles) : files;
+    
+    if (files.length > maxFiles) {
+        alert(`Maksimal ${maxFiles} foto yang dapat diunggah. Hanya ${maxFiles} foto pertama yang akan diproses.`);
+    }
+    
+    // Update counter
+    counter.textContent = `${selectedFiles.length} foto terpilih`;
+    
+    // Buat preview untuk setiap file
+    Array.from(selectedFiles).forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const previewItem = document.createElement('div');
+            previewItem.className = 'relative';
+            
+            previewItem.innerHTML = `
+                <img src="${e.target.result}" 
+                     class="w-full h-24 object-cover rounded-lg border border-gray-200"
+                     alt="Preview ${index + 1}">
+                <button type="button" 
+                        onclick="removePhoto(${index})"
+                        class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">
+                    ×
+                </button>
+            `;
+            preview.appendChild(previewItem);
+        }
+        reader.readAsDataURL(file);
+    });
+}
+
+// Fungsi untuk preview foto (form kedua)
+function previewPhotos2(event) {
+    const preview = document.getElementById('photoPreview2');
+    const counter = document.getElementById('fileCounter2');
+    const files = event.target.files;
+    
+    // Hapus preview sebelumnya
+    preview.innerHTML = '';
+    
+    // Batasi maksimal 5 foto
+    const maxFiles = 5;
+    const selectedFiles = files.length > maxFiles ? Array.from(files).slice(0, maxFiles) : files;
+    
+    if (files.length > maxFiles) {
+        alert(`Maksimal ${maxFiles} foto yang dapat diunggah. Hanya ${maxFiles} foto pertama yang akan diproses.`);
+    }
+    
+    // Update counter
+    counter.textContent = `${selectedFiles.length} foto terpilih`;
+    
+    // Buat preview untuk setiap file
+    Array.from(selectedFiles).forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const previewItem = document.createElement('div');
+            previewItem.className = 'relative';
+            
+            previewItem.innerHTML = `
+                <img src="${e.target.result}" 
+                     class="w-full h-24 object-cover rounded-lg border border-gray-200"
+                     alt="Preview ${index + 1}">
+                <button type="button" 
+                        onclick="removePhoto2(${index})"
+                        class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">
+                    ×
+                </button>
+            `;
+            preview.appendChild(previewItem);
+        }
+        reader.readAsDataURL(file);
+    });
+}
+
+// Fungsi untuk menghapus foto dari preview
+function removePhoto(index) {
+    const input = document.getElementById('photosInput');
+    const dt = new DataTransfer();
+    const files = Array.from(input.files);
+    
+    files.splice(index, 1);
+    files.forEach(file => dt.items.add(file));
+    
+    input.files = dt.files;
+    previewPhotos({ target: input });
+}
+
+function removePhoto2(index) {
+    const input = document.getElementById('photosInput2');
+    const dt = new DataTransfer();
+    const files = Array.from(input.files);
+    
+    files.splice(index, 1);
+    files.forEach(file => dt.items.add(file));
+    
+    input.files = dt.files;
+    previewPhotos2({ target: input });
+}
+
+// Fungsi untuk menampilkan loading saat submit
+document.addEventListener('DOMContentLoaded', function() {
+    const form1 = document.getElementById('uploadForm');
+    const form2 = document.getElementById('uploadForm2');
+    
+    if (form1) {
+        form1.addEventListener('submit', function() {
+            document.getElementById('loading').classList.remove('hidden');
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitBtn').innerHTML = '<span class="text-xl mr-2">⏳</span>Mengunggah...';
+        });
+    }
+    
+    if (form2) {
+        form2.addEventListener('submit', function() {
+            document.getElementById('loading2').classList.remove('hidden');
+            document.getElementById('submitBtn2').disabled = true;
+            document.getElementById('submitBtn2').innerHTML = '<span class="text-xl mr-2">⏳</span>Mengunggah...';
+        });
+    }
+    
+    // Auto-hide success message setelah 5 detik
+    const successMessage = document.getElementById('successMessage');
+    if (successMessage) {
+        setTimeout(() => {
+            successMessage.style.opacity = '0';
+            setTimeout(() => successMessage.remove(), 300);
+        }, 5000);
+    }
+});
+</script>
+
+<style>
+/* Animasi untuk preview */
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.animate-bounce {
+    animation: bounce 0.5s ease-in-out infinite;
+}
+
+/* Transisi untuk pesan sukses */
+#successMessage {
+    transition: opacity 0.3s ease;
+}
+</style>
 @endsection

@@ -241,7 +241,7 @@
                         <th class="px-4 py-3">Berat Panen</th>
                         <th class="px-4 py-3">Keterangan</th>
                         <th class="px-4 py-3">Status</th>
-                        <th class="px-4 py-3">Foto Panen</th>
+                        <th class="px-4 py-3">Foto Absensi</th> <!-- Kolom Foto Absensi -->
                     </tr>
                 </thead>
 
@@ -332,18 +332,27 @@
                                 @endif
                             </td>
                             
-                            <!-- FOTO PANEN -->
+                            <!-- FOTO ABSENSI (Diambil dari tabel attendance) -->
                             <td class="px-4 py-3">
-                                @if($panen && $panen->foto_panen)
-                                <a href="{{ asset('storage/'.$panen->foto_panen) }}" 
-                                    target="_blank" 
-                                    class="inline-flex items-center gap-1 text-blue-600 hover:underline text-sm">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                    </svg>
-                                    Lihat
-                                </a>
+                                @if($a->photo_path)
+                                <div class="flex flex-col items-center space-y-1">
+                                    <a href="{{ asset('storage/'.$a->photo_path) }}" 
+                                        target="_blank" 
+                                        class="inline-flex items-center gap-1 text-blue-600 hover:underline text-sm"
+                                        data-lightbox="attendance-photo-{{ $a->id }}"
+                                        data-title="Foto Absensi - {{ $a->user?->name ?? 'Unknown' }} - {{ \Carbon\Carbon::parse($a->date)->format('d M Y') }}">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                        Lihat Foto
+                                    </a>
+                                    @if($a->check_in)
+                                    <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                                        {{ \Carbon\Carbon::parse($a->check_in)->format('H:i') }}
+                                    </span>
+                                    @endif
+                                </div>
                                 @else
                                 <span class="text-gray-400">-</span>
                                 @endif
@@ -382,4 +391,15 @@
     </div>
 
 </div>
+
+<!-- Tambahkan Lightbox untuk preview foto -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
+<script>
+    lightbox.option({
+        'resizeDuration': 200,
+        'wrapAround': true,
+        'albumLabel': 'Foto %1 dari %2'
+    });
+</script>
 @endsection
