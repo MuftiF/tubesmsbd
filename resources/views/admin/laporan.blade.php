@@ -67,17 +67,6 @@
         $hasPalmAccess = !$selectedRole || $selectedRole == 'user';
         $dataType = request('data_type', 'today');
         $todayDate = \Carbon\Carbon::now()->translatedFormat('l, d F Y');
-        
-        // Helper function untuk mendapatkan data panen berdasarkan attendance
-        function getPanenData($attendance) {
-            if (!$attendance->user) return null;
-            
-            $panen = \App\Models\CatatanPanen::where('id_pegawai', $attendance->user_id)
-                ->whereDate('tanggal', $attendance->date)
-                ->first();
-                
-            return $panen;
-        }
     @endphp
 
     <!-- RINGKASAN HARI INI -->
@@ -239,9 +228,10 @@
                         <th class="px-4 py-3">Check In</th>
                         <th class="px-4 py-3">Check Out</th>
                         <th class="px-4 py-3">Berat Panen</th>
-                        <th class="px-4 py-3">Keterangan</th>
+                        <th class="px-4 py-3">Catatan</th>
                         <th class="px-4 py-3">Status</th>
-                        <th class="px-4 py-3">Foto Absensi</th> <!-- Kolom Foto Absensi -->
+                        <th class="px-4 py-3">Foto Check In</th>
+                        <th class="px-4 py-3">Foto Check Out</th>
                     </tr>
                 </thead>
 
@@ -274,11 +264,6 @@
                                 @if($a->check_in)
                                     <div class="flex flex-col">
                                         <span class="font-semibold">{{ \Carbon\Carbon::parse($a->check_in)->format('H:i') }}</span>
-                                        @if($a->check_in_location)
-                                        <span class="text-xs text-gray-400 truncate max-w-[120px]" title="{{ $a->check_in_location }}">
-                                            {{ Str::limit($a->check_in_location, 20) }}
-                                        </span>
-                                        @endif
                                     </div>
                                 @else
                                     <span class="text-gray-400">-</span>
@@ -290,11 +275,6 @@
                                 @if($a->check_out)
                                     <div class="flex flex-col">
                                         <span class="font-semibold">{{ \Carbon\Carbon::parse($a->check_out)->format('H:i') }}</span>
-                                        @if($a->check_out_location)
-                                        <span class="text-xs text-gray-400 truncate max-w-[120px]" title="{{ $a->check_out_location }}">
-                                            {{ Str::limit($a->check_out_location, 20) }}
-                                        </span>
-                                        @endif
                                     </div>
                                 @else
                                     <span class="text-yellow-500 font-medium text-sm">Belum Checkout</span>
@@ -310,10 +290,10 @@
                                 @endif
                             </td>
                             
-                            <!-- KETERANGAN PANEN -->
+                            <!-- CATATAN -->
                             <td class="px-4 py-3 text-gray-700">
-                                @if($panen && $panen->keterangan)
-                                    <span class="text-xs">{{ $panen->keterangan }}</span>
+                                @if($a->note)
+                                    <span class="text-xs">{{ $a->note }}</span>
                                 @else
                                     <span class="text-gray-400">-</span>
                                 @endif
@@ -332,27 +312,45 @@
                                 @endif
                             </td>
                             
-                            <!-- FOTO ABSENSI (Diambil dari tabel attendance) -->
+                            <!-- FOTO CHECK IN -->
                             <td class="px-4 py-3">
                                 @if($a->photo_path)
-                                <div class="flex flex-col items-center space-y-1">
-                                    <a href="{{ asset('storage/'.$a->photo_path) }}" 
-                                        target="_blank" 
-                                        class="inline-flex items-center gap-1 text-blue-600 hover:underline text-sm"
-                                        data-lightbox="attendance-photo-{{ $a->id }}"
-                                        data-title="Foto Absensi - {{ $a->user?->name ?? 'Unknown' }} - {{ \Carbon\Carbon::parse($a->date)->format('d M Y') }}">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                        </svg>
-                                        Lihat Foto
-                                    </a>
-                                    @if($a->check_in)
-                                    <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                                        {{ \Carbon\Carbon::parse($a->check_in)->format('H:i') }}
-                                    </span>
-                                    @endif
-                                </div>
+                                <a href="{{ asset('storage/'.$a->photo_path) }}" 
+                                    target="_blank" 
+                                    class="inline-flex items-center gap-1 text-blue-600 hover:underline text-sm">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    Lihat
+                                </a>
+                                @else
+                                <span class="text-gray-400">-</span>
+                                @endif
+                            </td>
+                            
+                            <!-- FOTO CHECK OUT -->
+                            <td class="px-4 py-3">
+                                @if($a->checkout_photo_path)
+                                <a href="{{ asset('storage/'.$a->checkout_photo_path) }}" 
+                                    target="_blank" 
+                                    class="inline-flex items-center gap-1 text-blue-600 hover:underline text-sm">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    Lihat
+                                </a>
+                                @elseif($panen && $panen->foto_panen)
+                                <a href="{{ asset('storage/'.$panen->foto_panen) }}" 
+                                    target="_blank" 
+                                    class="inline-flex items-center gap-1 text-blue-600 hover:underline text-sm">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    Lihat
+                                </a>
                                 @else
                                 <span class="text-gray-400">-</span>
                                 @endif
@@ -391,15 +389,4 @@
     </div>
 
 </div>
-
-<!-- Tambahkan Lightbox untuk preview foto -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
-<script>
-    lightbox.option({
-        'resizeDuration': 200,
-        'wrapAround': true,
-        'albumLabel': 'Foto %1 dari %2'
-    });
-</script>
 @endsection

@@ -5,8 +5,8 @@
 
     <!-- HEADER -->
     <div class="text-center mb-10">
-        <h1 class="text-4xl font-bold text-gray-900 tracking-tight">Laporan Manager - Hasil Panen Sawit</h1>
-        <p class="text-gray-500 text-sm mt-2">Dashboard analisis produktivitas dan kehadiran pekerja sawit (Manager View)</p>
+        <h1 class="text-4xl font-bold text-gray-900 tracking-tight">Laporan Hasil Panen Sawit</h1>
+        <p class="text-gray-500 text-sm mt-2">Dashboard analisis produktivitas dan kehadiran pekerja sawit</p>
     </div>
 
     <!-- FILTER BOX -->
@@ -41,6 +41,7 @@
             </div>
         </div>
 
+        <!-- FILTER DATA TYPE -->
         <div class="mt-4">
             <label class="text-sm font-medium text-gray-600">Tampilkan Data</label>
             <select name="data_type" class="mt-1 w-full border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500">
@@ -53,6 +54,7 @@
             <button class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold shadow transition">
                 Terapkan Filter
             </button>
+
             <a href="{{ route('manager.laporan') }}"
                 class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg font-semibold shadow transition">
                 Reset
@@ -67,6 +69,7 @@
         $todayDate = \Carbon\Carbon::now()->translatedFormat('l, d F Y');
     @endphp
 
+    <!-- RINGKASAN HARI INI -->
     @if($dataType == 'today' && $hasPalmAccess)
     <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl shadow-md p-6 border border-blue-100 mb-6">
         <div class="flex items-center justify-between">
@@ -99,9 +102,11 @@
     </div>
     @endif
 
+    <!-- SUMMARY CARDS -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
+
         <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100 text-center">
-            <p class="text-sm text-gray-500">Total Tim</p>
+            <p class="text-sm text-gray-500">Total Pekerja</p>
             <p class="text-3xl font-bold text-blue-700 mt-1">{{ $totalPegawai }}</p>
         </div>
 
@@ -123,15 +128,21 @@
             <p class="text-sm text-gray-500">Total Kehadiran</p>
             <p class="text-3xl font-bold text-orange-600 mt-1">{{ $totalHadir }}</p>
         </div>
+
     </div>
 
+    <!-- CHARTS -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+
         @if($hasPalmAccess)
+        <!-- PANEN HARIAN -->
         <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
             <h3 class="text-lg font-bold text-gray-800 mb-4">Hasil Panen 7 Hari Terakhir</h3>
+
             @if($dailyPalmWeight->count())
             <div class="space-y-3">
                 @php $maxWeight = $dailyPalmWeight->max('total_weight'); @endphp
+
                 @foreach($dailyPalmWeight as $daily)
                 <div>
                     <div class="flex justify-between text-sm text-gray-600 mb-1">
@@ -152,10 +163,13 @@
         </div>
         @endif
 
+        <!-- KEHADIRAN HARIAN -->
         <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
             <h3 class="text-lg font-bold text-gray-800 mb-4">Kehadiran 7 Hari Terakhir</h3>
+
             @if($dailyAttendance->count())
             <div class="space-y-3">
+
                 @foreach($dailyAttendance as $daily)
                 <div>
                     <div class="flex justify-between text-sm text-gray-600 mb-1">
@@ -169,14 +183,18 @@
                     </div>
                 </div>
                 @endforeach
+
             </div>
             @else
             <div class="h-40 flex items-center justify-center text-gray-400">Tidak ada data kehadiran</div>
             @endif
         </div>
+
     </div>
 
+    <!-- TABLE - DETAIL KEHADIRAN & PANEN -->
     <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100 mb-10">
+
         <div class="flex justify-between items-center mb-4">
             <h3 class="text-lg font-bold text-gray-800">
                 @if($dataType == 'today')
@@ -210,14 +228,16 @@
                         <th class="px-4 py-3">Check In</th>
                         <th class="px-4 py-3">Check Out</th>
                         <th class="px-4 py-3">Berat Panen</th>
+                        <th class="px-4 py-3">Catatan</th>
                         <th class="px-4 py-3">Status</th>
-                        <th class="px-4 py-3">Foto Absensi</th> <!-- Kolom Foto Absensi -->
+                        <th class="px-4 py-3">Foto Check Out</th>
                     </tr>
                 </thead>
 
                 <tbody class="text-sm">
                     @foreach($detailedAttendances as $a)
                         @php
+                            // Ambil data panen berdasarkan attendance
                             $panen = \App\Models\CatatanPanen::where('id_pegawai', $a->user_id)
                                 ->whereDate('tanggal', $a->date)
                                 ->first();
@@ -228,14 +248,17 @@
                             <td class="px-4 py-3 text-gray-700">{{ \Carbon\Carbon::parse($a->date)->format('d M Y') }}</td>
                             @endif
                             
+                            <!-- NAMA -->
                             <td class="px-4 py-3 font-medium text-gray-900">{{ $a->user?->name ?? 'Nama Tidak Diketahui' }}</td>
                             
+                            <!-- ROLE -->
                             <td class="px-4 py-3">
                                 <span class="px-2 py-1 rounded-full bg-blue-100 text-blue-600 text-xs capitalize">
                                     {{ $a->user?->role ?? 'unknown' }}
                                 </span>
                             </td>
                             
+                            <!-- CHECK IN -->
                             <td class="px-4 py-3 text-gray-700">
                                 @if($a->check_in)
                                     <div class="flex flex-col">
@@ -246,6 +269,7 @@
                                 @endif
                             </td>
                             
+                            <!-- CHECK OUT -->
                             <td class="px-4 py-3 text-gray-700">
                                 @if($a->check_out)
                                     <div class="flex flex-col">
@@ -256,6 +280,7 @@
                                 @endif
                             </td>
                             
+                            <!-- BERAT PANEN -->
                             <td class="px-4 py-3">
                                 @if($hasPalmAccess && $panen && $panen->berat_kg)
                                     <div class="font-semibold text-green-700">{{ number_format($panen->berat_kg, 1) }} kg</div>
@@ -264,6 +289,16 @@
                                 @endif
                             </td>
                             
+                            <!-- CATATAN -->
+                            <td class="px-4 py-3 text-gray-700">
+                                @if($a->note)
+                                    <span class="text-xs">{{ $a->note }}</span>
+                                @else
+                                    <span class="text-gray-400">-</span>
+                                @endif
+                            </td>
+                            
+                            <!-- STATUS ABSENSI -->
                             <td class="px-4 py-3">
                                 @if($a->status == 'tepat waktu')
                                 <span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs">Tepat Waktu</span>
@@ -275,36 +310,28 @@
                                 <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">Belum Absen</span>
                                 @endif
                             </td>
-                            
-                            <!-- FOTO ABSENSI (Diambil dari tabel attendance) -->
+                            <!-- FOTO CHECK OUT -->
                             <td class="px-4 py-3">
-                                @if($a->photo_path)
-                                <div class="flex items-center space-x-3">
-                                    <!-- Thumbnail kecil -->
-                                    <div class="w-10 h-10 rounded-lg overflow-hidden border border-gray-300 flex-shrink-0">
-                                        <a href="{{ asset('storage/'.$a->photo_path) }}" 
-                                           target="_blank"
-                                           data-lightbox="attendance-{{ $a->id }}">
-                                            <img src="{{ asset('storage/'.$a->photo_path) }}" 
-                                                 alt="Foto Absensi"
-                                                 class="w-full h-full object-cover hover:opacity-90 transition">
-                                        </a>
-                                    </div>
-                                    
-                                    <!-- Info -->
-                                    <div class="flex flex-col">
-                                        <a href="{{ asset('storage/'.$a->photo_path) }}" 
-                                           target="_blank"
-                                           class="text-blue-600 hover:underline text-xs">
-                                           Lihat
-                                        </a>
-                                        @if($a->check_in)
-                                        <span class="text-xs text-gray-500">
-                                            {{ \Carbon\Carbon::parse($a->check_in)->format('H:i') }}
-                                        </span>
-                                        @endif
-                                    </div>
-                                </div>
+                                @if($a->checkout_photo_path)
+                                <a href="{{ asset('storage/'.$a->checkout_photo_path) }}" 
+                                    target="_blank" 
+                                    class="inline-flex items-center gap-1 text-blue-600 hover:underline text-sm">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    Lihat
+                                </a>
+                                @elseif($panen && $panen->foto_panen)
+                                <a href="{{ asset('storage/'.$panen->foto_panen) }}" 
+                                    target="_blank" 
+                                    class="inline-flex items-center gap-1 text-blue-600 hover:underline text-sm">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    Lihat
+                                </a>
                                 @else
                                 <span class="text-gray-400">-</span>
                                 @endif
@@ -315,41 +342,12 @@
             </table>
         </div>
 
-        <div class="mt-6 bg-blue-50 p-4 rounded-lg">
-            <div class="flex justify-between items-center">
-                <div>
-                    <p class="text-sm text-gray-600">
-                        @if($dataType == 'today')
-                        Total Kehadiran Hari Ini: 
-                        <span class="font-bold text-blue-700">{{ $detailedAttendances->total() }} orang</span>
-                        @else
-                        Total Data: 
-                        <span class="font-bold text-blue-700">{{ $detailedAttendances->total() }} data</span>
-                        @endif
-                    </p>
-                    <p class="text-xs text-gray-500 mt-1">
-                        Data diupdate terakhir: {{ now()->format('H:i') }}
-                    </p>
-                </div>
-                
-                @if($dataType == 'today' && $detailedAttendances->total() > 0)
-                <div class="text-right">
-                    <p class="text-sm text-gray-600">
-                        Belum Checkout: 
-                        <span class="font-bold text-yellow-600">
-                            {{ $detailedAttendances->whereNull('check_out')->count() }} orang
-                        </span>
-                    </p>
-                </div>
-                @endif
-            </div>
-        </div>
-
         <div class="mt-4">
             {{ $detailedAttendances->links() }}
         </div>
 
         @else
+        <!-- TIDAK ADA DATA -->
         <div class="h-60 flex flex-col items-center justify-center text-gray-400">
             @if($dataType == 'today')
             <svg class="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -368,17 +366,8 @@
             @endif
         </div>
         @endif
-    </div>
-</div>
 
-<!-- Tambahkan Lightbox untuk preview foto -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
-<script>
-    lightbox.option({
-        'resizeDuration': 200,
-        'wrapAround': true,
-        'albumLabel': 'Foto %1 dari %2'
-    });
-</script>
+    </div>
+
+</div>
 @endsection

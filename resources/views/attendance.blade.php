@@ -91,9 +91,20 @@
                 </li>
                 @endif
 
+                <!-- Foto Check In -->
                 @if ($attendanceToday->photo_path)
                 <li class="mt-4">
+                    <p class="font-semibold text-gray-700 mb-2">Foto Check In:</p>
                     <img src="{{ asset('storage/'.$attendanceToday->photo_path) }}"
+                         class="w-48 rounded-xl border shadow">
+                </li>
+                @endif
+
+                <!-- Foto Check Out -->
+                @if ($attendanceToday->checkout_photo_path)
+                <li class="mt-4">
+                    <p class="font-semibold text-gray-700 mb-2">Foto Check Out:</p>
+                    <img src="{{ asset('storage/'.$attendanceToday->checkout_photo_path) }}"
                          class="w-48 rounded-xl border shadow">
                 </li>
                 @endif
@@ -132,29 +143,54 @@
             <div class="mb-4">
                 <label class="font-semibold text-gray-700">Foto Kehadiran *</label>
                 <input type="file" name="photo" required
+                       accept="image/*" capture="environment"
                        class="mt-2 border rounded-lg w-full p-2 focus:ring focus:ring-indigo-200">
+                <p class="text-xs text-gray-500 mt-1">Foto ini akan ditampilkan di laporan admin/manager</p>
             </div>
 
             <div class="mb-4">
                 <label class="font-semibold text-gray-700">Catatan (Opsional)</label>
-                <textarea name="note" class="mt-2 border rounded-lg w-full p-2"></textarea>
+                <textarea name="note" class="mt-2 border rounded-lg w-full p-2" 
+                          placeholder="Catatan tambahan..."></textarea>
             </div>
 
-            <button class="bg-green-600 hover:bg-green-700 text-white py-3 w-full rounded-lg font-semibold shadow">
+            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white py-3 w-full rounded-lg font-semibold shadow">
                 Check In Sekarang
             </button>
         </form>
 
         {{-- CHECK OUT --}}
         @elseif ($attendanceToday && !$attendanceToday->check_out)
-        <form action="{{ route('attendance.store') }}" method="POST">
+        <form action="{{ route('attendance.checkout') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
             <p class="text-gray-700 text-center mb-4">
                 Anda sudah check-in pukul <b>{{ $attendanceToday->check_in->format('H:i') }}</b>
             </p>
 
-            <button class="bg-red-600 hover:bg-red-700 text-white py-3 w-full rounded-lg font-semibold shadow">
+            @if(Auth::user()->role == 'user')
+            <div class="mb-4">
+                <label class="font-semibold text-gray-700">Berat Panen (kg) *</label>
+                <input type="number" name="palm_weight" step="0.1" min="0" required
+                       class="mt-2 border rounded-lg w-full p-2 focus:ring focus:ring-indigo-200">
+            </div>
+            @endif
+
+            <div class="mb-4">
+                <label class="font-semibold text-gray-700">Foto Check Out *</label>
+                <input type="file" name="checkout_photo" required
+                       accept="image/*" capture="environment"
+                       class="mt-2 border rounded-lg w-full p-2 focus:ring focus:ring-indigo-200">
+                <p class="text-xs text-gray-500 mt-1">Foto ini akan ditampilkan di laporan admin/manager</p>
+            </div>
+
+            <div class="mb-4">
+                <label class="font-semibold text-gray-700">Catatan</label>
+                <textarea name="note" class="mt-2 border rounded-lg w-full p-2" 
+                          placeholder="Catatan pekerjaan hari ini..." required></textarea>
+            </div>
+
+            <button type="submit" class="bg-red-600 hover:bg-red-700 text-white py-3 w-full rounded-lg font-semibold shadow">
                 Check Out Sekarang
             </button>
         </form>
@@ -162,7 +198,11 @@
         {{-- ABSEN SELESAI --}}
         @else
         <div class="text-center py-8 text-green-600 font-semibold">
-             Anda telah menyelesaikan absensi hari ini.
+            <svg class="w-16 h-16 mx-auto mb-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p class="text-lg">Anda telah menyelesaikan absensi hari ini.</p>
+            <p class="text-sm text-gray-600 mt-2">Terima kasih atas kerja keras Anda!</p>
         </div>
         @endif
 
@@ -171,6 +211,7 @@
             <h4 class="font-semibold text-indigo-700 mb-2">Petunjuk Absensi</h4>
             <ul class="text-sm text-gray-700 list-disc ml-6 space-y-1">
                 <li>Upload foto kehadiran yang jelas</li>
+                <li>Foto check in/out akan ditampilkan di laporan</li>
                 <li>Jam kerja: 08:00 - 17:00</li>
                 <li>Terlambat jika check in setelah 08:00</li>
                 <li>Wajib check out saat pulang</li>

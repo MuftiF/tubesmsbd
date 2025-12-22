@@ -79,11 +79,19 @@ class AttendanceController extends Controller
             $checkInTime = Carbon::now('Asia/Jakarta');
             $status = $checkInTime->format('H:i') <= '07:00' ? 'tepat waktu' : 'terlambat';
 
+            // Upload foto check in jika ada
+            $photoPath = null;
+            if ($request->hasFile('photo')) {
+                $photoPath = $request->file('photo')->store('attendance_photos', 'public');
+            }
+
             Attendance::create([
                 'user_id' => $user->id,
                 'date' => $today,
                 'check_in' => $checkInTime,
                 'status' => $status,
+                'photo_path' => $photoPath, // Menyimpan foto check in
+                'note' => $request->note ?? null,
             ]);
 
             return back()->with('success', 'Check In berhasil! Selamat bekerja! 🌴');
@@ -128,7 +136,7 @@ class AttendanceController extends Controller
 
         // Simpan foto checkout
         $checkoutPhotoPath = $request->file('checkout_photo')->store('checkout_photos', 'public');
-        $updateData['checkout_photo_path'] = $checkoutPhotoPath;
+        $updateData['checkout_photo_path'] = $checkoutPhotoPath; // Kolom untuk foto checkout
 
         // Jika pekerja sawit
         if ($user->role == 'user') {
@@ -143,6 +151,7 @@ class AttendanceController extends Controller
                 'jumlah_tandan' => 0,
                 'berat_kg' => $request->palm_weight,
                 'catatan' => $request->note,
+                'foto_panen' => $checkoutPhotoPath, // Simpan foto di tabel panen juga
             ]);
         } else {
             $updateData['note'] = $request->note;

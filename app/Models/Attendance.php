@@ -19,7 +19,9 @@ class Attendance extends Model
         'status',
         'photos',
         'description',
-        'note'
+        'note',
+        'photo_path', // foto check in
+        'checkout_photo_path' // foto check out
     ];
 
     protected $casts = [
@@ -46,5 +48,17 @@ class Attendance extends Model
     {
         return $this->hasOne(CatatanPanen::class, 'id_pegawai', 'user_id')
             ->where('tanggal', $this->date->toDateString());
+    }
+
+    // Accessor untuk foto checkout
+    public function getCheckoutPhotoUrlAttribute()
+    {
+        return $this->checkout_photo_path ? asset('storage/' . $this->checkout_photo_path) : null;
+    }
+
+    // Accessor untuk foto check in
+    public function getPhotoUrlAttribute()
+    {
+        return $this->photo_path ? asset('storage/' . $this->photo_path) : null;
     }
 }
