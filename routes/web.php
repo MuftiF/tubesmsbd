@@ -103,6 +103,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/pegawai', [HomeController::class, 'managerTambahPegawai'])->name('manager.pegawai.tambah');
         Route::put('/pegawai/{id}', [HomeController::class, 'managerUpdatePegawai'])->name('manager.pegawai.update');
         Route::delete('/pegawai/{id}', [HomeController::class, 'managerHapusPegawai'])->name('manager.pegawai.hapus');
+        
+        // Hapus pegawai dengan riwayat - ROUTE BARU
+        Route::delete('/pegawai/force-delete/{id}', [HomeController::class, 'managerForceDeletePegawai'])->name('manager.pegawai.force-delete');
 
         // Pengumuman Management
         Route::get('/pengumuman', [AnnouncementController::class, 'indexManager'])->name('manager.pengumuman');
@@ -193,5 +196,5 @@ Route::middleware('auth')->group(function () {
     });
 
     // routes/web.php
-Route::get('/test-perhitungan', [RapotController::class, 'testPerhitungan']);
+    Route::get('/test-perhitungan', [RapotController::class, 'testPerhitungan']);
 });

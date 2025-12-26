@@ -10,17 +10,23 @@
     </div>
 
     {{-- ALERT --}}
-    @if(session('success'))
-        <div class="bg-green-50 border-l-4 border-green-600 text-green-700 px-4 py-3 rounded-lg mb-4 shadow">
-            {{ session('success') }}
-        </div>
-    @endif
+@if(session('success'))
+    <div class="bg-green-50 border-l-4 border-green-600 text-green-700 px-4 py-3 rounded-lg mb-4 shadow">
+        {!! session('success') !!}
+    </div>
+@endif
 
-    @if(session('error'))
-        <div class="bg-red-50 border-l-4 border-red-600 text-red-700 px-4 py-3 rounded-lg mb-4 shadow">
-            {{ session('error') }}
-        </div>
-    @endif
+@if(session('error'))
+    <div class="bg-red-50 border-l-4 border-red-600 text-red-700 px-4 py-3 rounded-lg mb-4 shadow">
+        {{ session('error') }}
+    </div>
+@endif
+
+@if(session('warning'))
+    <div class="bg-yellow-50 border-l-4 border-yellow-600 text-yellow-700 px-4 py-3 rounded-lg mb-4 shadow">
+        {{ session('warning') }}
+    </div>
+@endif
 
     {{-- VALIDATION ERRORS --}}
     @if($errors->any())
@@ -108,6 +114,7 @@
                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">No HP</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Role</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Bergabung</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Riwayat</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Aksi</th>
                     </tr>
                 </thead>
@@ -116,6 +123,13 @@
                 <tbody class="bg-white divide-y divide-gray-200">
 
                     @forelse($pegawai as $p)
+                    @php
+                        $hasAttendance = \App\Models\Attendance::where('user_id', $p->id)->exists();
+                        $hasPanen = \App\Models\CatatanPanen::where('id_pegawai', $p->id)->exists();
+                        $hasRapot = class_exists('\App\Models\Rapot') ? \App\Models\Rapot::where('id_user', $p->id)->exists() : false;
+                        $hasRiwayat = $hasAttendance || $hasPanen || $hasRapot;
+                    @endphp
+                    
                     <tr class="hover:bg-gray-50 transition">
 
                         {{-- Nama --}}
@@ -126,6 +140,7 @@
                                 </div>
                                 <div class="ml-4">
                                     <p class="font-semibold text-gray-800">{{ $p->name }}</p>
+                                    <p class="text-xs text-gray-500">ID: {{ $p->id }}</p>
                                 </div>
                             </div>
                         </td>
@@ -166,30 +181,76 @@
                             {{ $p->created_at->format('d M Y') }}
                         </td>
 
+                        {{-- Riwayat --}}
+                        <td class="px-6 py-4">
+                            @if($hasRiwayat)
+                                <div class="flex flex-col space-y-1">
+                                    @if($hasAttendance)
+                                        <span class="inline-flex items-center px-2 py-1 rounded text-xs bg-blue-100 text-blue-800">
+                                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                                            </svg>
+                                            Absensi
+                                        </span>
+                                    @endif
+                                    @if($hasPanen)
+                                        <span class="inline-flex items-center px-2 py-1 rounded text-xs bg-green-100 text-green-800">
+                                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clip-rule="evenodd"/>
+                                            </svg>
+                                            Panen
+                                        </span>
+                                    @endif
+                                    @if($hasRapot)
+                                        <span class="inline-flex items-center px-2 py-1 rounded text-xs bg-purple-100 text-purple-800">
+                                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/>
+                                            </svg>
+                                            Rapot
+                                        </span>
+                                    @endif
+                                </div>
+                            @else
+                                <span class="text-gray-400 text-xs">Tidak ada riwayat</span>
+                            @endif
+                        </td>
+
                         {{-- Aksi --}}
-                        <td class="px-6 py-4 flex items-center gap-4 text-sm">
-
-                            <button
-                                onclick="openEditModal({{ $p }})"
-                                class="text-indigo-600 hover:text-indigo-800 font-semibold">
-                                Edit
-                            </button>
-
-                            <form action="{{ route('manager.pegawai.hapus',$p->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus pegawai ini?')" class="inline">
-                                @csrf
-                                @method('DELETE')
-                                <button class="text-red-600 hover:text-red-800 font-semibold">
-                                    Hapus
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                {{-- Tombol Edit --}}
+                                <button onclick="openEditModal({{ $p }})"
+                                    class="text-indigo-600 hover:text-indigo-800 font-semibold text-sm px-3 py-1 bg-indigo-50 rounded hover:bg-indigo-100 transition">
+                                    Edit
                                 </button>
-                            </form>
 
+                                {{-- Tombol Hapus berdasarkan kondisi --}}
+                                @if($hasRiwayat)
+                                    {{-- Jika ada riwayat, tampilkan modal konfirmasi hapus paksa --}}
+                                    <button onclick="openForceDeleteModal({{ $p->id }}, '{{ $p->name }}')"
+                                        class="text-red-600 hover:text-red-800 font-semibold text-sm px-3 py-1 bg-red-50 rounded hover:bg-red-100 transition">
+                                        Hapus Paksa
+                                    </button>
+                                @else
+                                    {{-- Jika tidak ada riwayat, hapus biasa --}}
+                                    <form action="{{ route('manager.pegawai.hapus', $p->id) }}" method="POST" 
+                                          onsubmit="return confirm('Yakin ingin menghapus pegawai ini?')" class="inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" 
+                                                class="text-red-600 hover:text-red-800 font-semibold text-sm px-3 py-1 bg-red-50 rounded hover:bg-red-100 transition">
+                                            Hapus
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
                         </td>
 
                     </tr>
 
                     @empty
                     <tr>
-                        <td colspan="5" class="px-6 py-6 text-center text-gray-500">
+                        <td colspan="6" class="px-6 py-6 text-center text-gray-500">
                             Tidak ada data pegawai.
                         </td>
                     </tr>
@@ -262,6 +323,86 @@
     </div>
 </div>
 
+{{-- MODAL HAPUS PAKSA --}}
+<div id="forceDeleteModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+    <div class="relative top-24 mx-auto w-full max-w-md bg-white rounded-xl shadow-lg p-6">
+        <div class="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-red-100 rounded-full">
+            <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+            </svg>
+        </div>
+        
+        <h3 class="text-xl font-bold text-gray-800 mb-2 text-center">Hapus Paksa Pegawai</h3>
+        
+        <div class="mb-6">
+            <p class="text-gray-600 text-center mb-4">
+                Anda akan menghapus pegawai:
+                <span id="deleteEmployeeName" class="font-bold text-red-600"></span>
+            </p>
+            
+            <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-4">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <h4 class="text-sm font-medium text-red-800">PERINGATAN!</h4>
+                        <div class="mt-2 text-sm text-red-700">
+                            <p>Tindakan ini akan menghapus:</p>
+                            <ul class="list-disc list-inside mt-1 space-y-1">
+                                <li>Semua data absensi pegawai</li>
+                                <li>Semua catatan panen pegawai</li>
+                                <li>Semua data rapor/evaluasi</li>
+                                <li>Data pegawai secara permanen</li>
+                            </ul>
+                            <p class="mt-2 font-bold">Tindakan ini tidak dapat dibatalkan!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <form id="forceDeleteForm" method="POST">
+                @csrf
+                @method('DELETE')
+                
+                <div class="mb-4">
+                    <label class="flex items-center">
+                        <input type="checkbox" name="confirm_delete" value="YA" required
+                            class="rounded border-gray-300 text-red-600 shadow-sm focus:border-red-300 focus:ring focus:ring-red-200 focus:ring-opacity-50">
+                        <span class="ml-2 text-sm text-gray-700">
+                            Saya memahami konsekuensi dan ingin melanjutkan
+                        </span>
+                    </label>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Ketik <span class="font-bold text-red-600">YA</span> untuk konfirmasi:
+                    </label>
+                    <input type="text" name="confirm_text" required
+                        pattern="YA"
+                        title="Harap ketik YA untuk konfirmasi"
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-red-500 outline-none"
+                        placeholder="Ketik YA">
+                </div>
+                
+                <div class="flex justify-end gap-3 mt-6">
+                    <button type="button" onclick="closeForceDeleteModal()" 
+                            class="px-5 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg font-semibold text-gray-700">
+                        Batal
+                    </button>
+                    <button type="submit" 
+                            class="px-5 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold shadow-md transition">
+                        Hapus Paksa
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 
 <script>
 function openEditModal(data) {
@@ -279,9 +420,54 @@ function closeEditModal() {
     document.getElementById('editModal').classList.add('hidden');
 }
 
+function openForceDeleteModal(userId, userName) {
+    document.getElementById('deleteEmployeeName').textContent = userName;
+    
+    const form = document.getElementById('forceDeleteForm');
+    form.action = '/manager/pegawai/force-delete/' + userId;
+    
+    document.getElementById('forceDeleteModal').classList.remove('hidden');
+}
+
+function closeForceDeleteModal() {
+    document.getElementById('forceDeleteModal').classList.add('hidden');
+    // Reset form
+    const form = document.getElementById('forceDeleteModal');
+    form.reset();
+}
+
 // Close modal by clicking overlay
 document.getElementById('editModal').addEventListener('click', function(e) {
     if (e.target === this) closeEditModal();
+});
+
+document.getElementById('forceDeleteModal').addEventListener('click', function(e) {
+    if (e.target === this) closeForceDeleteModal();
+});
+
+// Validasi form force delete
+document.getElementById('forceDeleteForm').addEventListener('submit', function(e) {
+    const confirmCheckbox = this.querySelector('input[name="confirm_delete"]');
+    const confirmText = this.querySelector('input[name="confirm_text"]');
+    
+    if (!confirmCheckbox.checked) {
+        e.preventDefault();
+        alert('Harap centang konfirmasi terlebih dahulu!');
+        return;
+    }
+    
+    if (confirmText.value !== 'YA') {
+        e.preventDefault();
+        alert('Harap ketik "YA" untuk konfirmasi!');
+        confirmText.focus();
+        return;
+    }
+    
+    // Final warning
+    if (!confirm('Anda yakin ingin menghapus pegawai ini beserta semua riwayatnya? Tindakan ini tidak dapat dibatalkan!')) {
+        e.preventDefault();
+        return;
+    }
 });
 
 // Validasi input No HP hanya angka

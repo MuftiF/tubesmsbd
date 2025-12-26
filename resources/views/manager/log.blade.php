@@ -142,7 +142,6 @@
                             <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Pulang</th>
                             <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Status</th>
                             <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Catatan</th>
-                            <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Foto</th>
                         </tr>
                     </thead>
 
@@ -214,17 +213,6 @@
                                 {{ $attendance->note ?? '-' }}
                             </td>
 
-                            {{-- Photo --}}
-                            <td class="px-4 py-3">
-                                @if($attendance->photo_path)
-                                    <a href="{{ asset('storage/'.$attendance->photo_path) }}"
-                                       target="_blank"
-                                       class="text-blue-600 hover:text-blue-800 text-sm underline">
-                                        Lihat Foto
-                                    </a>
-                                @else
-                                    <span class="text-gray-400 text-sm">-</span>
-                                @endif
                             </td>
 
                         </tr>

@@ -595,17 +595,78 @@ class HomeController extends Controller
 
         $pegawai = User::findOrFail($id);
 
-        if (Attendance::where('user_id', $id)->exists()) {
-            return redirect()->route('manager.pegawai')->with('error', 'Tidak dapat menghapus pegawai yang sudah memiliki riwayat absensi!');
-        }
+        // Cek apakah pegawai memiliki riwayat
+        $hasAttendance = Attendance::where('user_id', $id)->exists();
+        $hasPanen = CatatanPanen::where('id_pegawai', $id)->exists();
+        $hasRapot = \App\Models\Rapot::where('id_user', $id)->exists();
 
-        if (CatatanPanen::where('id_pegawai', $id)->exists()) {
-            return redirect()->route('manager.pegawai')->with('error', 'Tidak dapat menghapus pegawai yang sudah memiliki riwayat panen!');
+        if ($hasAttendance || $hasPanen || $hasRapot) {
+            // Kirim ke view dengan data riwayat untuk konfirmasi force delete
+            return redirect()->route('manager.pegawai')->with('warning', 
+                'Pegawai memiliki riwayat data. Gunakan Hapus Paksa untuk menghapus semua data terkait.');
         }
 
         $pegawai->delete();
 
         return redirect()->route('manager.pegawai')->with('success', 'Pegawai berhasil dihapus!');
+    }
+
+    /**
+     * Menghapus pegawai secara paksa beserta semua riwayatnya
+     */
+    public function managerForceDeletePegawai(Request $request, $id)
+    {
+        if (Auth::user()->role != 'manager') return redirect('/');
+
+        $pegawai = User::findOrFail($id);
+
+        // Validasi konfirmasi
+        if (!$request->has('confirm_delete') || $request->confirm_delete !== 'YA') {
+            return redirect()->route('manager.pegawai')->with('error', 
+                'Konfirmasi tidak valid. Harap centang konfirmasi dan ketik YA.');
+        }
+
+        // Mulai transaksi database
+        DB::beginTransaction();
+        
+        try {
+            $pegawaiName = $pegawai->name;
+            $pegawaiId = $pegawai->id;
+            
+            // Hapus riwayat rapot terlebih dahulu (jika ada foreign key constraint)
+            if (class_exists('\App\Models\Rapot')) {
+                \App\Models\Rapot::where('id_user', $pegawaiId)->delete();
+                \App\Models\Rapot::where('evaluator_id', $pegawaiId)->update(['evaluator_id' => null]);
+            }
+            
+            // Hapus riwayat panen
+            CatatanPanen::where('id_pegawai', $pegawaiId)->delete();
+            
+            // Hapus riwayat absensi
+            Attendance::where('user_id', $pegawaiId)->delete();
+            
+            // Hapus riwayat pengumuman yang dibuat (jika ada)
+            if (class_exists('\App\Models\Announcement')) {
+                \App\Models\Announcement::where('created_by', $pegawaiId)->update(['created_by' => null]);
+            }
+            
+            // Hapus user
+            $pegawai->delete();
+            
+            // Commit transaksi
+            DB::commit();
+            
+            return redirect()->route('manager.pegawai')->with('success', 
+                "Pegawai <strong>$pegawaiName</strong> berhasil dihapus beserta semua riwayatnya!");
+                
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            \Log::error('Force delete pegawai gagal: ' . $e->getMessage());
+            
+            return redirect()->route('manager.pegawai')->with('error', 
+                'Terjadi kesalahan saat menghapus pegawai: ' . $e->getMessage());
+        }
     }
 
     public function managerLog(Request $request)

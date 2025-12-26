@@ -61,4 +61,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Rapot::class, 'id_user');
     }
+
+    /**
+     * Relasi dengan announcements (pengumuman yang dibuat)
+     */
+    public function announcements()
+    {
+        return $this->hasMany(Announcement::class, 'created_by');
+    }
 }
