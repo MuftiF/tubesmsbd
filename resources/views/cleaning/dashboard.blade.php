@@ -37,6 +37,55 @@
         </div>
     </div>
 
+    <!-- STATUS CARD -->
+    <div class="bg-white rounded-2xl shadow-xl p-6 mb-6 border-l-4 border-green-600">
+        <h2 class="text-lg font-bold text-gray-800 mb-4">Status Kehadiran Hari Ini</h2>
+
+        <div class="grid grid-cols-2 gap-4">
+            <!-- MASUK -->
+            <div class="text-center">
+                <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-2 shadow">
+                    <span class="text-xl">⏰</span>
+                </div>
+                <p class="text-sm text-gray-600">Masuk</p>
+
+                <p class="font-bold text-gray-800">
+                    @if(!empty($absenHariIni) && $absenHariIni->check_in)
+                        {{ \Carbon\Carbon::parse($absenHariIni->check_in)->format('H:i') }}
+                    @else
+                        -
+                    @endif
+                </p>
+
+                <span class="inline-block mt-1 px-2 py-1 text-xs rounded-full
+                    @if(!empty($absenHariIni) && $absenHariIni->check_in) bg-green-100 text-green-800 @else bg-yellow-100 text-yellow-800 @endif">
+                    @if(!empty($absenHariIni) && $absenHariIni->check_in) TEPAT WAKTU @else BELUM @endif
+                </span>
+            </div>
+
+            <!-- PULANG -->
+            <div class="text-center">
+                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2 shadow">
+                    <span class="text-xl">🚪</span>
+                </div>
+                <p class="text-sm text-gray-600">Pulang</p>
+
+                <p class="font-bold text-gray-800">
+                    @if(!empty($absenHariIni) && $absenHariIni->check_out)
+                        {{ \Carbon\Carbon::parse($absenHariIni->check_out)->format('H:i') }}
+                    @else
+                        -
+                    @endif
+                </p>
+
+                <span class="inline-block mt-1 px-2 py-1 text-xs rounded-full
+                    @if(!empty($absenHariIni) && $absenHariIni->check_out) bg-green-100 text-green-800 @else bg-yellow-100 text-yellow-800 @endif">
+                    @if(!empty($absenHariIni) && $absenHariIni->check_out) SELESAI @else BELUM @endif
+                </span>
+            </div>
+        </div>
+    </div>
+
     {{-- ACTION BUTTONS --}}
     <div class="space-y-5">
 

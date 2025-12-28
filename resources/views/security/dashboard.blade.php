@@ -71,76 +71,93 @@
     </div>
     @endif
 
-    <!-- ACTION BUTTONS -->
-    <div class="space-y-4">
+    <!-- STATUS CARD -->
+    <div class="bg-white rounded-2xl shadow-xl p-6 mb-6 border-l-4 border-green-600">
+        <h2 class="text-lg font-bold text-gray-800 mb-4">Status Kehadiran Hari Ini</h2>
 
+        <div class="grid grid-cols-2 gap-4">
+            <!-- MASUK -->
+            <div class="text-center">
+                <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-2 shadow">
+                    <span class="text-xl">⏰</span>
+                </div>
+                <p class="text-sm text-gray-600">Masuk</p>
+
+                <p class="font-bold text-gray-800">
+                    @if(!empty($absenHariIni) && $absenHariIni->check_in)
+                        {{ \Carbon\Carbon::parse($absenHariIni->check_in)->format('H:i') }}
+                    @else
+                        -
+                    @endif
+                </p>
+
+                <span class="inline-block mt-1 px-2 py-1 text-xs rounded-full
+                    @if(!empty($absenHariIni) && $absenHariIni->check_in) bg-green-100 text-green-800 @else bg-yellow-100 text-yellow-800 @endif">
+                    @if(!empty($absenHariIni) && $absenHariIni->check_in) TEPAT WAKTU @else BELUM @endif
+                </span>
+            </div>
+
+            <!-- PULANG -->
+            <div class="text-center">
+                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2 shadow">
+                    <span class="text-xl">🚪</span>
+                </div>
+                <p class="text-sm text-gray-600">Pulang</p>
+
+                <p class="font-bold text-gray-800">
+                    @if(!empty($absenHariIni) && $absenHariIni->check_out)
+                        {{ \Carbon\Carbon::parse($absenHariIni->check_out)->format('H:i') }}
+                    @else
+                        -
+                    @endif
+                </p>
+
+                <span class="inline-block mt-1 px-2 py-1 text-xs rounded-full
+                    @if(!empty($absenHariIni) && $absenHariIni->check_out) bg-green-100 text-green-800 @else bg-yellow-100 text-yellow-800 @endif">
+                    @if(!empty($absenHariIni) && $absenHariIni->check_out) SELESAI @else BELUM @endif
+                </span>
+            </div>
+        </div>
+    </div>
+
+    {{-- ACTION BUTTONS --}}
+    <div class="space-y-5">
+
+        {{-- ABSEN MASUK --}}
         @if(!isset($absenHariIni) || !$absenHariIni || !$absenHariIni->check_in)
-        <!-- BELUM CHECK IN -->
-
-        <form action="{{ route('attendance.store') }}" method="POST" enctype="multipart/form-data"
-            class="bg-white rounded-xl shadow-xl p-6" id="uploadForm">
-            @csrf
-
-            <h3 class="text-lg font-bold text-gray-800 mb-4 text-center">Dokumentasi Lapangan</h3>
-
-            <!-- MULTIPLE FOTO -->
-            <div class="mb-6">
-                <label class="font-semibold text-gray-700 block mb-2">Upload Foto</label>
-                <p class="text-sm text-gray-500 mb-4">Boleh satu, boleh lebih. Maksimal 5 foto. Ukuran maksimal 2MB per foto.</p>
-                
-                <!-- PREVIEW FOTO -->
-                <div class="grid grid-cols-3 gap-2 mb-4" id="photoPreview">
-                    <!-- Foto akan muncul di sini -->
-                </div>
-
-                <!-- INPUT FILE DENGAN STYLING -->
-                <div class="relative border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-blue-400 transition-colors duration-200" 
-                     onclick="document.getElementById('photosInput').click()">
-                    <p class="text-gray-600 font-medium">Klik untuk memilih foto</p>
-                    <p class="text-sm text-gray-500 mt-1">atau drag & drop</p>
-                    <p class="text-xs text-gray-400 mt-2">Format: JPG, PNG, JPEG</p>
-                </div>
-
-                <input type="file" 
-                       id="photosInput"
-                       name="photos[]" 
-                       multiple 
-                       accept="image/*"
-                       class="hidden"
-                       onchange="previewPhotos(event)">
-                
-                <!-- COUNTER -->
-                <div class="text-right mt-2">
-                    <span id="fileCounter" class="text-sm text-gray-500">0 foto terpilih</span>
-                </div>
-
-                @error('photos') 
-                    <p class="text-red-600 text-sm mt-2">{{ $message }}</p> 
-                @enderror
-                @error('photos.*') 
-                    <p class="text-red-600 text-sm mt-2">{{ $message }}</p> 
-                @enderror
-            </div>
-
-            <!-- LOADING INDICATOR -->
-            <div id="loading" class="hidden mb-4">
-                <div class="flex items-center justify-center space-x-2">
-                    <div class="w-4 h-4 bg-blue-600 rounded-full animate-bounce"></div>
-                    <div class="w-4 h-4 bg-blue-600 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
-                    <div class="w-4 h-4 bg-blue-600 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
-                </div>
-                <p class="text-center text-blue-600 mt-2">Mengunggah foto...</p>
-            </div>
-
-            <button type="submit"
-                id="submitBtn"
-                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-xl shadow-lg transition duration-200 transform hover:scale-105 flex items-center justify-center">
-                <span class="text-xl mr-2">📤</span>
-                Kirim Foto
-            </button>
-        </form>
-
+        <a href="{{ route('attendance.index') }}"
+           class="block text-center w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-4 px-6 rounded-xl shadow-md transform hover:scale-[1.02] transition">
+            <span class="text-xl mr-2"></span> Absen Masuk
+        </a>
         @endif
+
+        {{-- ABSEN PULANG --}}
+        @if(isset($absenHariIni) && $absenHariIni->check_in && !$absenHariIni->check_out)
+        <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 text-center">Absen Pulang</h3>
+
+            <a href="{{ route('attendance.index') }}"
+                class="block text-center w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 px-5 rounded-lg shadow-md transform hover:scale-[1.02] transition">
+                <span class="text-xl mr-2"></span> Ambil Foto & Absen Pulang
+            </a>
+        </div>
+        @endif
+
+        {{-- SELESAI --}}
+        @if(isset($absenHariIni) && $absenHariIni->check_out)
+        <div class="bg-green-50 border border-green-200 rounded-xl p-6 text-center shadow-sm">
+            <div class="text-5xl mb-3"></div>
+            <h3 class="text-xl font-bold text-green-800 mb-1">Absensi Selesai</h3>
+            <p class="text-green-700 text-sm">Terima kasih sudah menjaga wilayah perkebunan hari ini!</p>
+
+            <a href="{{ route('attendance.history') }}"
+               class="inline-block mt-3 text-blue-600 hover:text-blue-800 font-semibold">
+                Lihat Riwayat →
+            </a>
+        </div>
+        @endif
+
+    </div>
 
     <!-- QUICK ACTIONS -->
     <div class="bg-white rounded-2xl shadow-xl p-6 mt-8">
