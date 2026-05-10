@@ -32,53 +32,76 @@ class HomeController extends Controller
     }
 
     public function adminDashboard()
-    {
-        $today = now('Asia/Jakarta')->startOfDay();
+{
+    $today = now('Asia/Jakarta')->startOfDay();
 
-        $totalPegawai = User::whereNotIn('role', ['admin', 'manager'])->count();
-        $hadirHariIni = Attendance::whereDate('date', $today->toDateString())
+    $totalPegawai = User::whereNotIn('role', ['admin', 'manager'])->count();
+    
+    // Hitung kehadiran hari ini
+    $hadirHariIni = Attendance::whereDate('date', $today->toDateString())
+        ->whereNotNull('check_in')
+        ->count();
+    
+    // Hitung total terlambat
+    $totalTerlambat = Attendance::whereDate('date', $today->toDateString())
+        ->where('status', 'terlambat')
+        ->count();
+
+    // Hitung Alpha (pegawai yang belum absen sama sekali hari ini)
+    $pegawaiIdsWithAttendance = Attendance::whereDate('date', $today->toDateString())
+        ->whereNotNull('check_in')
+        ->pluck('user_id')
+        ->toArray();
+
+    $totalAlpha = User::whereNotIn('role', ['admin', 'manager'])
+        ->whereNotIn('id', $pegawaiIdsWithAttendance)
+        ->count();
+
+    // Produksi hari ini
+    $produksiHariIni = CatatanPanen::whereDate('tanggal', $today->toDateString())
+        ->sum('berat_kg') ?? 0;
+
+    // Rate kehadiran (hitung berdasarkan yang sudah absen, baik tepat waktu maupun terlambat)
+    $totalHadirDanTerlambat = $hadirHariIni;
+    $rateKehadiran = $totalPegawai > 0 ? round(($totalHadirDanTerlambat / $totalPegawai) * 100) : 0;
+
+    // Aktivitas terbaru
+    $recentActivities = Attendance::with('user')
+        ->whereDate('date', $today->toDateString())
+        ->whereNotNull('check_in')
+        ->orderBy('check_in', 'desc')
+        ->limit(5)
+        ->get();
+
+    // Data departemen
+    $roles = ['user' => 'Kebun & Panen', 'security' => 'Security', 'cleaning' => 'Cleaning', 'kantoran' => 'Administrasi'];
+    $departments = [];
+
+    foreach ($roles as $role => $name) {
+        $total = User::where('role', $role)->count();
+        $hadir = Attendance::whereDate('date', $today->toDateString())
             ->whereNotNull('check_in')
+            ->whereHas('user', fn($q) => $q->where('role', $role))
             ->count();
-
-        // Menggunakan model CatatanPanen untuk menghitung produksi
-        $produksiHariIni = CatatanPanen::whereDate('tanggal', $today->toDateString())
-            ->sum('berat_kg') ?? 0;
-
-        $rateKehadiran = $totalPegawai > 0 ? round(($hadirHariIni / $totalPegawai) * 100) : 0;
-
-        $recentActivities = Attendance::with('user')
-            ->whereDate('date', $today->toDateString())
-            ->whereNotNull('check_in')
-            ->orderBy('check_in', 'desc')
-            ->limit(5)
-            ->get();
-
-        $roles = ['user' => 'Kebun & Panen', 'security' => 'Security', 'cleaning' => 'Cleaning', 'kantoran' => 'Administrasi'];
-        $departments = [];
-
-        foreach ($roles as $role => $name) {
-            $total = User::where('role', $role)->count();
-            $hadir = Attendance::whereDate('date', $today->toDateString())
-                ->whereNotNull('check_in')
-                ->whereHas('user', fn($q) => $q->where('role', $role))
-                ->count();
-            $departments[$role] = [
-                'name' => $name,
-                'total' => $total,
-                'hadir' => $hadir,
-                'percentage' => $total > 0 ? round(($hadir / $total) * 100) : 0,
-            ];
-        }
-
-        return view('admin.dashboard', compact(
-            'totalPegawai',
-            'hadirHariIni',
-            'produksiHariIni',
-            'rateKehadiran',
-            'recentActivities',
-            'departments'
-        ));
+        $departments[$role] = [
+            'name' => $name,
+            'total' => $total,
+            'hadir' => $hadir,
+            'percentage' => $total > 0 ? round(($hadir / $total) * 100) : 0,
+        ];
     }
+
+    return view('admin.dashboard', compact(
+        'totalPegawai',
+        'hadirHariIni',
+        'produksiHariIni',
+        'rateKehadiran',
+        'recentActivities',
+        'departments',
+        'totalTerlambat',
+        'totalAlpha'
+    ));
+}
 
     public function userDashboard()
     {
@@ -558,12 +581,20 @@ class HomeController extends Controller
                 $q->whereHas('user', function($q2) use ($role) {
                     $q2->where('role', $role);
                 });
+            }, function($q) {
+                $q->whereHas('user', function($q2) {
+                    $q2->whereIn('role', ['user', 'security', 'cleaning', 'kantoran']);
+                });
             })
             ->distinct('user_id')
             ->count('user_id');
 
         $todayPalmWeight = CatatanPanen::whereDate('tanggal', $today->toDateString())
             ->when($role == 'user', function($q) {
+                $q->whereHas('pegawai', function($q2) {
+                    $q2->where('role', 'user');
+                });
+            }, function($q) {
                 $q->whereHas('pegawai', function($q2) {
                     $q2->where('role', 'user');
                 });
@@ -677,30 +708,35 @@ class HomeController extends Controller
         }
 
         $today = now('Asia/Jakarta')->startOfDay();
-        
-        // Handle date filter
+
+        // ── Handle date filter ─────────────────────────────────────────────────
         $dateFilter = $request->input('date_filter', 'today');
-        
+
         if ($dateFilter === 'all') {
-            // Untuk semua tanggal, tidak ada filter tanggal
             $selectedDate = null;
-            $query = Attendance::with('user');
         } elseif ($dateFilter === 'custom') {
             $selectedDate = $request->date
                 ? Carbon::parse($request->date, 'Asia/Jakarta')->startOfDay()
                 : $today;
-            $query = Attendance::with('user')
-                ->whereDate('date', $selectedDate->toDateString());
         } else {
             // Default: today
+            $dateFilter   = 'today';
             $selectedDate = $today;
-            $query = Attendance::with('user')
-                ->whereDate('date', $selectedDate->toDateString());
+        }
+
+        // ── Query utama attendance (untuk tabel + paginasi) ────────────────────
+        $query = Attendance::with('user');
+
+        if ($dateFilter !== 'all') {
+            $query->whereDate('date', $selectedDate->toDateString());
         }
 
         // Filter role
         if ($request->filled('role')) {
             $query->whereHas('user', fn($q) => $q->where('role', $request->role));
+        } else {
+            // Pastikan hanya pegawai (bukan admin/manager)
+            $query->whereHas('user', fn($q) => $q->whereIn('role', ['user', 'security', 'cleaning', 'kantoran']));
         }
 
         // Filter status
@@ -708,7 +744,7 @@ class HomeController extends Controller
             $query->where('status', $request->status);
         }
 
-        // Filter nama/no_hp
+        // Filter nama / no_hp
         if ($request->filled('search')) {
             $query->whereHas('user', function ($q) use ($request) {
                 $q->where('name', 'like', "%{$request->search}%")
@@ -716,69 +752,89 @@ class HomeController extends Controller
             });
         }
 
-        $attendances = $query->orderBy('date', 'desc')
+        $attendances = $query
+            ->orderBy('date', 'desc')
             ->orderBy('check_in', 'desc')
             ->paginate(10)
             ->appends($request->except('page'));
 
-        // Statistik
-        $userQuery = User::whereIn('role', ['user', 'security', 'cleaning', 'kantoran']);
-        if ($request->filled('role')) {
-            $userQuery->where('role', $request->role);
-        }
-        $totalPegawai = $userQuery->count();
+        // ── Statistik ──────────────────────────────────────────────────────────
 
-        // Hitung statistik berdasarkan filter
+        // Total pegawai (fresh query, tidak tercampur kondisi lain)
+        $totalPegawai = User::whereIn('role', ['user', 'security', 'cleaning', 'kantoran'])
+            ->when($request->filled('role'), fn($q) => $q->where('role', $request->role))
+            ->count();
+
+        // Helper: closure filter role pada Attendance
+        // Selalu batasi hanya ke role pegawai agar admin/manager tidak ikut terhitung
+        $applyRoleFilter = function ($q) use ($request) {
+            if ($request->filled('role')) {
+                $q->whereHas('user', fn($q2) => $q2->where('role', $request->role));
+            } else {
+                $q->whereHas('user', fn($q2) => $q2->whereIn('role', ['user', 'security', 'cleaning', 'kantoran']));
+            }
+        };
+
         if ($dateFilter === 'all') {
-            // Untuk semua tanggal, hitung total
-            $totalHadir = Attendance::whereNotNull('check_in')
-                ->when($request->filled('role'), function($q) use ($request) {
-                    $q->whereHas('user', fn($q2) => $q2->where('role', $request->role));
-                })
-                ->distinct('user_id')
-                ->count('user_id');
 
-            $totalTerlambat = Attendance::where('status', 'terlambat')
-                ->when($request->filled('role'), function($q) use ($request) {
-                    $q->whereHas('user', fn($q2) => $q2->where('role', $request->role));
-                })
+            // ── Filter: Semua Tanggal ──────────────────────────────────────────
+
+            // Total Tepat Waktu = jumlah record dengan status tepat waktu (semua tanggal)
+            $totalHadir = Attendance::where('status', 'tepat waktu')
+                ->tap($applyRoleFilter)
                 ->count();
 
-            $totalAlpha = $totalPegawai - $totalHadir;
+            // Total Terlambat = jumlah record dengan status terlambat
+            $totalTerlambat = Attendance::where('status', 'terlambat')
+                ->tap($applyRoleFilter)
+                ->count();
+
+            // Alpha = pegawai yang BELUM PERNAH hadir sama sekali (tidak punya record check_in)
+            $pernahHadirIds = Attendance::whereNotNull('check_in')
+                ->tap($applyRoleFilter)
+                ->pluck('user_id')
+                ->unique()
+                ->toArray();
+
+            $totalAlpha = User::whereIn('role', ['user', 'security', 'cleaning', 'kantoran'])
+                ->when($request->filled('role'), fn($q) => $q->where('role', $request->role))
+                ->whereNotIn('id', $pernahHadirIds)
+                ->count();
+
         } else {
-            // Untuk tanggal tertentu
-            $date = $selectedDate ? $selectedDate->toDateString() : $today->toDateString();
-            
+
+            // ── Filter: Hari Ini / Custom ──────────────────────────────────────
+
+            $date = $selectedDate->toDateString();
+
+            // Total Tepat Waktu pada tanggal tersebut
             $totalHadir = Attendance::whereDate('date', $date)
-                ->whereNotNull('check_in')
-                ->when($request->filled('role'), function($q) use ($request) {
-                    $q->whereHas('user', fn($q2) => $q2->where('role', $request->role));
-                })
+                ->where('status', 'tepat waktu')
+                ->tap($applyRoleFilter)
                 ->distinct('user_id')
                 ->count('user_id');
 
+            // Total Terlambat pada tanggal tersebut
             $totalTerlambat = Attendance::whereDate('date', $date)
                 ->where('status', 'terlambat')
-                ->when($request->filled('role'), function($q) use ($request) {
-                    $q->whereHas('user', fn($q2) => $q2->where('role', $request->role));
-                })
+                ->tap($applyRoleFilter)
                 ->count();
 
-            // Hitung alpha
-            $pegawaiIdsWithAttendance = Attendance::whereDate('date', $date)
+            // Alpha = pegawai yang tidak punya record hadir pada tanggal tersebut
+            $hadirIds = Attendance::whereDate('date', $date)
                 ->whereNotNull('check_in')
-                ->when($request->filled('role'), function($q) use ($request) {
-                    $q->whereHas('user', fn($q2) => $q2->where('role', $request->role));
-                })
+                ->tap($applyRoleFilter)
                 ->pluck('user_id')
                 ->toArray();
 
-            $totalAlpha = $userQuery
-                ->whereNotIn('id', $pegawaiIdsWithAttendance)
+            // PENTING: fresh query — tidak mereuse query yang sudah di-count sebelumnya
+            $totalAlpha = User::whereIn('role', ['user', 'security', 'cleaning', 'kantoran'])
+                ->when($request->filled('role'), fn($q) => $q->where('role', $request->role))
+                ->whereNotIn('id', $hadirIds)
                 ->count();
         }
 
-        // Tentukan display date untuk view
+        // ── Display date untuk heading tabel ──────────────────────────────────
         if ($dateFilter === 'all') {
             $displayDate = 'Semua Tanggal';
         } elseif ($dateFilter === 'custom' && $selectedDate) {
