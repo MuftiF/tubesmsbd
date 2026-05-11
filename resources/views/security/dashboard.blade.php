@@ -130,6 +130,7 @@
             <span class="text-xl mr-2"></span> Absen Masuk
         </a>
         @endif
+>>>>>>> 1d91a7dcd489645262197c9bd0c57ff7b6a4b63b
 
         {{-- ABSEN PULANG --}}
         @if(isset($absenHariIni) && $absenHariIni->check_in && !$absenHariIni->check_out)

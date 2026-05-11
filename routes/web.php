@@ -93,24 +93,29 @@ Route::middleware('auth')->group(function () {
     // ======================================================================
     // MANAGER ROUTES
     // ======================================================================
-    Route::prefix('manager')->group(function () {
-        Route::get('/dashboard', [HomeController::class, 'managerDashboard'])->name('manager.dashboard');
-        Route::get('/laporan', [HomeController::class, 'laporanManager'])->name('manager.laporan');
-        Route::get('/log', [HomeController::class, 'managerLog'])->name('manager.log');
+    Route::prefix('manager')->name('manager.')->group(function () {
+        Route::get('/dashboard', [HomeController::class, 'managerDashboard'])->name('dashboard');
+        Route::get('/laporan', [HomeController::class, 'laporanManager'])->name('laporan');
+        Route::get('/log', [HomeController::class, 'managerLog'])->name('log');
+        
+        // LOG ABSENSI untuk Manager
+        Route::get('/log-absen', [AttendanceController::class, 'logAbsensiManager'])->name('log-absen');
+        Route::get('/log-absen/data', [AttendanceController::class, 'getLogAbsensiData'])->name('log-absen.data');
+        Route::get('/log-absen/export', [AttendanceController::class, 'exportLogAbsensi'])->name('log-absen.export');
 
         // Pegawai Management
-        Route::get('/pegawai', [HomeController::class, 'managerPegawai'])->name('manager.pegawai');
-        Route::post('/pegawai', [HomeController::class, 'managerTambahPegawai'])->name('manager.pegawai.tambah');
-        Route::put('/pegawai/{id}', [HomeController::class, 'managerUpdatePegawai'])->name('manager.pegawai.update');
-        Route::delete('/pegawai/{id}', [HomeController::class, 'managerHapusPegawai'])->name('manager.pegawai.hapus');
+        Route::get('/pegawai', [HomeController::class, 'managerPegawai'])->name('pegawai');
+        Route::post('/pegawai', [HomeController::class, 'managerTambahPegawai'])->name('pegawai.tambah');
+        Route::put('/pegawai/{id}', [HomeController::class, 'managerUpdatePegawai'])->name('pegawai.update');
+        Route::delete('/pegawai/{id}', [HomeController::class, 'managerHapusPegawai'])->name('pegawai.hapus');
         
-        // Hapus pegawai dengan riwayat - ROUTE BARU
-        Route::delete('/pegawai/force-delete/{id}', [HomeController::class, 'managerForceDeletePegawai'])->name('manager.pegawai.force-delete');
+        // Hapus pegawai dengan riwayat
+        Route::delete('/pegawai/force-delete/{id}', [HomeController::class, 'managerForceDeletePegawai'])->name('pegawai.force-delete');
 
         // Pengumuman Management
-        Route::get('/pengumuman', [AnnouncementController::class, 'indexManager'])->name('manager.pengumuman');
-        Route::post('/pengumuman', [AnnouncementController::class, 'storeManager'])->name('manager.pengumuman.store');
-        Route::delete('/pengumuman/{id}', [AnnouncementController::class, 'destroyManager'])->name('manager.pengumuman.delete');
+        Route::get('/pengumuman', [AnnouncementController::class, 'indexManager'])->name('pengumuman');
+        Route::post('/pengumuman', [AnnouncementController::class, 'storeManager'])->name('pengumuman.store');
+        Route::delete('/pengumuman/{id}', [AnnouncementController::class, 'destroyManager'])->name('pengumuman.delete');
     });
 
     // ======================================================================
@@ -121,9 +126,14 @@ Route::middleware('auth')->group(function () {
         Route::get('/dashboard', [HomeController::class, 'adminDashboard'])->name('dashboard');
         Route::get('/pegawai', [HomeController::class, 'kelolaPegawai'])->name('pegawai');
         Route::get('/laporan', [HomeController::class, 'laporanAdmin'])->name('laporan');
+        
+        // LOG ABSENSI untuk Admin
+        Route::get('/log-absen', [AttendanceController::class, 'logAbsensiAdmin'])->name('log-absen');
+        Route::get('/log-absen/data', [AttendanceController::class, 'getLogAbsensiData'])->name('log-absen.data');
+        Route::get('/log-absen/export', [AttendanceController::class, 'exportLogAbsensi'])->name('log-absen.export');
 
         // ======================================================================
-        // RAPOT MANAGEMENT - ROUTE YANG BENAR
+        // RAPOT MANAGEMENT
         // ======================================================================
         Route::prefix('rapot')->name('rapot.')->group(function () {
             // List pegawai untuk evaluasi
@@ -132,7 +142,7 @@ Route::middleware('auth')->group(function () {
             // Form evaluasi kinerja
             Route::get('/evaluasi/{user}', [RapotController::class, 'create'])->name('evaluasi.create');
             
-            // Simpan evaluasi kinerja - GUNAKAN 'store' bukan 'storeEvaluasi'
+            // Simpan evaluasi kinerja
             Route::post('/evaluasi/{user}', [RapotController::class, 'store'])->name('evaluasi.store');
             
             // Tampilkan detail evaluasi
@@ -195,6 +205,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/sheet-absen', [HomeController::class, 'exportSheetAbsen'])->name('export.sheet.absen');
     });
 
-    // routes/web.php
+    // Test route
     Route::get('/test-perhitungan', [RapotController::class, 'testPerhitungan']);
 });

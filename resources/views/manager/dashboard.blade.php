@@ -1,402 +1,263 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-6xl mx-auto py-10 px-4">
+<div class="bg-[#f8f6f2] min-h-screen font-['Inter',sans-serif] p-6 md:p-8">
+    <div class="max-w-7xl mx-auto">
 
-    {{-- HEADER --}}
-    <div class="text-center mb-12">
-        <div class="w-24 h-24 bg-purple-100 rounded-full flex items-center justify-center mx-auto shadow-sm">
-            <span class="text-5xl">👨‍💼</span>
+        {{-- Header --}}
+        <div class="relative pl-4 mb-8">
+            <div class="absolute left-0 top-0 bottom-0 w-1 bg-[#2d6a4f] rounded-full"></div>
+            <h1 class="text-2xl md:text-3xl font-bold text-[#1e1e1e] tracking-tight">Admin Dashboard</h1>
+            <p class="text-sm text-stone-500 mt-1">Monitoring produktivitas dan aktivitas tim kebun sawit</p>
         </div>
-        <h1 class="text-3xl font-bold text-gray-900 mt-4">Manager Dashboard</h1>
-        <p class="text-gray-500">Monitoring tim dan produktivitas harian kebun sawit</p>
-    </div>
 
-    {{-- STATS --}}
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
-        <div class="bg-white shadow-md rounded-xl p-6 text-center border-l-4 border-blue-500">
-            <p class="text-3xl font-bold text-blue-600">{{ $totalTim ?? 0 }}</p>
-            <p class="text-gray-600 text-sm mt-1">Total Tim</p>
-        </div>
-        <div class="bg-white shadow-md rounded-xl p-6 text-center border-l-4 border-green-500">
-            <p class="text-3xl font-bold text-green-600">{{ $hadirHariIni ?? 0 }}</p>
-            <p class="text-gray-600 text-sm mt-1">Hadir Hari Ini</p>
-        </div>
-        <div class="bg-white shadow-md rounded-xl p-6 text-center border-l-4 border-yellow-500">
-            <p class="text-3xl font-bold text-yellow-600">{{ number_format($produksiHariIni ?? 0, 1) }} kg</p>
-            <p class="text-gray-600 text-sm mt-1">Produksi Hari Ini</p>
-        </div>
-        <div class="bg-white shadow-md rounded-xl p-6 text-center border-l-4 border-red-500">
-            <p class="text-3xl font-bold text-red-600">{{ $totalAlpha ?? 0 }}</p>
-            <p class="text-gray-600 text-sm mt-1">Alpha</p>
-        </div>
-    </div>
-
-    {{-- MAIN CONTENT GRID --}}
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
-
-        {{-- AKSI CEPAT --}}
-        <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
-            <h3 class="text-xl font-bold text-gray-800 mb-5">Aksi Cepat</h3>
-            <div class="space-y-4">
-                <a href="{{ route('manager.laporan') }}"
-                   class="block bg-blue-600 hover:bg-blue-700 text-white rounded-lg py-4 px-4 text-center font-semibold shadow-sm transform hover:scale-[1.03] transition">
-                    <div class="text-2xl mb-1">📊</div>Laporan
-                </a>
-                <a href="{{ route('manager.log') }}"
-                   class="block bg-green-600 hover:bg-green-700 text-white rounded-lg py-4 px-4 text-center font-semibold shadow-sm transform hover:scale-[1.03] transition">
-                    <div class="text-2xl mb-1">📋</div>Log Absensi
-                </a>
-                <a href="{{ route('manager.pegawai') }}"
-                   class="block bg-purple-600 hover:bg-purple-700 text-white rounded-lg py-4 px-4 text-center font-semibold shadow-sm transform hover:scale-[1.03] transition">
-                    <div class="text-2xl mb-1">👥</div>Pegawai
-                </a>
+        {{-- Summary Cards --}}
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div class="bg-white rounded-2xl p-4 border border-stone-200 shadow-sm">
+                <div class="text-xs font-semibold uppercase tracking-wide text-stone-400 mb-2">Absensi Hari Ini</div>
+                <div class="text-2xl md:text-3xl font-bold text-[#2d6a4f]">{{ number_format($hadirHariIni ?? 0) }}</div>
+                <div class="text-xs font-medium text-stone-400 mt-1">Total Kehadiran</div>
+            </div>
+            <div class="bg-white rounded-2xl p-4 border border-stone-200 shadow-sm">
+                <div class="text-xs font-semibold uppercase tracking-wide text-stone-400 mb-2">Total Tim</div>
+                <div class="text-2xl md:text-3xl font-bold text-[#2563eb]">{{ number_format($totalTim ?? 0) }}</div>
+                <div class="text-xs font-medium text-stone-400 mt-1">Tim Aktif</div>
+            </div>
+            <div class="bg-white rounded-2xl p-4 border border-stone-200 shadow-sm">
+                <div class="text-xs font-semibold uppercase tracking-wide text-stone-400 mb-2">Produksi Hari Ini</div>
+                <div class="text-2xl md:text-3xl font-bold text-[#2d6a4f]">{{ number_format($produksiHariIni ?? 0, 1) }} <span class="text-sm">kg</span></div>
+                <div class="text-xs font-medium text-stone-400 mt-1">Total Panen</div>
+            </div>
+            <div class="bg-white rounded-2xl p-4 border border-stone-200 shadow-sm">
+                <div class="text-xs font-semibold uppercase tracking-wide text-stone-400 mb-2">Alpha</div>
+                <div class="text-2xl md:text-3xl font-bold text-[#dc2626]">{{ number_format($totalAlpha ?? 0) }}</div>
+                <div class="text-xs font-medium text-stone-400 mt-1">Tidak Hadir</div>
             </div>
         </div>
 
-        {{-- GRAFIK PRODUKTIVITAS --}}
-        <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100 lg:col-span-2">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-gray-800">Produktivitas Harian (kg)</h3>
-                <select id="chartRange"
-                        class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="7">7 Hari Terakhir</option>
-                    <option value="14">14 Hari Terakhir</option>
-                    <option value="30">30 Hari Terakhir</option>
-                </select>
-            </div>
-
-            <div class="h-64">
-                <canvas id="productivityChart"></canvas>
-            </div>
-
-            <div class="mt-4 grid grid-cols-3 gap-4 text-center">
-                <div class="bg-green-50 p-3 rounded-lg border border-green-200">
-                    <p class="text-sm text-gray-600">Rata-rata Harian</p>
-                    <p class="text-xl font-bold text-green-700" id="avgDaily">
-                        {{ number_format($avgProduksi ?? 0, 1) }} kg
-                    </p>
-                </div>
-                <div class="bg-blue-50 p-3 rounded-lg border border-blue-200">
-                    <p class="text-sm text-gray-600">Total Bulan Ini</p>
-                    <p class="text-xl font-bold text-blue-700" id="monthlyTotal">
-                        {{ number_format($totalProduksiBulanIni ?? 0, 1) }} kg
-                    </p>
-                </div>
-                <div class="bg-yellow-50 p-3 rounded-lg border border-yellow-200">
-                    <p class="text-sm text-gray-600">Puncak Produksi</p>
-                    <p class="text-xl font-bold text-yellow-700" id="peakProduction">
-                        {{ number_format($peakProduksi ?? 0, 1) }} kg
-                    </p>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    {{-- RINGKASAN & RANKING --}}
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
-
-        {{-- RINGKASAN --}}
-        <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
-            <h3 class="text-xl font-bold text-gray-800 mb-5">Ringkasan Hari Ini</h3>
-            <div class="space-y-4">
-                <div class="flex justify-between items-center bg-green-50 px-4 py-3 rounded-lg border border-green-200">
-                    <div class="flex items-center">
-                        <span class="text-green-600 text-2xl mr-3">👥</span>
-                        <p class="font-semibold text-gray-800">Kehadiran</p>
+        {{-- Charts Section --}}
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-8">
+            {{-- Line Chart --}}
+            <div class="lg:col-span-2 bg-white rounded-2xl p-5 md:p-6 border border-stone-200">
+                <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
+                    <div>
+                        <h3 class="text-sm font-bold text-stone-700">Produktivitas Harian</h3>
+                        <p class="text-xs text-stone-400">Dalam satuan kilogram (kg)</p>
                     </div>
-                    <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-bold">
-                        {{ $totalTim > 0 ? round(($hadirHariIni / $totalTim) * 100) : 0 }}%
-                    </span>
+                    <select id="filterType" class="border border-stone-200 rounded-full px-4 py-1.5 text-xs bg-white text-stone-600 focus:outline-none focus:border-[#2d6a4f] focus:ring-1 focus:ring-[#2d6a4f]">
+                        <option value="7">7 Hari</option>
+                        <option value="30">1 Bulan</option>
+                        <option value="365">1 Tahun</option>
+                    </select>
                 </div>
-
-                <div class="flex justify-between items-center bg-blue-50 px-4 py-3 rounded-lg border border-blue-200">
-                    <div class="flex items-center">
-                        <span class="text-blue-600 text-2xl mr-3">🌴</span>
-                        <p class="font-semibold text-gray-800">Produktivitas</p>
-                    </div>
-                    <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-bold">
-                        @if($produksiHariIni > 100)
-                            Tinggi
-                        @elseif($produksiHariIni > 50)
-                            Sedang
-                        @else
-                            Rendah
-                        @endif
-                    </span>
-                </div>
-
-                <div class="flex justify-between items-center bg-yellow-50 px-4 py-3 rounded-lg border border-yellow-200">
-                    <div class="flex items-center">
-                        <span class="text-yellow-600 text-2xl mr-3">⏰</span>
-                        <p class="font-semibold text-gray-800">Keterlambatan</p>
-                    </div>
-                    <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-bold">
-                        {{ $totalTerlambat ?? 0 }}
-                    </span>
-                </div>
-
-                <div class="flex justify-between items-center bg-purple-50 px-4 py-3 rounded-lg border border-purple-200">
-                    <div class="flex items-center">
-                        <span class="text-purple-600 text-2xl mr-3">📈</span>
-                        <p class="font-semibold text-gray-800">Trend Produksi</p>
-                    </div>
-                    <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-bold">
-                        {{ $trend ?? 'Stabil' }}
-                    </span>
+                <div class="h-[280px] relative">
+                    <canvas id="productivityChart"></canvas>
                 </div>
             </div>
-        </div>
 
-        {{-- TOP PERFORMER --}}
-        <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
-            <div class="flex justify-between items-center mb-5">
-                <h3 class="text-xl font-bold text-gray-800">Top Performer Hari Ini</h3>
-                <span class="text-sm text-gray-500">Berdasarkan Produksi</span>
-            </div>
-
-            <div class="space-y-3">
-                @forelse($topPerformers as $index => $performer)
-                <div class="flex items-center justify-between p-3 rounded-lg border
-                    {{ $index < 3 ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200' }}">
-                    <div class="flex items-center">
-                        <div class="w-10 h-10 rounded-full
-                            {{ $index < 3 ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-200 text-gray-600' }}
-                            flex items-center justify-center font-bold mr-3">
-                            {{ $index + 1 }}
-                        </div>
-                        <div>
-                            <p class="font-semibold text-gray-800">{{ $performer->name }}</p>
-                            <p class="text-sm text-gray-500">{{ ucfirst($performer->role) }}</p>
-                        </div>
+            {{-- Donut Chart --}}
+            <div class="bg-white rounded-2xl p-5 md:p-6 border border-stone-200">
+                <h3 class="text-sm font-bold text-stone-700 mb-4">Status Absensi Hari Ini</h3>
+                <div class="h-[200px] relative">
+                    <canvas id="attendanceChart"></canvas>
+                </div>
+                <div class="mt-4 space-y-2">
+                    <div class="flex justify-between items-center text-xs">
+                        <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-[#2d6a4f]"></span><span class="text-stone-600">Hadir</span></div>
+                        <span class="font-semibold text-stone-800">{{ $hadirHariIni ?? 0 }}</span>
                     </div>
-                    <div class="text-right">
-                        <p class="font-bold text-green-700">
-                            {{ number_format($performer->total_produksi ?? 0, 1) }} kg
-                        </p>
-                        <p class="text-xs text-gray-500">
-                            {{ $performer->check_in_time ?? 'Belum absen' }}
-                        </p>
+                    <div class="flex justify-between items-center text-xs">
+                        <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-[#eab308]"></span><span class="text-stone-600">Terlambat</span></div>
+                        <span class="font-semibold text-stone-800">{{ $totalTerlambat ?? 0 }}</span>
+                    </div>
+                    <div class="flex justify-between items-center text-xs">
+                        <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-[#dc2626]"></span><span class="text-stone-600">Alpha</span></div>
+                        <span class="font-semibold text-stone-800">{{ $totalAlpha ?? 0 }}</span>
                     </div>
                 </div>
-                @empty
-                <div class="text-center py-6 text-gray-500">Belum ada data produksi hari ini</div>
-                @endforelse
             </div>
         </div>
 
-    </div>
-
-    {{-- EXPORT DATA --}}
-<div class="bg-white rounded-xl shadow-md p-6 border border-gray-100 mb-10">
-    <h3 class="text-lg font-semibold text-gray-800 mb-4">Export Data Semua Aktivitas</h3>
-    
-    {{-- OPTION 1: Gunakan route umum --}}
-    <form action="{{ route('export.all') }}" method="GET"
-          class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
-        <div>
-            <label class="text-sm font-medium text-gray-700">Dari Tanggal</label>
-            <input type="date" name="from" required
-                   value="{{ date('Y-m-d', strtotime('-1 week')) }}"
-                   class="w-full mt-1 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-        </div>
-        <div>
-            <label class="text-sm font-medium text-gray-700">Sampai Tanggal</label>
-            <input type="date" name="to" required
-                   value="{{ date('Y-m-d') }}"
-                   class="w-full mt-1 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-        </div>
-        <div class="flex flex-col gap-2">
-            <button type="submit"
-                class="bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg px-4 py-3 shadow-sm transform hover:scale-[1.03] transition">
-                📥 Export CSV
-            </button>
-            <a href="{{ route('export.all.everything') }}"
-                class="bg-gray-700 hover:bg-gray-800 text-white font-semibold rounded-lg px-4 py-3 shadow-sm transform hover:scale-[1.02] transition text-center">
-                Export Semua Data (All Time)
+        {{-- Quick Action --}}
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <a href="{{ route('manager.laporan') }}" class="bg-white rounded-2xl p-4 border border-stone-200 flex items-center justify-between group hover:bg-[#fefcf7] hover:border-stone-300 transition-all hover:-translate-y-0.5">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-[#2d6a4f] text-xl"><i class="fas fa-chart-line"></i></div>
+                    <div><h4 class="font-bold text-stone-800 text-sm">Laporan</h4><p class="text-xs text-stone-400 mt-0.5">Lihat laporan harian</p></div>
+                </div>
+                <div class="text-stone-300 text-sm"><i class="fas fa-arrow-right"></i></div>
+            </a>
+            <a href="{{ route('manager.log') }}" class="bg-white rounded-2xl p-4 border border-stone-200 flex items-center justify-between group hover:bg-[#fefcf7] hover:border-stone-300 transition-all hover:-translate-y-0.5">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-[#2d6a4f] text-xl"><i class="fas fa-clipboard-list"></i></div>
+                    <div><h4 class="font-bold text-stone-800 text-sm">Log Absensi</h4><p class="text-xs text-stone-400 mt-0.5">Aktivitas pegawai</p></div>
+                </div>
+                <div class="text-stone-300 text-sm"><i class="fas fa-arrow-right"></i></div>
+            </a>
+            <a href="{{ route('manager.pegawai') }}" class="bg-white rounded-2xl p-4 border border-stone-200 flex items-center justify-between group hover:bg-[#fefcf7] hover:border-stone-300 transition-all hover:-translate-y-0.5">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-purple-50 rounded-2xl flex items-center justify-center text-purple-800 text-xl"><i class="fas fa-user-friends"></i></div>
+                    <div><h4 class="font-bold text-stone-800 text-sm">Pegawai</h4><p class="text-xs text-stone-400 mt-0.5">Kelola data tim</p></div>
+                </div>
+                <div class="text-stone-300 text-sm"><i class="fas fa-arrow-right"></i></div>
             </a>
         </div>
-    </form>
+
+        {{-- Top Performer & Activity --}}
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-8">
+            {{-- Top Performer --}}
+            <div class="bg-white rounded-2xl p-5 md:p-6 border border-stone-200">
+                <h3 class="text-sm font-bold text-stone-700">Top Performer Hari Ini</h3>
+                <p class="text-xs text-stone-400 mt-1">Berdasarkan hasil produksi</p>
+                <div class="mt-4 space-y-3">
+                    @forelse($topPerformers as $index => $performer)
+                    <div class="flex items-center justify-between p-3 rounded-xl border border-stone-100 hover:bg-[#fefcf7] transition">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 bg-emerald-50 rounded-xl flex items-center justify-center font-bold text-[#2d6a4f]">{{ $index + 1 }}</div>
+                            <div><h5 class="font-bold text-stone-800 text-sm">{{ $performer->name }}</h5><p class="text-xs text-stone-400">{{ ucfirst($performer->role) }}</p></div>
+                        </div>
+                        <div class="font-bold text-[#2d6a4f] text-sm">{{ number_format($performer->total_produksi ?? 0, 1) }} kg</div>
+                    </div>
+                    @empty
+                    <div class="py-8 text-center text-stone-400">
+                        <i class="fas fa-trophy text-3xl mb-2 block"></i>
+                        <p class="font-semibold text-sm">Belum ada data produksi hari ini</p>
+                    </div>
+                    @endforelse
+                </div>
+            </div>
+
+            {{-- Team Activity --}}
+            <div class="lg:col-span-2 bg-white rounded-2xl p-5 md:p-6 border border-stone-200">
+                <div class="flex flex-wrap justify-between items-center gap-2 mb-4">
+                    <div><h3 class="text-sm font-bold text-stone-700">Aktivitas Tim Terbaru</h3><p class="text-xs text-stone-400">Monitoring check in dan produksi tim</p></div>
+                    <a href="{{ route('manager.log') }}" class="text-xs font-semibold text-[#2d6a4f] hover:underline">Lihat Semua →</a>
+                </div>
+                <div class="space-y-3">
+                    @forelse($recentActivities as $activity)
+                    @php
+                        $prod = $activity->produksi_harian ?? 0;
+                        $efficiency = $prod > 20 ? 'Tinggi' : ($prod > 10 ? 'Sedang' : 'Rendah');
+                        $effClass = $prod > 20 ? 'bg-emerald-100 text-emerald-800' : ($prod > 10 ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800');
+                    @endphp
+                    <div class="flex flex-wrap items-center justify-between gap-3 p-4 rounded-xl border border-stone-100 hover:bg-[#fefcf7] transition">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-[#2d6a4f] text-xl"><i class="fas fa-user-check"></i></div>
+                            <div><h5 class="font-bold text-stone-800 text-sm">{{ $activity->user->name }}</h5><span class="inline-block bg-emerald-50 text-[#2d6a4f] text-xs font-semibold px-2 py-0.5 rounded-full mt-1">{{ ucfirst($activity->user->role) }}</span></div>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-4 text-xs text-stone-500">
+                            <span><i class="fas fa-clock text-stone-400 mr-1"></i> {{ \Carbon\Carbon::parse($activity->check_in)->format('H:i') }} WIB</span>
+                            @if($activity->produksi_harian)<span><i class="fas fa-seedling text-stone-400 mr-1"></i> {{ number_format($activity->produksi_harian, 1) }} kg</span>@endif
+                        </div>
+                        @if($activity->produksi_harian)
+                        <span class="text-xs font-semibold px-3 py-1 rounded-full {{ $effClass }}">{{ $efficiency }}</span>
+                        @endif
+                    </div>
+                    @empty
+                    <div class="py-8 text-center text-stone-400">
+                        <i class="fas fa-inbox text-3xl mb-2 block"></i>
+                        <p class="font-semibold text-sm">Belum Ada Aktivitas</p>
+                        <span class="text-xs">Aktivitas terbaru tim akan muncul di sini</span>
+                    </div>
+                    @endforelse
+                </div>
+            </div>
+        </div>
+
+        {{-- Export Data --}}
+        <div class="bg-white rounded-2xl p-5 md:p-6 border border-stone-200">
+            <div class="flex flex-wrap justify-between items-center gap-3 mb-5">
+                <div><h3 class="text-sm font-bold text-stone-700">Export Data Aktivitas</h3><p class="text-xs text-stone-400">Download laporan absensi dan aktivitas pegawai</p></div>
+                <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-[#2d6a4f] text-xl"><i class="fas fa-file-export"></i></div>
+            </div>
+            <form action="{{ route('export.all') }}" method="GET">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div><label class="block text-xs font-semibold uppercase tracking-wide text-stone-600 mb-1">Dari Tanggal</label><input type="date" name="from" value="{{ date('Y-m-d', strtotime('-1 week')) }}" class="w-full border border-stone-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#2d6a4f] focus:ring-1 focus:ring-[#2d6a4f]"></div>
+                    <div><label class="block text-xs font-semibold uppercase tracking-wide text-stone-600 mb-1">Sampai Tanggal</label><input type="date" name="to" value="{{ date('Y-m-d') }}" class="w-full border border-stone-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#2d6a4f] focus:ring-1 focus:ring-[#2d6a4f]"></div>
+                    <div><button type="submit" class="w-full bg-[#2d6a4f] text-white px-4 py-2 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 hover:bg-[#235f48] transition"><i class="fas fa-download"></i> Export CSV</button></div>
+                    <div><a href="{{ route('export.all.everything') }}" class="w-full bg-stone-800 text-white px-4 py-2 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 hover:bg-stone-700 transition"><i class="fas fa-database"></i> Export Semua Data</a></div>
+                </div>
+            </form>
+        </div>
+
+    </div>
 </div>
 
-    {{-- TEAM ACTIVITY --}}
-    <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
-        <div class="flex justify-between items-center mb-5">
-            <h3 class="text-xl font-bold text-gray-800">Aktivitas Tim Terbaru</h3>
-            <a href="{{ route('manager.log') }}"
-               class="text-blue-600 hover:text-blue-800 text-sm font-semibold">
-                Lihat Semua →
-            </a>
-        </div>
-
-        <div class="space-y-3">
-            @foreach($recentActivities as $activity)
-            <div class="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg p-4">
-                <div class="flex items-center">
-                    <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-3">
-                        <span class="text-green-600 text-xl">✓</span>
-                    </div>
-                    <div>
-                        <p class="font-semibold text-gray-800">{{ $activity->user->name }}</p>
-                        <p class="text-sm text-gray-500">
-                            {{ ucfirst($activity->user->role) }} |
-                            Check In: {{ \Carbon\Carbon::parse($activity->check_in)->format('H:i') }}
-                            @if($activity->produksi_harian)
-                                | Produksi: {{ number_format($activity->produksi_harian, 1) }} kg
-                            @endif
-                        </p>
-                    </div>
-                </div>
-                @if($activity->produksi_harian)
-                <div class="text-right">
-                    <span class="inline-block bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-bold">
-                        {{ number_format($activity->produksi_harian, 1) }} kg
-                    </span>
-                    <p class="text-xs text-gray-500 mt-1">
-                        Efisiensi:
-                        @if($activity->produksi_harian > 20)
-                            <span class="text-green-600 font-bold">Tinggi</span>
-                        @elseif($activity->produksi_harian > 10)
-                            <span class="text-yellow-600 font-bold">Sedang</span>
-                        @else
-                            <span class="text-red-600 font-bold">Rendah</span>
-                        @endif
-                    </p>
-                </div>
-                @endif
-            </div>
-            @endforeach
-        </div>
-    </div>
-
-
-
-{{-- CHART.JS --}}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Data dari controller (pastikan Anda mengirim data ini dari controller)
-    const productivityData = @json($produktivitasData ?? []);
-    
-    // Format tanggal untuk label
-    const formatDate = (dateString) => {
+    const allData = @json($produktivitasData ?? []);
+
+    function formatDate(dateString, type = '7') {
         const date = new Date(dateString);
-        return date.toLocaleDateString('id-ID', { 
-            day: 'numeric', 
-            month: 'short' 
-        });
-    };
-    
-    // 1. GRAFIK PRODUKTIVITAS HARIAN
-    const productivityCtx = document.getElementById('productivityChart').getContext('2d');
-    
-    // Siapkan data awal (7 hari terakhir)
-    let chartDays = 7;
-    let filteredData = productivityData.slice(-chartDays);
-    
-    const productivityChart = new Chart(productivityCtx, {
-        type: 'line',
-        data: {
-            labels: filteredData.map(item => formatDate(item.tanggal)),
-            datasets: [{
-                label: 'Produksi Sawit (kg)',
-                data: filteredData.map(item => item.total_produksi),
-                borderColor: '#10b981',
-                backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                borderWidth: 3,
-                fill: true,
-                tension: 0.4,
-                pointBackgroundColor: '#10b981',
-                pointBorderColor: '#ffffff',
-                pointBorderWidth: 2,
-                pointRadius: 5
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'top',
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return `Produksi: ${context.raw} kg`;
-                        }
-                    }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Kilogram (kg)'
-                    },
-                    ticks: {
-                        callback: function(value) {
-                            return value + ' kg';
-                        }
-                    }
-                },
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Tanggal'
-                    }
-                }
-            }
-        }
-    });
-    
-    // Event listener untuk filter range
-    document.getElementById('chartRange').addEventListener('change', function(e) {
-        chartDays = parseInt(e.target.value);
-        filteredData = productivityData.slice(-chartDays);
-        
-        // Update chart
-        productivityChart.data.labels = filteredData.map(item => formatDate(item.tanggal));
-        productivityChart.data.datasets[0].data = filteredData.map(item => item.total_produksi);
-        productivityChart.update();
-        
-        // Update statistik
-        updateStatistics(filteredData);
-    });
-    
-    // Fungsi untuk update statistik
-    function updateStatistics(data) {
-        if (data.length === 0) return;
-        
-        // Hitung rata-rata
-        const total = data.reduce((sum, item) => sum + parseFloat(item.total_produksi), 0);
-        const avg = total / data.length;
-        
-        // Temukan puncak produksi
-        const peak = Math.max(...data.map(item => item.total_produksi));
-        
-        // Hitung trend
-        let trend = 'Stabil';
-        if (data.length >= 2) {
-            const latest = data[data.length - 1].total_produksi;
-            const previous = data[data.length - 2].total_produksi;
-            const change = ((latest - previous) / previous) * 100;
-            
-            if (change > 10) trend = 'Naik';
-            else if (change < -10) trend = 'Turun';
-        }
-        
-        // Update UI
-        document.getElementById('avgDaily').textContent = avg.toFixed(1) + ' kg';
-        document.getElementById('peakProduction').textContent = peak.toFixed(1) + ' kg';
-        document.getElementById('trendIndicator').textContent = trend;
+        if (type == '365') return date.toLocaleDateString('id-ID', { month: 'short', year: 'numeric' });
+        return date.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' });
     }
-    
-    // Inisialisasi statistik
-    updateStatistics(filteredData);
+
+    function filterData(days) {
+        const now = new Date();
+        return allData.filter(item => {
+            const itemDate = new Date(item.tanggal);
+            const diffDays = (now - itemDate) / (1000 * 60 * 60 * 24);
+            return diffDays <= days;
+        });
+    }
+
+    const ctx = document.getElementById('productivityChart').getContext('2d');
+    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, 'rgba(45,106,79,0.35)');
+    gradient.addColorStop(1, 'rgba(45,106,79,0.02)');
+
+    let productivityChart;
+
+    function renderChart(days = 7) {
+        const filtered = filterData(days);
+        const labels = filtered.map(item => formatDate(item.tanggal, days));
+        const totals = filtered.map(item => item.total_produksi);
+
+        if (productivityChart) productivityChart.destroy();
+
+        productivityChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Produktivitas',
+                    data: totals,
+                    borderColor: '#2d6a4f',
+                    backgroundColor: gradient,
+                    fill: true,
+                    tension: 0.45,
+                    borderWidth: 3,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    pointBackgroundColor: '#2d6a4f',
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { backgroundColor: '#1e1e1e', padding: 10, titleColor: '#fff', bodyColor: '#fff', callbacks: { label: (ctx) => ctx.parsed.y + ' kg' } }
+                },
+                scales: { y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { callback: (val) => val + ' kg' } }, x: { grid: { display: false } } }
+            }
+        });
+    }
+
+    renderChart(7);
+    document.getElementById('filterType').addEventListener('change', function() { renderChart(parseInt(this.value)); });
+
+    new Chart(document.getElementById('attendanceChart').getContext('2d'), {
+        type: 'doughnut',
+        data: { labels: ['Hadir', 'Terlambat', 'Alpha'], datasets: [{ data: [{{ $hadirHariIni ?? 0 }}, {{ $totalTerlambat ?? 0 }}, {{ $totalAlpha ?? 0 }}], backgroundColor: ['#2d6a4f', '#eab308', '#dc2626'], borderWidth: 0, cutout: '70%' }] },
+        options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false }, tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.parsed}` } } } }
+    });
 });
 </script>
 @endsection
