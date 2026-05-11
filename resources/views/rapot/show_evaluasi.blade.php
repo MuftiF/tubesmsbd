@@ -1,336 +1,297 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mx-auto px-4 py-8">
-    <!-- Header -->
-    <div class="mb-8">
-        <div class="flex justify-between items-center">
-            <div>
-                <h1 class="text-3xl font-bold text-gray-800">Detail Evaluasi Kinerja</h1>
-                <p class="text-gray-600 mt-2">
-                    <span class="font-semibold">{{ $rapot->user->name ?? 'N/A' }}</span> |
-                    Periode: <span class="font-semibold">{{ $rapot->periode }}</span> |
-                    Status: 
-                    <span class="font-semibold 
-                        {{ $rapot->status == 'Sangat Baik' ? 'text-green-600' : 
-                           ($rapot->status == 'Baik' ? 'text-blue-600' : 
-                           ($rapot->status == 'Perlu Perbaikan' ? 'text-orange-600' : 'text-gray-600')) }}">
-                        {{ $rapot->status }}
-                    </span>
-                </p>
+<div class="bg-[#f8f6f2] min-h-screen font-['Inter',sans-serif] p-6 md:p-8">
+    <div class="max-w-7xl mx-auto">
+        {{-- Header --}}
+        <div class="relative pl-4 mb-8">
+            <div class="absolute left-0 top-0 bottom-0 w-1 bg-[#2d6a4f] rounded-full"></div>
+            <div class="flex flex-wrap justify-between items-start gap-4">
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-bold text-[#1e1e1e] tracking-tight">Detail Evaluasi Kinerja</h1>
+                    <p class="text-sm text-stone-500 mt-1">
+                        <span class="font-semibold text-[#2d6a4f]">{{ $rapot->user->name ?? 'N/A' }}</span> |
+                        Periode: <span class="font-semibold">{{ $rapot->periode }}</span> |
+                        Status:
+                        <span class="font-semibold
+                            {{ $rapot->status == 'Sangat Baik' ? 'text-emerald-600' :
+                               ($rapot->status == 'Baik' ? 'text-blue-600' :
+                               ($rapot->status == 'Perlu Perbaikan' ? 'text-amber-600' : 'text-stone-500')) }}">
+                            {{ $rapot->status }}
+                        </span>
+                    </p>
+                </div>
+                <div>
+                    @if(auth()->user()->role == 'admin')
+                    <a href="{{ route('admin.rapot.index') }}"
+                       class="inline-flex items-center gap-2 px-4 py-2 border border-stone-200 rounded-xl text-stone-600 text-sm font-semibold hover:bg-white hover:border-stone-300 transition">
+                        <i class="fas fa-arrow-left text-xs"></i> Kembali ke Daftar
+                    </a>
+                    @else
+                    <a href="{{ route('rapot.saya') }}"
+                       class="inline-flex items-center gap-2 px-4 py-2 border border-stone-200 rounded-xl text-stone-600 text-sm font-semibold hover:bg-white hover:border-stone-300 transition">
+                        <i class="fas fa-arrow-left text-xs"></i> Kembali
+                    </a>
+                    @endif
+                </div>
             </div>
-            <div>
-                @if(auth()->user()->role == 'admin')
-                <a href="{{ route('admin.rapot.index') }}" 
-                   class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition">
-                    ← Kembali ke Daftar
-                </a>
+        </div>
+
+        {{-- Informasi Utama - Grid 2 Kolom --}}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+            {{-- Informasi Pegawai --}}
+            <div class="bg-white rounded-2xl border border-stone-200 shadow-sm p-6">
+                <h3 class="text-sm font-bold text-stone-700 mb-4 flex items-center gap-2">
+                    <i class="fas fa-user-circle text-[#2d6a4f]"></i> Informasi Pegawai
+                </h3>
+                <div class="flex items-center gap-4 mb-5">
+                    <div class="w-14 h-14 bg-emerald-100 rounded-2xl flex items-center justify-center">
+                        <span class="text-2xl font-bold text-[#2d6a4f]">
+                            {{ strtoupper(substr($rapot->user->name ?? 'N', 0, 1)) }}
+                        </span>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-stone-800 text-lg">{{ $rapot->user->name ?? 'N/A' }}</h4>
+                        <span class="inline-block px-2.5 py-1 bg-emerald-50 text-[#2d6a4f] text-xs font-semibold rounded-full mt-1">
+                            {{ ucfirst($rapot->user->role ?? 'user') }}
+                        </span>
+                    </div>
+                </div>
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between py-1 border-b border-stone-100">
+                        <span class="text-stone-500">ID Pegawai</span>
+                        <span class="font-semibold text-stone-700">{{ $rapot->user->id ?? 'N/A' }}</span>
+                    </div>
+                    <div class="flex justify-between py-1 border-b border-stone-100">
+                        <span class="text-stone-500">Evaluator</span>
+                        <span class="font-semibold text-stone-700">{{ $rapot->evaluator->name ?? 'Admin' }}</span>
+                    </div>
+                    <div class="flex justify-between py-1">
+                        <span class="text-stone-500">Dibuat</span>
+                        <span class="font-semibold text-stone-700">{{ $rapot->created_at->format('d M Y H:i') }}</span>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Ringkasan Evaluasi --}}
+            <div class="bg-white rounded-2xl border border-stone-200 shadow-sm p-6">
+                <h3 class="text-sm font-bold text-stone-700 mb-4 flex items-center gap-2">
+                    <i class="fas fa-chart-line text-[#2d6a4f]"></i> Ringkasan Evaluasi
+                </h3>
+                @php
+                    $statusColor = match($dataEvaluasi['status_evaluasi'] ?? 'draft') {
+                        'draft' => 'bg-stone-100 text-stone-600',
+                        'dikirim' => 'bg-blue-100 text-blue-700',
+                        'selesai' => 'bg-emerald-100 text-emerald-700',
+                        'Perlu Perbaikan' => 'bg-amber-100 text-amber-700',
+                        default => 'bg-stone-100 text-stone-600'
+                    };
+                @endphp
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center py-2 border-b border-stone-100">
+                        <span class="text-stone-500 text-sm">Status Evaluasi</span>
+                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold {{ $statusColor }}">
+                            {{ ucfirst($dataEvaluasi['status_evaluasi'] ?? 'draft') }}
+                        </span>
+                    </div>
+                    <div class="flex justify-between py-2 border-b border-stone-100">
+                        <span class="text-stone-500 text-sm">Nilai Skala 10</span>
+                        <span class="font-bold text-stone-800">{{ number_format(abs($dataEvaluasi['nilai_skala_10'] ?? 0), 1) }}/10</span>
+                    </div>
+                    <div class="flex justify-between py-2 border-b border-stone-100">
+                        <span class="text-stone-500 text-sm">Tipe Evaluasi</span>
+                        <span class="font-semibold text-stone-700">{{ $rapot->tipe == 'evaluasi_kinerja' ? 'Evaluasi Kinerja' : ucfirst($rapot->tipe) }}</span>
+                    </div>
+                    <div class="flex justify-between py-2">
+                        <span class="text-stone-500 text-sm">Persentase Kehadiran</span>
+                        <span class="font-bold {{ ($dataEvaluasi['persentase_kehadiran'] ?? 0) < 0 ? 'text-red-500' : 'text-emerald-600' }}">
+                            {{ number_format(abs($dataEvaluasi['persentase_kehadiran'] ?? 0), 1) }}%
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Evaluasi Detail --}}
+        <div class="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden mb-8">
+            <div class="px-6 md:px-8 py-6 border-b border-stone-100 bg-stone-50/30">
+                <h2 class="text-base font-bold text-stone-800 flex items-center gap-2">
+                    <i class="fas fa-clipboard-list text-[#2d6a4f]"></i> Evaluasi Kinerja
+                </h2>
+            </div>
+
+            <div class="p-6 md:p-8 space-y-8">
+                {{-- Evaluasi Kerja --}}
+                <div>
+                    <h3 class="text-sm font-bold text-stone-700 mb-3 flex items-center gap-2">
+                        <i class="fas fa-star text-amber-500 text-xs"></i> Evaluasi Kerja
+                    </h3>
+                    <div class="bg-emerald-50/30 rounded-xl p-5 border border-emerald-100">
+                        <p class="text-stone-700 whitespace-pre-line text-sm leading-relaxed">
+                            {{ $dataEvaluasi['evaluasi_kerja'] ?? ($rapot->evaluasi_kerja ?? 'Tidak ada evaluasi') }}
+                        </p>
+                    </div>
+                </div>
+
+                {{-- Saran Perbaikan --}}
+                <div>
+                    <h3 class="text-sm font-bold text-stone-700 mb-3 flex items-center gap-2">
+                        <i class="fas fa-lightbulb text-amber-500 text-xs"></i> Saran Perbaikan
+                    </h3>
+                    <div class="bg-blue-50/30 rounded-xl p-5 border border-blue-100">
+                        <p class="text-stone-700 whitespace-pre-line text-sm leading-relaxed">
+                            {{ $dataEvaluasi['saran_perbaikan'] ?? ($rapot->saran_perbaikan ?? 'Tidak ada saran') }}
+                        </p>
+                    </div>
+                </div>
+
+                {{-- Catatan Tambahan --}}
+                @if($rapot->catatan)
+                <div>
+                    <h3 class="text-sm font-bold text-stone-700 mb-3 flex items-center gap-2">
+                        <i class="fas fa-pencil-alt text-stone-400 text-xs"></i> Catatan Tambahan
+                    </h3>
+                    <div class="bg-amber-50/30 rounded-xl p-5 border border-amber-100">
+                        <p class="text-stone-700 whitespace-pre-line text-sm leading-relaxed">{{ $rapot->catatan }}</p>
+                    </div>
+                </div>
+                @endif
+
+                {{-- Statistik Detail --}}
+                <div class="pt-4 border-t border-stone-100">
+                    <h3 class="text-sm font-bold text-stone-700 mb-4 flex items-center gap-2">
+                        <i class="fas fa-chart-simple text-[#2d6a4f] text-xs"></i> Statistik Detail
+                    </h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <div class="bg-stone-50 rounded-xl p-4 text-center">
+                            <p class="text-xs text-stone-500 mb-1">Persentase Kehadiran</p>
+                            <p class="text-xl font-bold {{ ($dataEvaluasi['persentase_kehadiran'] ?? 0) < 0 ? 'text-red-500' : 'text-emerald-600' }}">
+                                {{ number_format(abs($dataEvaluasi['persentase_kehadiran'] ?? 0), 1) }}%
+                            </p>
+                        </div>
+                        <div class="bg-stone-50 rounded-xl p-4 text-center">
+                            <p class="text-xs text-stone-500 mb-1">Hari Hadir</p>
+                            <p class="text-xl font-bold text-stone-800">{{ $dataEvaluasi['hari_hadir'] ?? 0 }} <span class="text-xs font-normal text-stone-400">hari</span></p>
+                        </div>
+                        <div class="bg-stone-50 rounded-xl p-4 text-center">
+                            <p class="text-xs text-stone-500 mb-1">Total Terlambat</p>
+                            <p class="text-xl font-bold text-amber-600">{{ $dataEvaluasi['total_terlambat'] ?? 0 }} <span class="text-xs font-normal text-stone-400">kali</span></p>
+                        </div>
+                        <div class="bg-stone-50 rounded-xl p-4 text-center">
+                            <p class="text-xs text-stone-500 mb-1">Rata-rata Jam/Hari</p>
+                            <p class="text-xl font-bold text-stone-800">{{ number_format(abs($dataEvaluasi['rata_jam_perhari'] ?? 0), 2) }} <span class="text-xs font-normal text-stone-400">jam</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Detail Kehadiran --}}
+        <div class="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden mb-8">
+            <div class="px-6 md:px-8 py-6 border-b border-stone-100 bg-stone-50/30">
+                <h2 class="text-base font-bold text-stone-800 flex items-center gap-2">
+                    <i class="fas fa-calendar-check text-[#2d6a4f]"></i> Detail Kehadiran
+                </h2>
+                <p class="text-xs text-stone-400 mt-1">Total: {{ count($detailAbsen) }} hari kehadiran</p>
+            </div>
+
+            <div class="p-6 md:p-8">
+                @if(!empty($detailAbsen) && count($detailAbsen) > 0)
+                <div class="overflow-x-auto rounded-xl border border-stone-200">
+                    <table class="w-full">
+                        <thead class="bg-stone-50 border-b border-stone-100">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-stone-500">Tanggal</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-stone-500">Check In</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-stone-500">Check Out</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-stone-500">Jam Kerja</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-stone-500">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-stone-100">
+                            @foreach($detailAbsen as $absen)
+                            <tr class="hover:bg-[#fefcf7] transition">
+                                <td class="px-4 py-3 text-sm text-stone-800 font-medium">
+                                    @if(isset($absen['tanggal']) && $absen['tanggal'])
+                                        @php
+                                            try {
+                                                if (preg_match('/^\d{2}\/\d{2}\/\d{4}$/', $absen['tanggal'])) {
+                                                    echo $absen['tanggal'];
+                                                } elseif (preg_match('/^\d{4}-\d{2}-\d{2}$/', $absen['tanggal'])) {
+                                                    echo \Carbon\Carbon::parse($absen['tanggal'])->format('d/m/Y');
+                                                } else {
+                                                    echo $absen['tanggal'];
+                                                }
+                                            } catch (\Exception $e) {
+                                                echo $absen['tanggal'];
+                                            }
+                                        @endphp
+                                    @else
+                                        -
+                                    @endif
+                                </td>
+                                <td class="px-4 py-3 text-sm text-stone-600">{{ $absen['check_in'] ?? '-' }}</td>
+                                <td class="px-4 py-3 text-sm text-stone-600">{{ $absen['check_out'] ?? '-' }}</td>
+                                <td class="px-4 py-3">
+                                    <span class="inline-flex text-xs font-semibold px-2.5 py-1 rounded-full 
+                                        {{ ($absen['jam_kerja'] ?? 0) > 0 ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800' }}">
+                                        {{ isset($absen['jam_kerja']) ? number_format(abs($absen['jam_kerja']), 2) . ' jam' : '-' }}
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    @php
+                                        $statusColor = match($absen['status'] ?? 'hadir') {
+                                            'hadir', 'tepat waktu' => 'bg-emerald-100 text-emerald-800',
+                                            'izin' => 'bg-yellow-100 text-yellow-800',
+                                            'sakit' => 'bg-blue-100 text-blue-800',
+                                            'terlambat' => 'bg-amber-100 text-amber-800',
+                                            'alfa' => 'bg-red-100 text-red-800',
+                                            default => 'bg-stone-100 text-stone-600'
+                                        };
+                                    @endphp
+                                    <span class="px-2.5 py-1 text-xs font-semibold rounded-full {{ $statusColor }}">
+                                        {{ ucfirst($absen['status'] ?? 'hadir') }}
+                                    </span>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
                 @else
-                <a href="{{ route('rapot.saya') }}" 
-                   class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition">
-                    ← Kembali
-                </a>
+                <div class="text-center py-12 border-2 border-dashed border-stone-200 rounded-xl">
+                    <i class="fas fa-calendar-times text-3xl text-stone-300 mb-3 block"></i>
+                    <p class="text-stone-500 font-semibold text-sm">Tidak ada data kehadiran untuk periode ini.</p>
+                </div>
                 @endif
             </div>
         </div>
-    </div>
 
-    <!-- Informasi Utama -->
-           <div class="bg-white rounded-xl shadow p-6 border border-gray-200">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">👤 Informasi Pegawai</h3>
-            <div class="flex items-center mb-4">
-                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
-                    <span class="text-xl font-bold text-blue-600">
-                        {{ strtoupper(substr($rapot->user->name ?? 'N', 0, 1)) }}
-                    </span>
-                </div>
-                <div>
-                    <h4 class="font-bold text-gray-900">{{ $rapot->user->name ?? 'N/A' }}</h4>
-                    <p class="text-gray-600">{{ $rapot->user->role ?? 'user' }}</p>
-                </div>
+        {{-- Footer Actions --}}
+        <div class="flex flex-wrap justify-between items-center gap-4 pt-4 border-t border-stone-200">
+            <div class="text-xs text-stone-400">
+                <i class="far fa-clock mr-1"></i> Terakhir diupdate: {{ $rapot->updated_at->format('d M Y H:i') }}
             </div>
-            <div class="space-y-2 text-sm">
-                <div class="flex justify-between">
-                    <span class="text-gray-600">ID:</span>
-                    <span class="font-medium">{{ $rapot->user->id ?? 'N/A' }}</span>
-                </div>
-                <div class="flex justify-between">
-                    <span class="text-gray-600">Evaluator:</span>
-                    <span class="font-medium">{{ $rapot->evaluator->name ?? 'Admin' }}</span>
-                </div>
-                <div class="flex justify-between">
-                    <span class="text-gray-600">Dibuat:</span>
-                    <span class="font-medium">{{ $rapot->created_at->format('d M Y H:i') }}</span>
-                </div>
+            @if(auth()->check() && auth()->user()->role == 'admin')
+            <div class="flex gap-3">
+                @if(Route::has('admin.rapot.delete'))
+                <form action="{{ route('admin.rapot.delete', $rapot->id) }}" method="POST"
+                      onsubmit="return confirm('Yakin ingin menghapus evaluasi ini?')" class="inline">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit"
+                            class="px-4 py-2 bg-red-500 text-white text-sm font-semibold rounded-xl hover:bg-red-600 transition flex items-center gap-2">
+                        <i class="fas fa-trash"></i> Hapus Evaluasi
+                    </button>
+                </form>
+                @endif
             </div>
-        </div>
-
-        <div class="bg-white rounded-xl shadow p-6 border border-gray-200">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">Ringkasan Evaluasi</h3>
-            <div class="space-y-3">
-                @php
-                    $statusColor = match($dataEvaluasi['status_evaluasi'] ?? 'draft') {
-                        'draft' => 'bg-gray-100 text-gray-800',
-                        'dikirim' => 'bg-blue-100 text-blue-800',
-                        'selesai' => 'bg-green-100 text-green-800',
-                        'Perlu Perbaikan' => 'bg-orange-100 text-orange-800',
-                        default => 'bg-gray-100 text-gray-800'
-                    };
-                @endphp
-                <div class="flex justify-between items-center">
-                    <span class="text-gray-600">Status Evaluasi:</span>
-                    <span class="px-3 py-1 rounded-full text-sm font-medium {{ $statusColor }}">
-                        {{ ucfirst($dataEvaluasi['status_evaluasi'] ?? 'draft') }}
-                    </span>
-                </div>
-                <div class="flex justify-between">
-                    <span class="text-gray-600">Nilai Skala 10:</span>
-                    <span class="font-medium">
-                        {{ number_format(abs($dataEvaluasi['nilai_skala_10'] ?? 0), 1) }}/10
-                    </span>
-                </div>
-                <div class="flex justify-between">
-                    <span class="text-gray-600">Tipe:</span>
-                    <span class="font-medium">{{ $rapot->tipe == 'evaluasi_kinerja' ? 'Evaluasi Kinerja' : ucfirst($rapot->tipe) }}</span>
-                </div>
-                <div class="flex justify-between">
-                    <span class="text-gray-600">Persentase:</span>
-                    <span class="font-medium {{ ($dataEvaluasi['persentase_kehadiran'] ?? 0) < 0 ? 'text-red-600' : 'text-green-600' }}">
-                        {{ number_format(abs($dataEvaluasi['persentase_kehadiran'] ?? 0), 1) }}%
-                    </span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Evaluasi Detail -->
-    <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6 mb-8">
-        <h2 class="text-2xl font-bold text-gray-800 mb-6">Evaluasi Kinerja</h2>
-        
-        <!-- Evaluasi Kerja -->
-        <div class="mb-8">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                <span class="mr-2"></span> Evaluasi Kerja
-            </h3>
-            <div class="bg-gray-50 rounded-lg p-6">
-                <p class="text-gray-700 whitespace-pre-line">
-                    {{ $dataEvaluasi['evaluasi_kerja'] ?? ($rapot->evaluasi_kerja ?? 'Tidak ada evaluasi') }}
-                </p>
-            </div>
-        </div>
-
-        <!-- Saran Perbaikan -->
-        <div class="mb-8">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                <span class="mr-2"></span> Saran Perbaikan
-            </h3>
-            <div class="bg-blue-50 rounded-lg p-6">
-                <p class="text-gray-700 whitespace-pre-line">
-                    {{ $dataEvaluasi['saran_perbaikan'] ?? ($rapot->saran_perbaikan ?? 'Tidak ada saran') }}
-                </p>
-            </div>
-        </div>
-
-        <!-- Catatan Tambahan -->
-        @if($rapot->catatan)
-        <div class="mb-8">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                <span class="mr-2"></span> Catatan Tambahan
-            </h3>
-            <div class="bg-yellow-50 rounded-lg p-6">
-                <p class="text-gray-700 whitespace-pre-line">{{ $rapot->catatan }}</p>
-            </div>
-        </div>
-        @endif
-
-        <!-- Statistik Detail -->
-        <div class="border-t border-gray-200 pt-6">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                <span class="mr-2"></span> Statistik Detail
-            </h3>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="bg-gray-50 rounded-lg p-4">
-                    <p class="text-sm text-gray-500">Persentase Kehadiran</p>
-                    <p class="text-2xl font-bold 
-                        {{ ($dataEvaluasi['persentase_kehadiran'] ?? 0) < 0 ? 'text-red-600' : 'text-gray-800' }}">
-                        {{ number_format(abs($dataEvaluasi['persentase_kehadiran'] ?? 0), 1) }}%
-                    </p>
-                </div>
-                <div class="bg-gray-50 rounded-lg p-4">
-                    <p class="text-sm text-gray-500">Hari Hadir</p>
-                    <p class="text-2xl font-bold text-gray-800">
-                        {{ $dataEvaluasi['hari_hadir'] ?? 0 }}
-                    </p>
-                </div>
-                <div class="bg-gray-50 rounded-lg p-4">
-                    <p class="text-sm text-gray-500">Total Terlambat</p>
-                    <p class="text-2xl font-bold text-gray-800">
-                        {{ $dataEvaluasi['total_terlambat'] ?? 0 }}
-                    </p>
-                </div>
-                <div class="bg-gray-50 rounded-lg p-4">
-                    <p class="text-sm text-gray-500">Rata Jam/Hari</p>
-                    <p class="text-2xl font-bold text-gray-800">
-                        {{ number_format(abs($dataEvaluasi['rata_jam_perhari'] ?? 0), 2) }} jam
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Detail Kehadiran -->
-    <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6 mb-8">
-        <h2 class="text-2xl font-bold text-gray-800 mb-6">Detail Kehadiran</h2>
-        
-        @if(!empty($detailAbsen) && count($detailAbsen) > 0)
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Check In</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Check Out</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jam Kerja</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    @foreach($detailAbsen as $absen)
-                    <tr class="hover:bg-gray-50">
-                        <!-- TANGGAL - FIXED -->
-                        <td class="px-4 py-3 text-sm text-gray-900">
-                            @if(isset($absen['tanggal']) && $absen['tanggal'])
-                                @php
-                                    try {
-                                        // Jika sudah format d/m/Y, tampilkan langsung
-                                        if (preg_match('/^\d{2}\/\d{2}\/\d{4}$/', $absen['tanggal'])) {
-                                            echo $absen['tanggal'];
-                                        } 
-                                        // Jika format Y-m-d, konversi ke d/m/Y
-                                        elseif (preg_match('/^\d{4}-\d{2}-\d{2}$/', $absen['tanggal'])) {
-                                            echo \Carbon\Carbon::parse($absen['tanggal'])->format('d/m/Y');
-                                        }
-                                        // Jika sudah string waktu lainnya, tampilkan langsung
-                                        else {
-                                            echo $absen['tanggal'];
-                                        }
-                                    } catch (\Exception $e) {
-                                        echo $absen['tanggal'];
-                                    }
-                                @endphp
-                            @else
-                                -
-                            @endif
-                        </td>
-                        
-                        <!-- CHECK IN - FIXED -->
-                        <td class="px-4 py-3 text-sm text-gray-900">
-                            @if(isset($absen['check_in']) && $absen['check_in'] && $absen['check_in'] !== '-')
-                                @php
-                                    try {
-                                        // Jika sudah format H:i, tampilkan langsung
-                                        if (preg_match('/^\d{1,2}:\d{2}$/', $absen['check_in'])) {
-                                            echo $absen['check_in'];
-                                        } 
-                                        // Jika datetime, ambil hanya waktu
-                                        else {
-                                            $time = \Carbon\Carbon::parse($absen['check_in'])->format('H:i');
-                                            echo $time;
-                                        }
-                                    } catch (\Exception $e) {
-                                        echo $absen['check_in'];
-                                    }
-                                @endphp
-                            @else
-                                -
-                            @endif
-                        </td>
-                        
-                        <!-- CHECK OUT - FIXED -->
-                        <td class="px-4 py-3 text-sm text-gray-900">
-                            @if(isset($absen['check_out']) && $absen['check_out'] && $absen['check_out'] !== '-')
-                                @php
-                                    try {
-                                        if (preg_match('/^\d{1,2}:\d{2}$/', $absen['check_out'])) {
-                                            echo $absen['check_out'];
-                                        } else {
-                                            $time = \Carbon\Carbon::parse($absen['check_out'])->format('H:i');
-                                            echo $time;
-                                        }
-                                    } catch (\Exception $e) {
-                                        echo $absen['check_out'];
-                                    }
-                                @endphp
-                            @else
-                                -
-                            @endif
-                        </td>
-                        
-                        <!-- JAM KERJA -->
-                        <td class="px-4 py-3 text-sm text-gray-900">
-                            {{ isset($absen['jam_kerja']) ? number_format(abs($absen['jam_kerja']), 2) . ' jam' : '-' }}
-                        </td>
-                        
-                        <!-- STATUS -->
-                        <td class="px-4 py-3">
-                            @php
-                                $statusColor = match($absen['status'] ?? 'hadir') {
-                                    'hadir' => 'bg-green-100 text-green-800',
-                                    'izin' => 'bg-yellow-100 text-yellow-800',
-                                    'sakit' => 'bg-blue-100 text-blue-800',
-                                    'terlambat' => 'bg-orange-100 text-orange-800',
-                                    'alfa' => 'bg-red-100 text-red-800',
-                                    'tepat waktu' => 'bg-green-100 text-green-800',
-                                    default => 'bg-gray-100 text-gray-800'
-                                };
-                            @endphp
-                            <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $statusColor }}">
-                                {{ ucfirst($absen['status'] ?? 'hadir') }}
-                            </span>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-        <p class="mt-4 text-sm text-gray-500">
-            Total: {{ count($detailAbsen) }} hari kehadiran
-        </p>
-        @else
-        <div class="text-center py-12">
-            <div class="text-gray-400 text-5xl mb-4"></div>
-            <p class="text-gray-500 text-lg">Tidak ada data kehadiran untuk periode ini.</p>
-            @if($rapot->detail_absen)
-                <p class="text-sm text-gray-400 mt-2">
-                    Data tersimpan: {{ substr($rapot->detail_absen, 0, 50) }}...
-                </p>
             @endif
         </div>
-        @endif
-    </div>
-
-    <!-- Footer Actions -->
-    <div class="flex justify-between items-center pt-6 border-t border-gray-200">
-        <div class="text-sm text-gray-500">
-            Terakhir diupdate: {{ $rapot->updated_at->format('d M Y H:i') }}
-        </div>
-        @if(auth()->check() && auth()->user()->role == 'admin')
-        <div class="flex gap-3">      
-            @if(Route::has('admin.rapot.delete'))
-            <form action="{{ route('admin.rapot.delete', $rapot->id) }}" method="POST" 
-                  onsubmit="return confirm('Hapus evaluasi ini?')" class="inline">
-                @csrf
-                @method('DELETE')
-                <button type="submit" 
-                        class="px-4 py-2 bg-red-500 text-white font-medium rounded-lg hover:bg-red-600 transition">
-                    Hapus Evaluasi
-                </button>
-            </form>
-            @endif
-        </div>
-        @endif
     </div>
 </div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
 @push('scripts')
 <script>

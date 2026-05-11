@@ -1,587 +1,186 @@
 @extends('layouts.app')
 
 @section('content')
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap');
+<div class="bg-[#f8f6f2] min-h-screen font-['Inter',sans-serif] p-6 md:p-8">
+    <div class="max-w-7xl mx-auto">
 
-    .admin-wrap * {
-        font-family: 'Inter', sans-serif;
-    }
-
-    .admin-wrap {
-        background: #f8f6f2;
-        min-height: 100vh;
-        padding: 2rem 1.5rem;
-    }
-
-    /* HEADER */
-    .lap-header {
-        margin-bottom: 2rem;
-        position: relative;
-        padding-left: 1rem;
-    }
-    .lap-header::before {
-        content: '';
-        position: absolute;
-        left: 0; top: 0; bottom: 0;
-        width: 4px;
-        background: #2d6a4f;
-        border-radius: 2px;
-    }
-    .lap-header h1 {
-        font-size: 1.75rem;
-        font-weight: 700;
-        color: #1e1e1e;
-        letter-spacing: -0.3px;
-        margin: 0;
-    }
-    .lap-header p {
-        font-size: 0.85rem;
-        color: #78716c;
-        margin-top: 0.25rem;
-    }
-
-    /* SUMMARY CARDS */
-    .summary-cards {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
-        margin-bottom: 2rem;
-    }
-    @media (min-width: 768px) {
-        .summary-cards { grid-template-columns: repeat(4, 1fr); }
-    }
-    .scard {
-        background: white;
-        border-radius: 18px;
-        padding: 1rem 1.25rem;
-        border: 1px solid #e7e5e4;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.03);
-        transition: all 0.2s;
-    }
-    .scard .sc-label {
-        font-size: 0.7rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-        color: #a8a29e;
-        margin-bottom: 0.5rem;
-    }
-    .scard .sc-val {
-        font-size: 1.75rem;
-        font-weight: 700;
-        color: #1c1c1c;
-        line-height: 1.2;
-    }
-    .scard .sc-unit {
-        font-size: 0.7rem;
-        font-weight: 500;
-        color: #a8a29e;
-        margin-top: 0.25rem;
-    }
-    .scard-emerald .sc-val { color: #2d6a4f; }
-    .scard-blue .sc-val { color: #2563eb; }
-    .scard-red .sc-val { color: #dc2626; }
-
-    /* CHARTS GRID */
-    .charts-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 1.25rem;
-        margin-bottom: 2rem;
-    }
-    @media (min-width: 1024px) {
-        .charts-grid { grid-template-columns: repeat(3, 1fr); }
-        .charts-grid .col-span-2 { grid-column: span 2; }
-    }
-    .chart-box {
-        background: white;
-        border-radius: 20px;
-        padding: 1.25rem 1.5rem;
-        border: 1px solid #e7e5e4;
-    }
-    .chart-box h3 {
-        font-size: 0.85rem;
-        font-weight: 700;
-        color: #44403c;
-        margin-bottom: 1.25rem;
-    }
-    .chart-box .sub {
-        font-size: 0.7rem;
-        color: #a8a29e;
-        margin-top: 0.25rem;
-    }
-    .chart-container {
-        height: 280px;
-        position: relative;
-    }
-
-    /* QUICK ACTION */
-    .quick-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 1rem;
-        margin-bottom: 2rem;
-    }
-    @media (min-width: 768px) {
-        .quick-grid { grid-template-columns: repeat(3, 1fr); }
-    }
-    .action-card {
-        background: white;
-        border-radius: 20px;
-        padding: 1rem 1.25rem;
-        border: 1px solid #e7e5e4;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        text-decoration: none;
-        transition: all 0.2s;
-    }
-    .action-card:hover {
-        background: #fefcf7;
-        border-color: #d6d3d1;
-        transform: translateY(-2px);
-    }
-    .action-left {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
-    .action-icon {
-        width: 48px;
-        height: 48px;
-        background: #eef5f0;
-        border-radius: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #2d6a4f;
-        font-size: 1.25rem;
-    }
-    .action-icon.purple { background: #f3e8ff; color: #6b21a5; }
-    .action-text h4 { font-weight: 700; color: #1c1c1c; font-size: 0.9rem; margin: 0; }
-    .action-text p { font-size: 0.7rem; color: #a8a29e; margin: 0.2rem 0 0; }
-    .action-arrow { color: #cbcbc4; font-size: 0.9rem; }
-
-    /* TOP PERFORMER */
-    .performer-list {
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-    }
-    .performer-item {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0.75rem;
-        border-radius: 14px;
-        border: 1px solid #f0f0ee;
-        transition: background 0.15s;
-    }
-    .performer-item:hover { background: #fefcf7; }
-    .performer-rank {
-        width: 36px;
-        height: 36px;
-        background: #eef5f0;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        color: #2d6a4f;
-    }
-    .performer-info h5 { font-weight: 700; color: #1c1c1c; font-size: 0.85rem; margin: 0; }
-    .performer-info p { font-size: 0.7rem; color: #a8a29e; margin: 0.2rem 0 0; }
-    .performer-weight { font-weight: 700; color: #2d6a4f; font-size: 0.9rem; }
-
-    /* ACTIVITY LIST */
-    .activity-list {
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-    }
-    .activity-item {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: space-between;
-        gap: 1rem;
-        padding: 1rem;
-        border-radius: 16px;
-        border: 1px solid #f0f0ee;
-        transition: background 0.15s;
-    }
-    .activity-item:hover { background: #fefcf7; }
-    .activity-user {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-    .activity-avatar {
-        width: 48px;
-        height: 48px;
-        background: #eef5f0;
-        border-radius: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #2d6a4f;
-        font-size: 1.25rem;
-    }
-    .activity-name h5 { font-weight: 700; color: #1c1c1c; font-size: 0.85rem; margin: 0; }
-    .activity-name .role-badge {
-        display: inline-block;
-        background: #eef5f0;
-        color: #2d6a4f;
-        font-size: 0.6rem;
-        font-weight: 600;
-        padding: 0.2rem 0.6rem;
-        border-radius: 999px;
-        margin-top: 0.25rem;
-    }
-    .activity-detail {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1rem;
-        font-size: 0.7rem;
-        color: #78716c;
-    }
-    .activity-detail i { margin-right: 0.25rem; color: #a8a29e; }
-    .efficiency-badge {
-        font-size: 0.7rem;
-        font-weight: 600;
-        padding: 0.25rem 0.75rem;
-        border-radius: 999px;
-    }
-    .efficiency-high { background: #e3f5e9; color: #0f6e3f; }
-    .efficiency-medium { background: #fef3c7; color: #b45309; }
-    .efficiency-low { background: #fee9e6; color: #bc3f2c; }
-
-    /* EXPORT BOX */
-    .export-box {
-        background: white;
-        border-radius: 20px;
-        padding: 1.25rem 1.5rem;
-        border: 1px solid #e7e5e4;
-        margin-top: 1.5rem;
-    }
-    .export-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 1.25rem;
-        flex-wrap: wrap;
-        gap: 0.75rem;
-    }
-    .export-header h3 { font-size: 0.9rem; font-weight: 700; color: #1c1c1c; margin: 0; }
-    .export-header p { font-size: 0.7rem; color: #a8a29e; margin: 0.2rem 0 0; }
-    .export-icon {
-        width: 48px;
-        height: 48px;
-        background: #eef5f0;
-        border-radius: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #2d6a4f;
-        font-size: 1.25rem;
-    }
-    .form-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-    @media (min-width: 768px) {
-        .form-grid { grid-template-columns: repeat(4, 1fr); }
-    }
-    .form-group label {
-        font-size: 0.7rem;
-        font-weight: 600;
-        color: #57534e;
-        display: block;
-        margin-bottom: 0.3rem;
-        text-transform: uppercase;
-        letter-spacing: 0.03em;
-    }
-    .form-group input, .form-group select {
-        width: 100%;
-        border: 1px solid #e7e5e4;
-        border-radius: 14px;
-        padding: 0.6rem 0.875rem;
-        font-size: 0.8rem;
-        background: #ffffff;
-        outline: none;
-    }
-    .form-group input:focus, .form-group select:focus {
-        border-color: #2d6a4f;
-        box-shadow: 0 0 0 3px rgba(45,106,79,0.1);
-    }
-    .btn-export {
-        background: #2d6a4f;
-        color: white;
-        padding: 0.6rem 1rem;
-        border-radius: 14px;
-        font-weight: 600;
-        font-size: 0.8rem;
-        border: none;
-        cursor: pointer;
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-    }
-    .btn-export-dark {
-        background: #1e1e1e;
-    }
-    .btn-export-dark:hover { background: #2c2c2c; }
-
-    /* EMPTY STATE */
-    .empty-state {
-        padding: 2rem 1rem;
-        text-align: center;
-        color: #a8a29e;
-    }
-    .empty-state i { font-size: 2rem; margin-bottom: 0.5rem; display: block; }
-    .empty-state p { font-weight: 600; margin-top: 0.5rem; font-size: 0.85rem; }
-
-    /* LEGEND */
-    .legend-stats {
-        margin-top: 1rem;
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-    .legend-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 0.75rem;
-    }
-    .legend-dot {
-        width: 10px;
-        height: 10px;
-        border-radius: 999px;
-        margin-right: 0.5rem;
-    }
-    .legend-label { color: #57534e; }
-    .legend-value { font-weight: 600; color: #1c1c1c; }
-</style>
-
-<div class="admin-wrap">
-<div style="max-width:1280px;margin:0 auto;">
-
-    <!-- HEADER -->
-    <div class="lap-header">
-        <h1>Admin Dashboard</h1>
-        <p>Monitoring produktivitas dan aktivitas tim kebun sawit</p>
-    </div>
-
-    <!-- SUMMARY CARDS -->
-    <div class="summary-cards">
-        <div class="scard scard-emerald">
-            <div class="sc-label">Absensi Hari Ini</div>
-            <div class="sc-val">{{ number_format($hadirHariIni ?? 0) }}</div>
-            <div class="sc-unit">Total Kehadiran</div>
+        {{-- Header --}}
+        <div class="relative pl-4 mb-8">
+            <div class="absolute left-0 top-0 bottom-0 w-1 bg-[#2d6a4f] rounded-full"></div>
+            <h1 class="text-2xl md:text-3xl font-bold text-[#1e1e1e] tracking-tight">Admin Dashboard</h1>
+            <p class="text-sm text-stone-500 mt-1">Monitoring produktivitas dan aktivitas tim kebun sawit</p>
         </div>
-        <div class="scard scard-blue">
-            <div class="sc-label">Total Tim</div>
-            <div class="sc-val">{{ number_format($totalTim ?? 0) }}</div>
-            <div class="sc-unit">Tim Aktif</div>
-        </div>
-        <div class="scard scard-emerald">
-            <div class="sc-label">Produksi Hari Ini</div>
-            <div class="sc-val">{{ number_format($produksiHariIni ?? 0, 1) }} <span style="font-size:0.9rem;">kg</span></div>
-            <div class="sc-unit">Total Panen</div>
-        </div>
-        <div class="scard scard-red">
-            <div class="sc-label">Alpha</div>
-            <div class="sc-val">{{ number_format($totalAlpha ?? 0) }}</div>
-            <div class="sc-unit">Tidak Hadir</div>
-        </div>
-    </div>
 
-    <!-- CHARTS SECTION -->
-    <div class="charts-grid">
-        <!-- LINE CHART - Produktivitas Harian -->
-        <div class="chart-box col-span-2">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1rem;">
-                <div>
-                    <h3>Produktivitas Harian</h3>
-                    <div class="sub">Dalam satuan kilogram (kg)</div>
-                </div>
-                <select id="filterType" style="border:1px solid #e7e5e4; border-radius:30px; padding:0.4rem 1rem; font-size:0.7rem; background:white;">
-                    <option value="7">7 Hari</option>
-                    <option value="30">1 Bulan</option>
-                    <option value="365">1 Tahun</option>
-                </select>
+        {{-- Summary Cards --}}
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div class="bg-white rounded-2xl p-4 border border-stone-200 shadow-sm">
+                <div class="text-xs font-semibold uppercase tracking-wide text-stone-400 mb-2">Absensi Hari Ini</div>
+                <div class="text-2xl md:text-3xl font-bold text-[#2d6a4f]">{{ number_format($hadirHariIni ?? 0) }}</div>
+                <div class="text-xs font-medium text-stone-400 mt-1">Total Kehadiran</div>
             </div>
-            <div class="chart-container">
-                <canvas id="productivityChart"></canvas>
+            <div class="bg-white rounded-2xl p-4 border border-stone-200 shadow-sm">
+                <div class="text-xs font-semibold uppercase tracking-wide text-stone-400 mb-2">Total Tim</div>
+                <div class="text-2xl md:text-3xl font-bold text-[#2563eb]">{{ number_format($totalTim ?? 0) }}</div>
+                <div class="text-xs font-medium text-stone-400 mt-1">Tim Aktif</div>
+            </div>
+            <div class="bg-white rounded-2xl p-4 border border-stone-200 shadow-sm">
+                <div class="text-xs font-semibold uppercase tracking-wide text-stone-400 mb-2">Produksi Hari Ini</div>
+                <div class="text-2xl md:text-3xl font-bold text-[#2d6a4f]">{{ number_format($produksiHariIni ?? 0, 1) }} <span class="text-sm">kg</span></div>
+                <div class="text-xs font-medium text-stone-400 mt-1">Total Panen</div>
+            </div>
+            <div class="bg-white rounded-2xl p-4 border border-stone-200 shadow-sm">
+                <div class="text-xs font-semibold uppercase tracking-wide text-stone-400 mb-2">Alpha</div>
+                <div class="text-2xl md:text-3xl font-bold text-[#dc2626]">{{ number_format($totalAlpha ?? 0) }}</div>
+                <div class="text-xs font-medium text-stone-400 mt-1">Tidak Hadir</div>
             </div>
         </div>
 
-        <!-- DONUT CHART - Status Absensi -->
-        <div class="chart-box">
-            <h3>Status Absensi Hari Ini</h3>
-            <div class="chart-container" style="height: 200px;">
-                <canvas id="attendanceChart"></canvas>
-            </div>
-            <div class="legend-stats">
-                <div class="legend-item">
-                    <div><span class="legend-dot" style="background:#2d6a4f;"></span><span class="legend-label">Hadir</span></div>
-                    <span class="legend-value">{{ $hadirHariIni ?? 0 }}</span>
-                </div>
-                <div class="legend-item">
-                    <div><span class="legend-dot" style="background:#eab308;"></span><span class="legend-label">Terlambat</span></div>
-                    <span class="legend-value">{{ $totalTerlambat ?? 0 }}</span>
-                </div>
-                <div class="legend-item">
-                    <div><span class="legend-dot" style="background:#dc2626;"></span><span class="legend-label">Alpha</span></div>
-                    <span class="legend-value">{{ $totalAlpha ?? 0 }}</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- QUICK ACTION -->
-    <div class="quick-grid">
-        <a href="{{ route('manager.laporan') }}" class="action-card">
-            <div class="action-left">
-                <div class="action-icon"><i class="fas fa-chart-line"></i></div>
-                <div class="action-text">
-                    <h4>Laporan</h4>
-                    <p>Lihat laporan harian</p>
-                </div>
-            </div>
-            <div class="action-arrow"><i class="fas fa-arrow-right"></i></div>
-        </a>
-        <a href="{{ route('manager.log') }}" class="action-card">
-            <div class="action-left">
-                <div class="action-icon"><i class="fas fa-clipboard-list"></i></div>
-                <div class="action-text">
-                    <h4>Log Absensi</h4>
-                    <p>Aktivitas pegawai</p>
-                </div>
-            </div>
-            <div class="action-arrow"><i class="fas fa-arrow-right"></i></div>
-        </a>
-        <a href="{{ route('manager.pegawai') }}" class="action-card">
-            <div class="action-left">
-                <div class="action-icon purple"><i class="fas fa-user-friends"></i></div>
-                <div class="action-text">
-                    <h4>Pegawai</h4>
-                    <p>Kelola data tim</p>
-                </div>
-            </div>
-            <div class="action-arrow"><i class="fas fa-arrow-right"></i></div>
-        </a>
-    </div>
-
-    <!-- TOP PERFORMER & ACTIVITY -->
-    <div class="charts-grid" style="margin-bottom:0;">
-        <!-- TOP PERFORMER -->
-        <div class="chart-box">
-            <h3>Top Performer Hari Ini</h3>
-            <div class="sub">Berdasarkan hasil produksi</div>
-            <div class="performer-list" style="margin-top:1rem;">
-                @forelse($topPerformers as $index => $performer)
-                <div class="performer-item">
-                    <div style="display: flex; align-items: center; gap: 0.75rem;">
-                        <div class="performer-rank">{{ $index + 1 }}</div>
-                        <div class="performer-info">
-                            <h5>{{ $performer->name }}</h5>
-                            <p>{{ ucfirst($performer->role) }}</p>
-                        </div>
+        {{-- Charts Section --}}
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-8">
+            {{-- Line Chart --}}
+            <div class="lg:col-span-2 bg-white rounded-2xl p-5 md:p-6 border border-stone-200">
+                <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
+                    <div>
+                        <h3 class="text-sm font-bold text-stone-700">Produktivitas Harian</h3>
+                        <p class="text-xs text-stone-400">Dalam satuan kilogram (kg)</p>
                     </div>
-                    <div class="performer-weight">{{ number_format($performer->total_produksi ?? 0, 1) }} kg</div>
+                    <select id="filterType" class="border border-stone-200 rounded-full px-4 py-1.5 text-xs bg-white text-stone-600 focus:outline-none focus:border-[#2d6a4f] focus:ring-1 focus:ring-[#2d6a4f]">
+                        <option value="7">7 Hari</option>
+                        <option value="30">1 Bulan</option>
+                        <option value="365">1 Tahun</option>
+                    </select>
                 </div>
-                @empty
-                <div class="empty-state">
-                    <i class="fas fa-trophy"></i>
-                    <p>Belum ada data produksi hari ini</p>
+                <div class="h-[280px] relative">
+                    <canvas id="productivityChart"></canvas>
                 </div>
-                @endforelse
+            </div>
+
+            {{-- Donut Chart --}}
+            <div class="bg-white rounded-2xl p-5 md:p-6 border border-stone-200">
+                <h3 class="text-sm font-bold text-stone-700 mb-4">Status Absensi Hari Ini</h3>
+                <div class="h-[200px] relative">
+                    <canvas id="attendanceChart"></canvas>
+                </div>
+                <div class="mt-4 space-y-2">
+                    <div class="flex justify-between items-center text-xs">
+                        <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-[#2d6a4f]"></span><span class="text-stone-600">Hadir</span></div>
+                        <span class="font-semibold text-stone-800">{{ $hadirHariIni ?? 0 }}</span>
+                    </div>
+                    <div class="flex justify-between items-center text-xs">
+                        <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-[#eab308]"></span><span class="text-stone-600">Terlambat</span></div>
+                        <span class="font-semibold text-stone-800">{{ $totalTerlambat ?? 0 }}</span>
+                    </div>
+                    <div class="flex justify-between items-center text-xs">
+                        <div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-[#dc2626]"></span><span class="text-stone-600">Alpha</span></div>
+                        <span class="font-semibold text-stone-800">{{ $totalAlpha ?? 0 }}</span>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- TEAM ACTIVITY -->
-        <div class="chart-box col-span-2">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;">
-                <div>
-                    <h3>Aktivitas Tim Terbaru</h3>
-                    <div class="sub">Monitoring check in dan produksi tim</div>
+        {{-- Quick Action --}}
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <a href="{{ route('manager.laporan') }}" class="bg-white rounded-2xl p-4 border border-stone-200 flex items-center justify-between group hover:bg-[#fefcf7] hover:border-stone-300 transition-all hover:-translate-y-0.5">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-[#2d6a4f] text-xl"><i class="fas fa-chart-line"></i></div>
+                    <div><h4 class="font-bold text-stone-800 text-sm">Laporan</h4><p class="text-xs text-stone-400 mt-0.5">Lihat laporan harian</p></div>
                 </div>
-                <a href="{{ route('manager.log') }}" style="font-size:0.7rem; color:#2d6a4f; font-weight:600; text-decoration:none;">Lihat Semua →</a>
-            </div>
-            <div class="activity-list">
-                @forelse($recentActivities as $activity)
-                <div class="activity-item">
-                    <div class="activity-user">
-                        <div class="activity-avatar"><i class="fas fa-user-check"></i></div>
-                        <div class="activity-name">
-                            <h5>{{ $activity->user->name }}</h5>
-                            <span class="role-badge">{{ ucfirst($activity->user->role) }}</span>
+                <div class="text-stone-300 text-sm"><i class="fas fa-arrow-right"></i></div>
+            </a>
+            <a href="{{ route('manager.log') }}" class="bg-white rounded-2xl p-4 border border-stone-200 flex items-center justify-between group hover:bg-[#fefcf7] hover:border-stone-300 transition-all hover:-translate-y-0.5">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-[#2d6a4f] text-xl"><i class="fas fa-clipboard-list"></i></div>
+                    <div><h4 class="font-bold text-stone-800 text-sm">Log Absensi</h4><p class="text-xs text-stone-400 mt-0.5">Aktivitas pegawai</p></div>
+                </div>
+                <div class="text-stone-300 text-sm"><i class="fas fa-arrow-right"></i></div>
+            </a>
+            <a href="{{ route('manager.pegawai') }}" class="bg-white rounded-2xl p-4 border border-stone-200 flex items-center justify-between group hover:bg-[#fefcf7] hover:border-stone-300 transition-all hover:-translate-y-0.5">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-purple-50 rounded-2xl flex items-center justify-center text-purple-800 text-xl"><i class="fas fa-user-friends"></i></div>
+                    <div><h4 class="font-bold text-stone-800 text-sm">Pegawai</h4><p class="text-xs text-stone-400 mt-0.5">Kelola data tim</p></div>
+                </div>
+                <div class="text-stone-300 text-sm"><i class="fas fa-arrow-right"></i></div>
+            </a>
+        </div>
+
+        {{-- Top Performer & Activity --}}
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-8">
+            {{-- Top Performer --}}
+            <div class="bg-white rounded-2xl p-5 md:p-6 border border-stone-200">
+                <h3 class="text-sm font-bold text-stone-700">Top Performer Hari Ini</h3>
+                <p class="text-xs text-stone-400 mt-1">Berdasarkan hasil produksi</p>
+                <div class="mt-4 space-y-3">
+                    @forelse($topPerformers as $index => $performer)
+                    <div class="flex items-center justify-between p-3 rounded-xl border border-stone-100 hover:bg-[#fefcf7] transition">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 bg-emerald-50 rounded-xl flex items-center justify-center font-bold text-[#2d6a4f]">{{ $index + 1 }}</div>
+                            <div><h5 class="font-bold text-stone-800 text-sm">{{ $performer->name }}</h5><p class="text-xs text-stone-400">{{ ucfirst($performer->role) }}</p></div>
                         </div>
+                        <div class="font-bold text-[#2d6a4f] text-sm">{{ number_format($performer->total_produksi ?? 0, 1) }} kg</div>
                     </div>
-                    <div class="activity-detail">
-                        <span><i class="fas fa-clock"></i> {{ \Carbon\Carbon::parse($activity->check_in)->format('H:i') }} WIB</span>
+                    @empty
+                    <div class="py-8 text-center text-stone-400">
+                        <i class="fas fa-trophy text-3xl mb-2 block"></i>
+                        <p class="font-semibold text-sm">Belum ada data produksi hari ini</p>
+                    </div>
+                    @endforelse
+                </div>
+            </div>
+
+            {{-- Team Activity --}}
+            <div class="lg:col-span-2 bg-white rounded-2xl p-5 md:p-6 border border-stone-200">
+                <div class="flex flex-wrap justify-between items-center gap-2 mb-4">
+                    <div><h3 class="text-sm font-bold text-stone-700">Aktivitas Tim Terbaru</h3><p class="text-xs text-stone-400">Monitoring check in dan produksi tim</p></div>
+                    <a href="{{ route('manager.log') }}" class="text-xs font-semibold text-[#2d6a4f] hover:underline">Lihat Semua →</a>
+                </div>
+                <div class="space-y-3">
+                    @forelse($recentActivities as $activity)
+                    @php
+                        $prod = $activity->produksi_harian ?? 0;
+                        $efficiency = $prod > 20 ? 'Tinggi' : ($prod > 10 ? 'Sedang' : 'Rendah');
+                        $effClass = $prod > 20 ? 'bg-emerald-100 text-emerald-800' : ($prod > 10 ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800');
+                    @endphp
+                    <div class="flex flex-wrap items-center justify-between gap-3 p-4 rounded-xl border border-stone-100 hover:bg-[#fefcf7] transition">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-[#2d6a4f] text-xl"><i class="fas fa-user-check"></i></div>
+                            <div><h5 class="font-bold text-stone-800 text-sm">{{ $activity->user->name }}</h5><span class="inline-block bg-emerald-50 text-[#2d6a4f] text-xs font-semibold px-2 py-0.5 rounded-full mt-1">{{ ucfirst($activity->user->role) }}</span></div>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-4 text-xs text-stone-500">
+                            <span><i class="fas fa-clock text-stone-400 mr-1"></i> {{ \Carbon\Carbon::parse($activity->check_in)->format('H:i') }} WIB</span>
+                            @if($activity->produksi_harian)<span><i class="fas fa-seedling text-stone-400 mr-1"></i> {{ number_format($activity->produksi_harian, 1) }} kg</span>@endif
+                        </div>
                         @if($activity->produksi_harian)
-                        <span><i class="fas fa-seedling"></i> {{ number_format($activity->produksi_harian, 1) }} kg</span>
+                        <span class="text-xs font-semibold px-3 py-1 rounded-full {{ $effClass }}">{{ $efficiency }}</span>
                         @endif
                     </div>
-                    @if($activity->produksi_harian)
-                    <div>
-                        @php
-                            $prod = $activity->produksi_harian;
-                            $efficiency = $prod > 20 ? 'Tinggi' : ($prod > 10 ? 'Sedang' : 'Rendah');
-                            $effClass = $prod > 20 ? 'efficiency-high' : ($prod > 10 ? 'efficiency-medium' : 'efficiency-low');
-                        @endphp
-                        <span class="efficiency-badge {{ $effClass }}">{{ $efficiency }}</span>
+                    @empty
+                    <div class="py-8 text-center text-stone-400">
+                        <i class="fas fa-inbox text-3xl mb-2 block"></i>
+                        <p class="font-semibold text-sm">Belum Ada Aktivitas</p>
+                        <span class="text-xs">Aktivitas terbaru tim akan muncul di sini</span>
                     </div>
-                    @endif
+                    @endforelse
                 </div>
-                @empty
-                <div class="empty-state">
-                    <i class="fas fa-inbox"></i>
-                    <p>Belum Ada Aktivitas</p>
-                    <span style="font-size:0.7rem;">Aktivitas terbaru tim akan muncul di sini</span>
-                </div>
-                @endforelse
             </div>
         </div>
-    </div>
 
-    <!-- EXPORT DATA -->
-    <div class="export-box">
-        <div class="export-header">
-            <div>
-                <h3>Export Data Aktivitas</h3>
-                <p>Download laporan absensi dan aktivitas pegawai</p>
+        {{-- Export Data --}}
+        <div class="bg-white rounded-2xl p-5 md:p-6 border border-stone-200">
+            <div class="flex flex-wrap justify-between items-center gap-3 mb-5">
+                <div><h3 class="text-sm font-bold text-stone-700">Export Data Aktivitas</h3><p class="text-xs text-stone-400">Download laporan absensi dan aktivitas pegawai</p></div>
+                <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-[#2d6a4f] text-xl"><i class="fas fa-file-export"></i></div>
             </div>
-            <div class="export-icon"><i class="fas fa-file-export"></i></div>
+            <form action="{{ route('export.all') }}" method="GET">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div><label class="block text-xs font-semibold uppercase tracking-wide text-stone-600 mb-1">Dari Tanggal</label><input type="date" name="from" value="{{ date('Y-m-d', strtotime('-1 week')) }}" class="w-full border border-stone-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#2d6a4f] focus:ring-1 focus:ring-[#2d6a4f]"></div>
+                    <div><label class="block text-xs font-semibold uppercase tracking-wide text-stone-600 mb-1">Sampai Tanggal</label><input type="date" name="to" value="{{ date('Y-m-d') }}" class="w-full border border-stone-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#2d6a4f] focus:ring-1 focus:ring-[#2d6a4f]"></div>
+                    <div><button type="submit" class="w-full bg-[#2d6a4f] text-white px-4 py-2 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 hover:bg-[#235f48] transition"><i class="fas fa-download"></i> Export CSV</button></div>
+                    <div><a href="{{ route('export.all.everything') }}" class="w-full bg-stone-800 text-white px-4 py-2 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 hover:bg-stone-700 transition"><i class="fas fa-database"></i> Export Semua Data</a></div>
+                </div>
+            </form>
         </div>
-        <form action="{{ route('export.all') }}" method="GET">
-            <div class="form-grid">
-                <div class="form-group">
-                    <label>Dari Tanggal</label>
-                    <input type="date" name="from" value="{{ date('Y-m-d', strtotime('-1 week')) }}" required>
-                </div>
-                <div class="form-group">
-                    <label>Sampai Tanggal</label>
-                    <input type="date" name="to" value="{{ date('Y-m-d') }}" required>
-                </div>
-                <div class="form-group">
-                    <button type="submit" class="btn-export"><i class="fas fa-download"></i> Export CSV</button>
-                </div>
-                <div class="form-group">
-                    <a href="{{ route('export.all.everything') }}" class="btn-export btn-export-dark" style="display:flex; align-items:center; justify-content:center; text-decoration:none;"><i class="fas fa-database"></i> Export Semua Data</a>
-                </div>
-            </div>
-        </form>
-    </div>
 
-</div>
+    </div>
 </div>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
@@ -593,9 +192,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function formatDate(dateString, type = '7') {
         const date = new Date(dateString);
-        if (type == '365') {
-            return date.toLocaleDateString('id-ID', { month: 'short', year: 'numeric' });
-        }
+        if (type == '365') return date.toLocaleDateString('id-ID', { month: 'short', year: 'numeric' });
         return date.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' });
     }
 
@@ -603,8 +200,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const now = new Date();
         return allData.filter(item => {
             const itemDate = new Date(item.tanggal);
-            const diffTime = now - itemDate;
-            const diffDays = diffTime / (1000 * 60 * 60 * 24);
+            const diffDays = (now - itemDate) / (1000 * 60 * 60 * 24);
             return diffDays <= days;
         });
     }
@@ -621,9 +217,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const labels = filtered.map(item => formatDate(item.tanggal, days));
         const totals = filtered.map(item => item.total_produksi);
 
-        if (productivityChart) {
-            productivityChart.destroy();
-        }
+        if (productivityChart) productivityChart.destroy();
 
         productivityChart = new Chart(ctx, {
             type: 'line',
@@ -649,56 +243,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 maintainAspectRatio: false,
                 plugins: {
                     legend: { display: false },
-                    tooltip: {
-                        backgroundColor: '#1e1e1e',
-                        padding: 10,
-                        titleColor: '#fff',
-                        bodyColor: '#fff',
-                        callbacks: {
-                            label: function(context) { return context.parsed.y + ' kg'; }
-                        }
-                    }
+                    tooltip: { backgroundColor: '#1e1e1e', padding: 10, titleColor: '#fff', bodyColor: '#fff', callbacks: { label: (ctx) => ctx.parsed.y + ' kg' } }
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: { color: 'rgba(0,0,0,0.05)' },
-                        ticks: { callback: (val) => val + ' kg' }
-                    },
-                    x: {
-                        grid: { display: false }
-                    }
-                }
+                scales: { y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { callback: (val) => val + ' kg' } }, x: { grid: { display: false } } }
             }
         });
     }
 
     renderChart(7);
-    document.getElementById('filterType').addEventListener('change', function() {
-        renderChart(parseInt(this.value));
-    });
+    document.getElementById('filterType').addEventListener('change', function() { renderChart(parseInt(this.value)); });
 
-    // Donut Chart
-    const attendanceCtx = document.getElementById('attendanceChart').getContext('2d');
-    new Chart(attendanceCtx, {
+    new Chart(document.getElementById('attendanceChart').getContext('2d'), {
         type: 'doughnut',
-        data: {
-            labels: ['Hadir', 'Terlambat', 'Alpha'],
-            datasets: [{
-                data: [{{ $hadirHariIni ?? 0 }}, {{ $totalTerlambat ?? 0 }}, {{ $totalAlpha ?? 0 }}],
-                backgroundColor: ['#2d6a4f', '#eab308', '#dc2626'],
-                borderWidth: 0,
-                cutout: '70%'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            plugins: {
-                legend: { display: false },
-                tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.parsed}` } }
-            }
-        }
+        data: { labels: ['Hadir', 'Terlambat', 'Alpha'], datasets: [{ data: [{{ $hadirHariIni ?? 0 }}, {{ $totalTerlambat ?? 0 }}, {{ $totalAlpha ?? 0 }}], backgroundColor: ['#2d6a4f', '#eab308', '#dc2626'], borderWidth: 0, cutout: '70%' }] },
+        options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false }, tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.parsed}` } } } }
     });
 });
 </script>

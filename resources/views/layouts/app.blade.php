@@ -7,10 +7,11 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Custom transition for mobile sidebar */
+        /* Custom transition for sidebar */
         .sidebar-transition {
             transition: transform 0.3s ease-in-out;
         }
+        
         /* Active menu style */
         .nav-active {
             background-color: #2d6a4f;
@@ -22,12 +23,32 @@
         .nav-item:hover {
             background-color: #f0fdf4;
         }
-        /* For desktop sidebar fixed position */
+        
+        /* Desktop sidebar - closed state */
+        .desktop-sidebar-closed {
+            transform: translateX(-100%);
+        }
+        
+        /* Desktop sidebar - open state */
+        .desktop-sidebar-open {
+            transform: translateX(0);
+        }
+        
+        /* Main content transition */
+        .main-content {
+            transition: margin-left 0.3s ease-in-out;
+        }
+        
+        /* Main content margin when sidebar is open on desktop */
         @media (min-width: 768px) {
-            .main-content {
+            .main-content-with-sidebar {
                 margin-left: 16rem;
             }
+            .main-content-no-sidebar {
+                margin-left: 0;
+            }
         }
+        
         /* Make footer stick to bottom */
         html, body {
             height: 100%;
@@ -39,6 +60,7 @@
         .flex-1 {
             flex: 1;
         }
+        
         /* Logo styling */
         .logo-image {
             width: 40px;
@@ -56,26 +78,46 @@
             align-items: center;
             gap: 10px;
         }
-        .topbar-logo {
-            width: 32px;
-            height: 32px;
-            object-fit: contain;
-            border-radius: 6px;
+        
+        /* Desktop hamburger button in navbar */
+        .desktop-hamburger {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        @media (max-width: 768px) {
-            .topbar-logo {
-                display: none;
-            }
+        
+        .desktop-hamburger:hover {
+            background-color: #f3f4f6;
+        }
+        
+        .desktop-hamburger svg {
+            width: 24px;
+            height: 24px;
+            stroke: #4b5563;
+        }
+        
+        /* Navbar styling */
+        .navbar {
+            background-color: white;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 20;
         }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col md:flex-row">
 
-    <!-- DESKTOP SIDEBAR (VERTICAL LEFT) -->
-    <aside class="hidden md:flex md:flex-col md:w-64 bg-white shadow-lg fixed h-full z-30">
+    <!-- DESKTOP SIDEBAR (VERTICAL LEFT) - Bisa dibuka/tutup -->
+    <aside id="desktop-sidebar" class="hidden md:flex md:flex-col md:w-64 bg-white shadow-lg fixed h-full z-30 transition-transform duration-300 desktop-sidebar-open">
         <div class="p-6 border-b">
             <div class="sidebar-logo-container">
-                <!-- Logo 1.jpg added here -->
                 <img src="{{ asset('images/Logo 1.jpg') }}" alt="Logo PT Sipirok Indah" class="logo-image" onerror="this.src='https://placehold.co/40x40?text=Logo'">
                 <div>
                     <div class="text-xl font-bold text-gray-800">PT. SIPIROK INDAH</div>
@@ -96,7 +138,6 @@
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                             <span>Pegawai</span>
                         </a>
-                        <!-- Menu Log Absensi untuk Admin telah dihapus -->
                         <a href="{{ route('admin.laporan') }}" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700 font-medium transition-colors duration-200 {{ request()->routeIs('admin.laporan') ? 'nav-active' : '' }}">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                             <span>Laporan</span>
@@ -116,7 +157,6 @@
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
                             <span>Dashboard</span>
                         </a>
-                        <!-- Menu Log Absensi untuk Manager telah dihapus -->
                         <a href="{{ route('manager.laporan') }}" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700 font-medium transition-colors duration-200 {{ request()->routeIs('manager.laporan') ? 'nav-active' : '' }}">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                             <span>Laporan</span>
@@ -215,6 +255,14 @@
                 @endswitch
             @endauth
         </nav>
+        
+        <!-- Desktop Logout Button -->
+        <div class="p-4 border-t">
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button class="w-full bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-semibold">Logout</button>
+            </form>
+        </div>
     </aside>
 
     <!-- MOBILE HAMBURGER BUTTON (only visible on small screens) -->
@@ -226,7 +274,7 @@
         </button>
     </div>
 
-    <!-- MOBILE SIDEBAR (off-canvas) dengan Logo -->
+    <!-- MOBILE SIDEBAR (off-canvas) -->
     <div id="mobile-sidebar" class="fixed top-0 left-[-100%] h-full w-64 bg-white shadow-lg p-6 flex flex-col z-50 sidebar-transition md:hidden">
         <div class="flex justify-between items-center mb-8 border-b pb-4">
             <div class="mobile-logo-container">
@@ -249,7 +297,6 @@
                     @case('admin')
                         <a href="{{ route('admin.dashboard') }}" class="mobile-nav-item block px-4 py-3 rounded-lg text-gray-700 font-medium {{ request()->routeIs('admin.dashboard') ? 'nav-active' : '' }}">Dashboard</a>
                         <a href="{{ route('admin.pegawai') }}" class="mobile-nav-item block px-4 py-3 rounded-lg text-gray-700 font-medium {{ request()->routeIs('admin.pegawai') ? 'nav-active' : '' }}">Pegawai</a>
-                        <!-- Menu Log Absensi untuk Admin (Mobile) telah dihapus -->
                         <a href="{{ route('admin.laporan') }}" class="mobile-nav-item block px-4 py-3 rounded-lg text-gray-700 font-medium {{ request()->routeIs('admin.laporan') ? 'nav-active' : '' }}">Laporan</a>
                         <a href="{{ route('admin.rapot.index') }}" class="mobile-nav-item block px-4 py-3 rounded-lg text-gray-700 font-medium {{ request()->routeIs('admin.rapot.*') ? 'nav-active' : '' }}">Rapot</a>
                         <a href="{{ route('admin.pengumuman') }}" class="mobile-nav-item block px-4 py-3 rounded-lg text-gray-700 font-medium {{ request()->routeIs('admin.pengumuman') ? 'nav-active' : '' }}">Pengumuman</a>
@@ -257,7 +304,6 @@
                         
                     @case('manager')
                         <a href="{{ route('manager.dashboard') }}" class="mobile-nav-item block px-4 py-3 rounded-lg text-gray-700 font-medium {{ request()->routeIs('manager.dashboard') ? 'nav-active' : '' }}">Dashboard</a>
-                        <!-- Menu Log Absensi untuk Manager (Mobile) telah dihapus -->
                         <a href="{{ route('manager.laporan') }}" class="mobile-nav-item block px-4 py-3 rounded-lg text-gray-700 font-medium {{ request()->routeIs('manager.laporan') ? 'nav-active' : '' }}">Laporan</a>
                         <a href="{{ route('manager.pegawai') }}" class="mobile-nav-item block px-4 py-3 rounded-lg text-gray-700 font-medium {{ request()->routeIs('manager.pegawai') ? 'nav-active' : '' }}">Kelola Pegawai</a>
                         <a href="{{ route('pengumuman.user') }}" class="mobile-nav-item block px-4 py-3 rounded-lg text-gray-700 font-medium {{ request()->routeIs('pengumuman.user') ? 'nav-active' : '' }}">Pengumuman</a>
@@ -304,13 +350,18 @@
     </div>
 
     <!-- MAIN CONTENT AREA -->
-    <div class="flex-1 main-content md:ml-64 flex flex-col min-h-screen">
-        <!-- TOP BAR with Profile & Logout (Logo ditambahkan di sebelah kiri user info) -->
-        <div class="bg-white shadow-sm sticky top-0 z-20">
-            <div class="flex justify-end items-center px-6 py-3">
-                <div class="flex items-center space-x-4">
-                    <!-- Logo tambahan di top bar (untuk tampilan layar besar, bisa opsional) -->
-
+    <div class="flex-1 main-content main-content-with-sidebar flex flex-col min-h-screen">
+        <!-- TOP BAR with Profile & Logout + Desktop Hamburger Menu -->
+        <div class="navbar">
+            <div class="flex justify-between items-center px-6 py-3">
+                <!-- Desktop Hamburger Menu Button (untuk buka/tutup sidebar) -->
+                <button id="desktop-hamburger" class="desktop-hamburger md:flex hidden">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+                
+                <div class="flex items-center space-x-4 ml-auto">
                     <div class="text-right">
                         <div class="text-sm font-semibold text-gray-800">{{ Auth::user()->name ?? 'Guest' }}</div>
                         <div class="text-xs text-gray-500">
@@ -332,18 +383,45 @@
             </div>
         </div>
 
-        <!-- PAGE CONTENT - This will grow to push footer down -->
+        <!-- PAGE CONTENT -->
         <main class="flex-1 container mx-auto px-4 py-6">
             @yield('content')
         </main>
 
-        <!-- FOOTER - Always at bottom -->
+        <!-- FOOTER -->
         <footer class="bg-white text-center py-4 shadow-inner text-gray-500 text-sm">
             &copy; {{ date('Y') }} Sistem Absensi Perusahaan Sawit - PT. Sipirok Indah
         </footer>
     </div>
 
     <script>
+        // Desktop sidebar toggle
+        const desktopSidebar = document.getElementById('desktop-sidebar');
+        const desktopHamburger = document.getElementById('desktop-hamburger');
+        const mainContent = document.querySelector('.main-content');
+        
+        let sidebarOpen = true;
+        
+        if (desktopHamburger && desktopSidebar && mainContent) {
+            desktopHamburger.addEventListener('click', () => {
+                if (sidebarOpen) {
+                    // Tutup sidebar
+                    desktopSidebar.classList.remove('desktop-sidebar-open');
+                    desktopSidebar.classList.add('desktop-sidebar-closed');
+                    mainContent.classList.remove('main-content-with-sidebar');
+                    mainContent.classList.add('main-content-no-sidebar');
+                    sidebarOpen = false;
+                } else {
+                    // Buka sidebar
+                    desktopSidebar.classList.remove('desktop-sidebar-closed');
+                    desktopSidebar.classList.add('desktop-sidebar-open');
+                    mainContent.classList.remove('main-content-no-sidebar');
+                    mainContent.classList.add('main-content-with-sidebar');
+                    sidebarOpen = true;
+                }
+            });
+        }
+        
         // Mobile menu toggle
         const menuBtn = document.getElementById('menu-btn-mobile');
         const closeBtn = document.getElementById('close-btn-mobile');
@@ -361,23 +439,42 @@
             });
         }
 
-        // Close sidebar when clicking a link on mobile
+        // Close mobile sidebar saat klik link
         document.querySelectorAll('.mobile-nav-item').forEach(link => {
             link.addEventListener('click', () => {
                 mobileSidebar.style.left = "-100%";
             });
         });
         
-        // Close sidebar when clicking outside on mobile (optional)
+        // Close mobile sidebar saat klik di luar
         document.addEventListener('click', function(event) {
             if (window.innerWidth < 768) {
-                const isClickInside = mobileSidebar.contains(event.target);
+                const isClickInside = mobileSidebar && mobileSidebar.contains(event.target);
                 const isClickOnMenuBtn = menuBtn && menuBtn.contains(event.target);
                 
-                if (!isClickInside && !isClickOnMenuBtn && mobileSidebar.style.left === "0px") {
+                if (mobileSidebar && !isClickInside && !isClickOnMenuBtn && mobileSidebar.style.left === "0px") {
                     mobileSidebar.style.left = "-100%";
                 }
             }
+        });
+        
+        // Reset sidebar state saat resize window
+        let resizeTimeout;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(function() {
+                if (window.innerWidth >= 768) {
+                    if (sidebarOpen) {
+                        mainContent.classList.add('main-content-with-sidebar');
+                        mainContent.classList.remove('main-content-no-sidebar');
+                    } else {
+                        mainContent.classList.remove('main-content-with-sidebar');
+                        mainContent.classList.add('main-content-no-sidebar');
+                    }
+                } else {
+                    mainContent.classList.remove('main-content-with-sidebar', 'main-content-no-sidebar');
+                }
+            }, 200);
         });
     </script>
 </body>
