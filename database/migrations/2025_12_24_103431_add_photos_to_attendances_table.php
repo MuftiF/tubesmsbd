@@ -9,7 +9,7 @@ class AddPhotosToAttendancesTable extends Migration
     public function up()
     {
         Schema::table('attendances', function (Blueprint $table) {
-            $table->json('photos')->nullable()->after('description');
+            $table->json('photos')->nullable();
         });
     }
 
