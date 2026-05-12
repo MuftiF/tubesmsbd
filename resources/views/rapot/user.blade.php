@@ -1,33 +1,36 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="bg-[#f8f6f2] min-h-screen font-['Inter',sans-serif] p-6 md:p-8">
+<div class="bg-gray-50 min-h-screen p-6 md:p-8">
     <div class="max-w-5xl mx-auto">
+
         {{-- Header --}}
-        <div class="relative pl-4 mb-8">
-            <div class="absolute left-0 top-0 bottom-0 w-1 bg-[#2d6a4f] rounded-full"></div>
-            <h1 class="text-2xl md:text-3xl font-bold text-[#1e1e1e] tracking-tight flex items-center gap-2">
-                Evaluasi Kinerja Saya
-            </h1>
-            <p class="text-sm text-stone-500 mt-1">
-                Rekap evaluasi kinerja berdasarkan periode penilaian
-            </p>
+        <div class="mb-8 pb-5 border-b border-gray-200">
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+                <div>
+                    <p class="text-sm text-gray-500 uppercase tracking-wide mb-1">Karyawan</p>
+                    <h1 class="text-2xl md:text-3xl font-bold text-[#2c5e4e]">Evaluasi Kinerja Saya</h1>
+                    <p class="text-sm text-gray-500 mt-1">Rekap evaluasi kinerja berdasarkan periode penilaian</p>
+                </div>
+                <span class="inline-block px-4 py-1.5 bg-[#eaf4f1] text-[#2c5e4e] rounded-full text-sm font-medium self-start sm:self-center">
+                    PT. Sipirok Indah
+                </span>
+            </div>
         </div>
 
         @if($rapots->isEmpty())
-        <div class="bg-white rounded-2xl p-10 text-center border border-stone-200 shadow-sm">
-            <div class="flex flex-col items-center">
-                <i class="fas fa-file-alt text-4xl text-stone-300 mb-4"></i>
-                <p class="text-stone-600 font-semibold text-lg">Belum ada evaluasi kinerja</p>
-                <p class="text-stone-400 text-sm mt-1">Admin akan mengirimkan evaluasi setelah periode penilaian selesai.</p>
-            </div>
+        <div class="bg-white rounded-2xl p-10 text-center border border-gray-200 shadow-sm">
+            <svg class="w-12 h-12 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <p class="text-gray-600 font-semibold text-lg">Belum ada evaluasi kinerja</p>
+            <p class="text-gray-400 text-sm mt-1">Admin akan mengirimkan evaluasi setelah periode penilaian selesai.</p>
         </div>
         @else
 
         <div class="grid grid-cols-1 gap-6">
             @foreach($rapots as $rapot)
             @php
-                // Decode detail absen dari JSON atau gunakan array kosong
                 $detailAbsen = [];
                 if ($rapot->detail_absen) {
                     if (is_string($rapot->detail_absen)) {
@@ -36,69 +39,62 @@
                         $detailAbsen = $rapot->detail_absen;
                     }
                 }
-                
-                // Parse data evaluasi
                 $dataEvaluasi = [];
                 if ($rapot->detail_evaluasi && is_string($rapot->detail_evaluasi)) {
                     $dataEvaluasi = json_decode($rapot->detail_evaluasi, true) ?? [];
                 } elseif (is_array($rapot->detail_evaluasi)) {
                     $dataEvaluasi = $rapot->detail_evaluasi;
                 }
-                
-                // Hitung statistik dari detail absen
                 $totalJam = 0;
                 $hariHadir = 0;
                 $totalTerlambat = 0;
                 $hasKeterangan = false;
-                
                 if (!empty($detailAbsen)) {
                     foreach ($detailAbsen as $absen) {
                         if (isset($absen['jam_kerja']) && $absen['jam_kerja'] > 0) {
                             $totalJam += abs($absen['jam_kerja'] ?? 0);
                             $hariHadir++;
                         }
-                        
                         if (isset($absen['status']) && strtolower($absen['status']) == 'terlambat') {
                             $totalTerlambat++;
                         }
-                        
                         $keterangan = $absen['keterangan'] ?? $absen['description'] ?? '-';
                         if ($keterangan && $keterangan !== '-' && trim($keterangan) !== '') {
                             $hasKeterangan = true;
                         }
                     }
                 }
-                
                 $hariHadir = $dataEvaluasi['hari_hadir'] ?? $hariHadir;
                 $totalJam = $dataEvaluasi['total_jam'] ?? $totalJam;
                 $totalTerlambat = $dataEvaluasi['total_terlambat'] ?? $totalTerlambat;
                 $rataJam = $dataEvaluasi['rata_jam_perhari'] ?? ($hariHadir > 0 ? $totalJam / $hariHadir : 0);
             @endphp
 
-            <div class="bg-white rounded-2xl border border-stone-200 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
+
                 {{-- Header Kartu --}}
-                <div class="px-6 py-4 border-b border-stone-100 bg-gradient-to-r from-emerald-50 to-white">
+                <div class="px-6 py-5 border-b border-gray-100 bg-[#eaf4f1]/30">
                     <div class="flex flex-wrap justify-between items-start gap-3">
                         <div>
-                            <h2 class="text-base font-bold text-stone-800">
-                                Evaluasi Periode <span class="text-[#2d6a4f]">{{ $rapot->periode }}</span>
+                            <h2 class="text-base font-semibold text-gray-800">
+                                Evaluasi Periode <span class="text-[#2c5e4e] font-bold">{{ $rapot->periode }}</span>
                             </h2>
-                            <p class="text-xs text-stone-400 mt-1">
+                            <p class="text-xs text-gray-400 mt-1">
                                 Dibuat: {{ $rapot->created_at->format('d M Y') }}
                                 @if($rapot->generated_at)
-                                    | Dikirim: {{ $rapot->generated_at->diffForHumans() }}
+                                    · Dikirim: {{ $rapot->generated_at->diffForHumans() }}
                                 @endif
                             </p>
                         </div>
                         <div class="flex flex-col items-end gap-1">
-                            <span class="px-2.5 py-1 rounded-full text-xs font-semibold
-                                @if($rapot->status == 'draft') bg-stone-100 text-stone-600
+                            <span class="px-3 py-1 rounded-full text-xs font-semibold
+                                @if($rapot->status == 'draft') bg-gray-100 text-gray-600
                                 @elseif($rapot->status == 'dikirim') bg-blue-100 text-blue-700
-                                @elseif($rapot->status == 'selesai') bg-emerald-100 text-emerald-700
-                                @else bg-stone-100 text-stone-600 @endif">
+                                @elseif($rapot->status == 'selesai') bg-[#eaf4f1] text-[#2c5e4e]
+                                @else bg-gray-100 text-gray-600 @endif">
                                 {{ ucfirst($rapot->status) }}
                             </span>
-                            <span class="text-xs text-stone-400">
+                            <span class="text-xs text-gray-400">
                                 {{ $rapot->tipe == 'evaluasi' ? 'Evaluasi' : 'Standar' }}
                             </span>
                         </div>
@@ -106,43 +102,45 @@
                 </div>
 
                 <div class="p-6 space-y-5">
+
                     {{-- Informasi Pegawai --}}
-                    <div class="flex items-center gap-4 p-4 bg-emerald-50/40 rounded-xl border border-emerald-100">
-                        <div class="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center">
-                            <span class="text-xl font-bold text-[#2d6a4f]">
+                    <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                        <div class="w-12 h-12 bg-[#eaf4f1] rounded-2xl flex items-center justify-center flex-shrink-0">
+                            <span class="text-lg font-bold text-[#2c5e4e]">
                                 {{ strtoupper(substr($rapot->user->name ?? 'N', 0, 1)) }}
                             </span>
                         </div>
                         <div>
-                            <h3 class="font-bold text-stone-800">{{ $rapot->user->name ?? 'N/A' }}</h3>
-                            <span class="inline-block px-2 py-0.5 bg-emerald-50 text-[#2d6a4f] text-xs font-semibold rounded-full mt-1">
+                            <h3 class="font-semibold text-gray-800">{{ $rapot->user->name ?? 'N/A' }}</h3>
+                            <span class="inline-block px-2.5 py-0.5 bg-[#eaf4f1] text-[#2c5e4e] text-xs font-semibold rounded-full mt-1">
                                 {{ ucfirst($rapot->user->role ?? 'user') }}
                             </span>
                         </div>
                     </div>
 
-                    {{-- Statistik Ringkas --}}
+                    {{-- Statistik --}}
                     <div class="grid grid-cols-2 gap-3">
-                        <div class="bg-stone-50 rounded-xl p-4 text-center">
-                            <p class="text-xs text-stone-500 mb-1">Hari Hadir</p>
-                            <p class="text-2xl font-bold text-stone-800">{{ $hariHadir }} <span class="text-xs font-normal text-stone-400">hari</span></p>
+                        <div class="bg-gray-50 rounded-xl p-4 text-center border border-gray-100">
+                            <p class="text-xs text-gray-500 mb-1">Hari Hadir</p>
+                            <p class="text-2xl font-bold text-gray-800">{{ $hariHadir }} <span class="text-xs font-normal text-gray-400">hari</span></p>
                         </div>
-                        <div class="bg-stone-50 rounded-xl p-4 text-center">
-                            <p class="text-xs text-stone-500 mb-1">Rata-rata Harian</p>
-                            <p class="text-2xl font-bold text-[#2d6a4f]">{{ number_format($rataJam, 2) }} <span class="text-xs font-normal text-stone-400">jam</span></p>
+                        <div class="bg-[#eaf4f1]/50 rounded-xl p-4 text-center border border-[#eaf4f1]">
+                            <p class="text-xs text-gray-500 mb-1">Rata-rata Harian</p>
+                            <p class="text-2xl font-bold text-[#2c5e4e]">{{ number_format($rataJam, 2) }} <span class="text-xs font-normal text-gray-400">jam</span></p>
                         </div>
                     </div>
 
                     {{-- Evaluasi Kerja --}}
                     @if($rapot->evaluasi_kerja)
                     <div>
-                        <h3 class="text-xs font-semibold uppercase tracking-wide text-stone-500 mb-2 flex items-center gap-2">
-                            <i class="fas fa-star text-amber-400 text-xs"></i> Evaluasi Kerja
+                        <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2 flex items-center gap-2">
+                            <svg class="w-3.5 h-3.5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                            </svg>
+                            Evaluasi Kerja
                         </h3>
-                        <div class="bg-emerald-50/30 rounded-xl p-4 border border-emerald-100">
-                            <p class="text-stone-700 text-sm whitespace-pre-line leading-relaxed">
-                                {{ Str::limit($rapot->evaluasi_kerja, 200) }}
-                            </p>
+                        <div class="bg-[#eaf4f1]/30 rounded-xl p-4 border border-[#eaf4f1]">
+                            <p class="text-gray-700 text-sm whitespace-pre-line leading-relaxed">{{ Str::limit($rapot->evaluasi_kerja, 200) }}</p>
                         </div>
                     </div>
                     @endif
@@ -150,13 +148,14 @@
                     {{-- Saran Perbaikan --}}
                     @if($rapot->saran_perbaikan)
                     <div>
-                        <h3 class="text-xs font-semibold uppercase tracking-wide text-stone-500 mb-2 flex items-center gap-2">
-                            <i class="fas fa-lightbulb text-amber-400 text-xs"></i> Saran Perbaikan
+                        <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2 flex items-center gap-2">
+                            <svg class="w-3.5 h-3.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                            </svg>
+                            Saran Perbaikan
                         </h3>
                         <div class="bg-blue-50/30 rounded-xl p-4 border border-blue-100">
-                            <p class="text-stone-700 text-sm whitespace-pre-line leading-relaxed">
-                                {{ Str::limit($rapot->saran_perbaikan, 200) }}
-                            </p>
+                            <p class="text-gray-700 text-sm whitespace-pre-line leading-relaxed">{{ Str::limit($rapot->saran_perbaikan, 200) }}</p>
                         </div>
                     </div>
                     @endif
@@ -164,13 +163,14 @@
                     {{-- Catatan --}}
                     @if($rapot->catatan)
                     <div>
-                        <h3 class="text-xs font-semibold uppercase tracking-wide text-stone-500 mb-2 flex items-center gap-2">
-                            <i class="fas fa-pencil-alt text-stone-400 text-xs"></i> Catatan
+                        <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2 flex items-center gap-2">
+                            <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                            </svg>
+                            Catatan
                         </h3>
                         <div class="bg-amber-50/30 rounded-xl p-4 border border-amber-100">
-                            <p class="text-stone-700 text-sm whitespace-pre-line leading-relaxed">
-                                {{ Str::limit($rapot->catatan, 200) }}
-                            </p>
+                            <p class="text-gray-700 text-sm whitespace-pre-line leading-relaxed">{{ Str::limit($rapot->catatan, 200) }}</p>
                         </div>
                     </div>
                     @endif
@@ -179,31 +179,35 @@
                     @if(!empty($detailAbsen))
                     <div class="pt-2">
                         <details class="group">
-                            <summary class="cursor-pointer py-2 flex items-center justify-between text-sm font-semibold text-stone-600 hover:text-[#2d6a4f] transition">
+                            <summary class="cursor-pointer py-2 flex items-center justify-between text-sm font-semibold text-gray-600 hover:text-[#2c5e4e] transition">
                                 <div class="flex items-center gap-2">
-                                    <i class="fas fa-calendar-alt text-stone-400"></i>
+                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
                                     Detail Absensi ({{ count($detailAbsen) }} hari)
                                 </div>
-                                <i class="fas fa-chevron-down text-xs text-stone-400 group-open:rotate-180 transition-transform"></i>
+                                <svg class="w-4 h-4 text-gray-400 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
                             </summary>
 
-                            <div class="mt-4 overflow-x-auto rounded-xl border border-stone-200">
+                            <div class="mt-4 overflow-x-auto rounded-xl border border-gray-200">
                                 <table class="w-full text-sm">
-                                    <thead class="bg-stone-50 border-b border-stone-100">
+                                    <thead class="bg-gray-50 border-b border-gray-100">
                                         <tr>
-                                            <th class="px-3 py-2 text-left text-xs font-semibold text-stone-500">Tanggal</th>
-                                            <th class="px-3 py-2 text-left text-xs font-semibold text-stone-500">Check In</th>
-                                            <th class="px-3 py-2 text-left text-xs font-semibold text-stone-500">Status</th>
-                                            <th class="px-3 py-2 text-left text-xs font-semibold text-stone-500">Jam Kerja</th>
+                                            <th class="px-3 py-2 text-left text-xs font-semibold text-gray-500">Tanggal</th>
+                                            <th class="px-3 py-2 text-left text-xs font-semibold text-gray-500">Check In</th>
+                                            <th class="px-3 py-2 text-left text-xs font-semibold text-gray-500">Status</th>
+                                            <th class="px-3 py-2 text-left text-xs font-semibold text-gray-500">Jam Kerja</th>
                                             @if($hasKeterangan)
-                                            <th class="px-3 py-2 text-left text-xs font-semibold text-stone-500">Keterangan</th>
+                                            <th class="px-3 py-2 text-left text-xs font-semibold text-gray-500">Keterangan</th>
                                             @endif
                                         </tr>
                                     </thead>
-                                    <tbody class="divide-y divide-stone-100">
+                                    <tbody class="divide-y divide-gray-100">
                                         @foreach($detailAbsen as $absen)
-                                        <tr class="hover:bg-[#fefcf7] transition">
-                                            <td class="px-3 py-2 text-stone-700">
+                                        <tr class="hover:bg-gray-50 transition">
+                                            <td class="px-3 py-2 text-gray-700">
                                                 @if(isset($absen['tanggal']) && $absen['tanggal'])
                                                     @php
                                                         try {
@@ -218,11 +222,10 @@
                                                             echo $absen['tanggal'];
                                                         }
                                                     @endphp
-                                                @else
-                                                    -
+                                                @else -
                                                 @endif
                                             </td>
-                                            <td class="px-3 py-2 font-medium text-stone-700">
+                                            <td class="px-3 py-2 font-medium text-gray-700">
                                                 @if(isset($absen['check_in']) && $absen['check_in'] && $absen['check_in'] !== '-')
                                                     @php
                                                         try {
@@ -235,8 +238,7 @@
                                                             echo $absen['check_in'];
                                                         }
                                                     @endphp
-                                                @else
-                                                    -
+                                                @else -
                                                 @endif
                                             </td>
                                             <td class="px-3 py-2">
@@ -244,27 +246,26 @@
                                                     $status = $absen['status'] ?? 'hadir';
                                                     $statusLower = strtolower($status);
                                                     $statusColor = match($statusLower) {
-                                                        'hadir', 'tepat waktu' => 'bg-emerald-100 text-emerald-800',
+                                                        'hadir', 'tepat waktu' => 'bg-[#eaf4f1] text-[#2c5e4e]',
                                                         'izin' => 'bg-yellow-100 text-yellow-800',
                                                         'sakit' => 'bg-blue-100 text-blue-800',
                                                         'terlambat' => 'bg-amber-100 text-amber-800',
                                                         'alfa' => 'bg-red-100 text-red-800',
-                                                        default => 'bg-stone-100 text-stone-600'
+                                                        default => 'bg-gray-100 text-gray-600'
                                                     };
                                                 @endphp
                                                 <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $statusColor }}">
                                                     {{ ucfirst($status) }}
                                                 </span>
                                             </td>
-                                            <td class="px-3 py-2 font-medium text-stone-700">
+                                            <td class="px-3 py-2 font-medium text-gray-700">
                                                 @if(isset($absen['jam_kerja']) && $absen['jam_kerja'] > 0)
                                                     {{ number_format($absen['jam_kerja'], 2) }} jam
-                                                @else
-                                                    -
+                                                @else -
                                                 @endif
                                             </td>
                                             @if($hasKeterangan)
-                                            <td class="px-3 py-2 text-stone-500 text-xs">
+                                            <td class="px-3 py-2 text-gray-500 text-xs">
                                                 {{ $absen['keterangan'] ?? $absen['description'] ?? '-' }}
                                             </td>
                                             @endif
@@ -279,20 +280,27 @@
                 </div>
 
                 {{-- Footer Kartu --}}
-                <div class="px-6 py-4 border-t border-stone-100 bg-stone-50/30 flex flex-wrap justify-between items-center gap-3">
-                    <div class="text-xs text-stone-400">
-                        <i class="far fa-id-card mr-1"></i> ID: {{ $rapot->id }} |
-                        <i class="fas fa-user-check ml-2 mr-1"></i> Evaluator: {{ $rapot->evaluator->name ?? 'Admin' }}
+                <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/30 flex flex-wrap justify-between items-center gap-3">
+                    <div class="text-xs text-gray-400 flex items-center gap-3">
+                        <span>ID: {{ $rapot->id }}</span>
+                        <span>·</span>
+                        <span>Evaluator: {{ $rapot->evaluator->name ?? 'Admin' }}</span>
                     </div>
                     @if(Route::has('rapot.show'))
-                    <a href="{{ route('rapot.show', $rapot->id) }}" 
-                       class="inline-flex items-center gap-2 px-4 py-2 bg-[#2d6a4f] text-white text-xs font-semibold rounded-xl hover:bg-[#235f48] transition">
-                        Lihat Detail <i class="fas fa-arrow-right text-xs"></i>
+                    <a href="{{ route('rapot.show', $rapot->id) }}"
+                       class="inline-flex items-center gap-2 px-4 py-2 bg-[#2c5e4e] hover:bg-[#1f4a3d] text-white text-xs font-semibold rounded-xl transition">
+                        Lihat Detail
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
                     </a>
                     @elseif(Route::has('admin.rapot.show') && auth()->user()->role == 'admin')
-                    <a href="{{ route('admin.rapot.show', $rapot->id) }}" 
-                       class="inline-flex items-center gap-2 px-4 py-2 bg-[#2d6a4f] text-white text-xs font-semibold rounded-xl hover:bg-[#235f48] transition">
-                        Lihat Detail <i class="fas fa-arrow-right text-xs"></i>
+                    <a href="{{ route('admin.rapot.show', $rapot->id) }}"
+                       class="inline-flex items-center gap-2 px-4 py-2 bg-[#2c5e4e] hover:bg-[#1f4a3d] text-white text-xs font-semibold rounded-xl transition">
+                        Lihat Detail
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
                     </a>
                     @endif
                 </div>
@@ -300,49 +308,31 @@
             @endforeach
         </div>
 
-        {{-- Pagination --}}
         @if($rapots->hasPages())
         <div class="mt-8 flex justify-center">
             {{ $rapots->links() }}
         </div>
         @endif
 
-    @endif
+        @endif
     </div>
 </div>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-
 @push('styles')
 <style>
-    details summary::-webkit-details-marker {
-        display: none;
-    }
-    
-    details summary {
-        list-style: none;
-    }
-    
-    details[open] summary .fa-chevron-down {
-        transform: rotate(180deg);
-    }
+    details summary::-webkit-details-marker { display: none; }
+    details summary { list-style: none; }
 </style>
 @endpush
 
 @push('scripts')
 <script>
     @if(session('success'))
-    setTimeout(() => {
-        alert('{{ session('success') }}');
-    }, 100);
+    setTimeout(() => { alert('{{ session('success') }}'); }, 100);
     @endif
-
     @if(session('error'))
-    setTimeout(() => {
-        alert('Error: {{ session('error') }}');
-    }, 100);
+    setTimeout(() => { alert('Error: {{ session('error') }}'); }, 100);
     @endif
-    
     document.addEventListener('DOMContentLoaded', function() {
         if (window.location.hash === '#details') {
             const details = document.querySelector('details');

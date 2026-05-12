@@ -9,20 +9,18 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
+  public function up(): void
+{
+    if (!Schema::hasTable('catatan_panen')) {
         Schema::create('catatan_panen', function (Blueprint $table) {
             $table->id();
-
             $table->unsignedBigInteger('id_pegawai');
-
             $table->date('tanggal');
-
             $table->integer('berat_kg')->default(0);
-
             $table->timestamps();
         });
     }
+}
 
     /**
      * Reverse the migrations.

@@ -3,41 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Main Gate</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>PT. Sipirok Indah - Sistem Absensi</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        body {
+            background: #e5e7eb;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            margin: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+        .card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+            border: 1px solid rgba(0,0,0,0.06);
+            padding: 2.5rem 2rem;
+            width: 100%;
+            max-width: 320px;
+            text-align: center;
+        }
+        .logo-wrap {
+            width: 72px;
+            height: 72px;
+            border-radius: 16px;
+            background: white;
+            border: 1px solid #f3f4f6;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            overflow: hidden;
+        }
+        .logo-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 6px;
+        }
+        h1 {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #2c5e4e;
+            margin: 0 0 4px;
+        }
+        .subtitle {
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin: 0 0 2px;
+        }
+        .sub2 {
+            font-size: 0.7rem;
+            color: #9ca3af;
+            margin: 0;
+        }
+        .divider {
+            height: 1px;
+            background: #f3f4f6;
+            margin: 1.5rem 0;
+        }
+        .btn-primary {
+            display: block;
+            width: 100%;
+            background: #2c5e4e;
+            color: white;
+            font-weight: 600;
+            font-size: 0.875rem;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+            margin-bottom: 0.625rem;
+            box-sizing: border-box;
+        }
+        .btn-primary:hover {
+            background: #1f4a3d;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(44,94,78,0.25);
+        }
+        .btn-secondary {
+            display: block;
+            width: 100%;
+            background: white;
+            color: #4b5563;
+            font-weight: 500;
+            font-size: 0.875rem;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+            box-sizing: border-box;
+        }
+        .btn-secondary:hover {
+            background: #f9fafb;
+            border-color: #d1d5db;
+            color: #1f2937;
+        }
+        .footer {
+            font-size: 0.7rem;
+            color: #9ca3af;
+            margin-top: 1.25rem;
+        }
+    </style>
 </head>
-<body class="bg-gradient-to-b from-gray-100 to-gray-200 flex items-center justify-center min-h-screen">
+<body>
 
-    <!-- Kartu utama -->
-    <div class="bg-white p-10 rounded-2xl shadow-lg border border-gray-200 text-center w-full max-w-md">
-        
-        <!-- Logo besar -->
-        <div class="mb-8">
-            <img src="{{ asset('images/LOGO.jpg') }}" 
-                 alt="Logo Perusahaan"
-                 class="mx-auto w-36 h-36 rounded-xl shadow-sm border border-gray-100">
+    <div class="card">
+
+        <div class="logo-wrap">
+            <img src="{{ asset('images/LOGO.jpg') }}"
+                 alt="Logo PT. Sipirok Indah"
+                 onerror="this.src='https://placehold.co/72x72?text=SP'">
         </div>
 
-        <!-- Teks sambutan -->
-        <h1 class="text-3xl font-bold text-gray-800 mb-2">Selamat Datang</h1>
-        <p class="text-gray-600 mb-8">Portal resmi untuk karyawan dan pengunjung</p>
+        <h1>PT. Sipirok Indah</h1>
+        <p class="subtitle">Sistem Absensi Karyawan</p>
+        <p class="sub2">Portal resmi untuk karyawan dan pengunjung</p>
 
-        <!-- Tombol navigasi -->
-        <div class="flex justify-center gap-4">
-            <a href="{{ url('/home') }}"
-               class="px-6 py-3 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 transition text-lg font-medium">
-               Homepage
-            </a>
+        <div class="divider"></div>
 
-            <a href="{{ route('login') }}"
-               class="px-6 py-3 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 focus:ring-4 focus:ring-green-300 transition text-lg font-medium">
-               Login
-            </a>
-        </div>
+        <a href="{{ route('login') }}" class="btn-primary">Masuk ke Sistem</a>
+        <a href="{{ url('/home') }}" class="btn-secondary">Lihat Homepage</a>
 
-        <!-- Footer kecil -->
-        <p class="text-sm text-gray-400 mt-8">© {{ date('Y') }} PT. Sipirok Indah</p>
     </div>
+
+    <p class="footer">© {{ date('Y') }} PT. Sipirok Indah. All rights reserved.</p>
 
 </body>
 </html>

@@ -10,20 +10,25 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-    {
-        Schema::table('catatan_panen', function (Blueprint $table) {
-
+{
+    Schema::table('catatan_panen', function (Blueprint $table) {
+        if (!Schema::hasColumn('catatan_panen', 'id_area_kerja')) {
             $table->unsignedBigInteger('id_area_kerja')->nullable()->after('id_pegawai');
-
-            $table->integer('jumlah_tandan')->default(0)->after('id_area_kerja');
-
-            $table->text('catatan')->nullable()->after('berat_kg');
-
-            $table->string('foto_panen')->nullable()->after('catatan');
-
-        });
-    }
-
+        }
+        if (!Schema::hasColumn('catatan_panen', 'jumlah_tandan')) {
+            $table->integer('jumlah_tandan')->nullable()->after('id_area_kerja');
+        }
+        if (!Schema::hasColumn('catatan_panen', 'foto_panen')) {
+            $table->string('foto_panen')->nullable()->after('berat_kg');
+        }
+        if (!Schema::hasColumn('catatan_panen', 'catatan')) {
+            $table->text('catatan')->nullable()->after('foto_panen');
+        }
+        if (!Schema::hasColumn('catatan_panen', 'keterangan')) {
+            $table->text('keterangan')->nullable()->after('catatan');
+        }
+    });
+}
     /**
      * Reverse the migrations.
      */

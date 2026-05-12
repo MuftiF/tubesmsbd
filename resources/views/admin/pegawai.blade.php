@@ -1,281 +1,59 @@
 @extends('layouts.app')
 
 @section('content')
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap');
+<div class="bg-gray-50 min-h-screen p-6 md:p-8">
+<div class="max-w-7xl mx-auto">
 
-    .pegawai-wrap * {
-        font-family: 'Inter', sans-serif;
-    }
-
-    .pegawai-wrap {
-        background: #f8f6f2;
-        min-height: 100vh;
-        padding: 2rem 1.5rem;
-    }
-
-    /* HEADER */
-    .lap-header {
-        margin-bottom: 2rem;
-        position: relative;
-        padding-left: 1rem;
-    }
-    .lap-header::before {
-        content: '';
-        position: absolute;
-        left: 0; top: 0; bottom: 0;
-        width: 4px;
-        background: #2d6a4f;
-        border-radius: 2px;
-    }
-    .lap-header h1 {
-        font-size: 1.75rem;
-        font-weight: 700;
-        color: #1e1e1e;
-        letter-spacing: -0.3px;
-        margin: 0;
-    }
-    .lap-header p {
-        font-size: 0.85rem;
-        color: #78716c;
-        margin-top: 0.25rem;
-    }
-
-    /* SUMMARY CARDS */
-    .summary-cards {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
-        margin-bottom: 2rem;
-    }
-    @media (min-width: 768px) {
-        .summary-cards { grid-template-columns: repeat(5, 1fr); }
-    }
-    .scard {
-        background: white;
-        border-radius: 18px;
-        padding: 1rem 1.25rem;
-        border: 1px solid #e7e5e4;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.03);
-        transition: all 0.2s;
-        text-align: center;
-    }
-    .scard .sc-label {
-        font-size: 0.7rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-        color: #a8a29e;
-        margin-bottom: 0.5rem;
-    }
-    .scard .sc-val {
-        font-size: 1.75rem;
-        font-weight: 700;
-        color: #1c1c1c;
-        line-height: 1.2;
-    }
-    .scard-blue .sc-val { color: #2563eb; }
-    .scard-emerald .sc-val { color: #2d6a4f; }
-    .scard-yellow .sc-val { color: #ca8a04; }
-    .scard-red .sc-val { color: #dc2626; }
-    .scard-purple .sc-val { color: #7c3aed; }
-
-    /* FILTER BOX */
-    .filter-box {
-        background: #ffffff;
-        border-radius: 20px;
-        padding: 1.5rem;
-        margin-bottom: 2rem;
-        border: 1px solid #e7e5e4;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    }
-    .filter-box label {
-        font-size: 0.7rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.03em;
-        color: #57534e;
-        display: block;
-        margin-bottom: 0.3rem;
-    }
-    .filter-box input,
-    .filter-box select {
-        width: 100%;
-        border: 1px solid #e7e5e4;
-        border-radius: 12px;
-        padding: 0.6rem 0.875rem;
-        font-size: 0.85rem;
-        color: #1c1c1c;
-        background: #ffffff;
-        transition: all 0.2s;
-        outline: none;
-    }
-    .filter-box input:focus,
-    .filter-box select:focus {
-        border-color: #2d6a4f;
-        box-shadow: 0 0 0 3px rgba(45,106,79,0.1);
-    }
-
-    /* TABLE BOX */
-    .table-box {
-        background: white;
-        border-radius: 20px;
-        padding: 0;
-        border: 1px solid #e7e5e4;
-        overflow: hidden;
-    }
-    .table-header {
-        padding: 1.25rem 1.5rem 0.75rem 1.5rem;
-        border-bottom: 1px solid #f0f0ee;
-    }
-    .table-header h2 {
-        font-size: 0.9rem;
-        font-weight: 700;
-        color: #1c1c1c;
-        margin: 0;
-    }
-    .overflow-x-auto {
-        overflow-x: auto;
-    }
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-    thead tr {
-        border-bottom: 1px solid #e9ecee;
-        background: #fafaf8;
-    }
-    thead th {
-        text-align: left;
-        padding: 0.9rem 1rem;
-        font-size: 0.7rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: #8d8a84;
-        background: #fafaf8;
-    }
-    tbody tr {
-        border-bottom: 1px solid #f0f0ee;
-        transition: background 0.15s ease;
-    }
-    tbody tr:hover {
-        background: #fefcf7;
-    }
-    tbody td {
-        padding: 0.9rem 1rem;
-        font-size: 0.8rem;
-        color: #3c3a36;
-        vertical-align: middle;
-    }
-
-    /* AVATAR */
-    .avatar {
-        width: 36px;
-        height: 36px;
-        background: #eef5f0;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        color: #2d6a4f;
-    }
-    .employee-name {
-        font-weight: 700;
-        color: #1c1c1c;
-    }
-    .employee-id {
-        font-size: 0.65rem;
-        color: #a8a29e;
-        margin-top: 0.15rem;
-    }
-
-    /* BADGES */
-    .badge-role {
-        display: inline-flex;
-        align-items: center;
-        padding: 0.25rem 0.85rem;
-        border-radius: 9999px;
-        font-size: 0.7rem;
-        font-weight: 600;
-        line-height: 1.25;
-    }
-    .badge-admin { background: #fee9e6; color: #bc3f2c; }
-    .badge-manager { background: #f3e8ff; color: #6b21a5; }
-    .badge-user { background: #eef5f0; color: #2d6a4f; }
-    .badge-security { background: #eef2ff; color: #1e40af; }
-    .badge-cleaning { background: #fef3c7; color: #b45309; }
-    .badge-kantoran { background: #f3e8ff; color: #6b21a5; }
-
-    /* EMPTY STATE */
-    .empty-state {
-        padding: 3rem 1rem;
-        text-align: center;
-        color: #a8a29e;
-    }
-    .empty-state p {
-        font-weight: 600;
-        margin-top: 0.5rem;
-    }
-
-    .dash {
-        color: #cbcbc4;
-    }
-
-    /* FLEX */
-    .flex-start {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-</style>
-
-<div class="pegawai-wrap">
-<div style="max-width:1280px;margin:0 auto;">
-
-    <!-- HEADER -->
-    <div class="lap-header">
-        <h1>Data Pegawai</h1>
-        <p>Daftar lengkap pegawai perusahaan</p>
-    </div>
-
-    <!-- SUMMARY CARDS -->
-    <div class="summary-cards">
-        <div class="scard scard-blue">
-            <div class="sc-label">Total Pegawai</div>
-            <div class="sc-val">{{ $pegawai->count() }}</div>
-        </div>
-        <div class="scard scard-emerald">
-            <div class="sc-label">Kebun & Panen</div>
-            <div class="sc-val">{{ $pegawai->where('role','user')->count() }}</div>
-        </div>
-        <div class="scard scard-blue">
-            <div class="sc-label">Security</div>
-            <div class="sc-val">{{ $pegawai->where('role','security')->count() }}</div>
-        </div>
-        <div class="scard scard-yellow">
-            <div class="sc-label">Cleaning</div>
-            <div class="sc-val">{{ $pegawai->where('role','cleaning')->count() }}</div>
-        </div>
-        <div class="scard scard-purple">
-            <div class="sc-label">Kantoran</div>
-            <div class="sc-val">{{ $pegawai->where('role','kantoran')->count() }}</div>
+    {{-- Header --}}
+    <div class="mb-8 pb-5 border-b border-gray-200">
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+            <div>
+                <p class="text-sm text-gray-500 uppercase tracking-wide mb-1">Admin</p>
+                <h1 class="text-2xl md:text-3xl font-bold text-[#2c5e4e]">Data Pegawai</h1>
+                <p class="text-sm text-gray-500 mt-1">Daftar lengkap pegawai perusahaan</p>
+            </div>
+            <span class="inline-block px-4 py-1.5 bg-[#eaf4f1] text-[#2c5e4e] rounded-full text-sm font-medium self-start sm:self-center">
+                PT. Sipirok Indah
+            </span>
         </div>
     </div>
 
-    <!-- FILTER BOX -->
-    <div class="filter-box">
-        <div style="display: grid; grid-template-columns: 1fr; gap: 1rem;">
-            <div style="display: grid; grid-template-columns: 1fr; gap: 1rem;">
-                <div>
-                    <label>Cari Pegawai</label>
-                    <input type="text" id="searchInput" placeholder="Cari nama atau nomor HP pegawai...">
-                </div>
+    {{-- Summary Cards --}}
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-5 mb-8">
+        <div class="bg-[#2c5e4e] rounded-2xl p-5 transition-all hover:bg-[#1f4a3d] hover:shadow-sm">
+            <p class="text-xs font-semibold uppercase tracking-wide text-white/70 mb-2">Total Pegawai</p>
+            <p class="text-3xl font-bold text-white">{{ $pegawai->count() }}</p>
+        </div>
+        <div class="bg-white rounded-2xl p-5 border border-gray-200 transition-all hover:border-[#eaf4f1] hover:shadow-sm">
+            <p class="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-2">Kebun & Panen</p>
+            <p class="text-3xl font-bold text-[#2c5e4e]">{{ $pegawai->where('role','user')->count() }}</p>
+        </div>
+        <div class="bg-white rounded-2xl p-5 border border-gray-200 transition-all hover:border-[#eaf4f1] hover:shadow-sm">
+            <p class="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-2">Security</p>
+            <p class="text-3xl font-bold text-gray-800">{{ $pegawai->where('role','security')->count() }}</p>
+        </div>
+        <div class="bg-white rounded-2xl p-5 border border-gray-200 transition-all hover:border-[#eaf4f1] hover:shadow-sm">
+            <p class="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-2">Cleaning</p>
+            <p class="text-3xl font-bold text-gray-800">{{ $pegawai->where('role','cleaning')->count() }}</p>
+        </div>
+        <div class="bg-white rounded-2xl p-5 border border-gray-200 transition-all hover:border-[#eaf4f1] hover:shadow-sm">
+            <p class="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-2">Kantoran</p>
+            <p class="text-3xl font-bold text-gray-800">{{ $pegawai->where('role','kantoran')->count() }}</p>
+        </div>
+    </div>
+
+    {{-- Filter Box --}}
+    <div class="bg-white rounded-2xl p-5 md:p-6 mb-6 border border-gray-200 shadow-sm">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-xs font-semibold uppercase tracking-wide text-gray-500 mb-1.5">Cari Pegawai</label>
+                <input type="text" id="searchInput" placeholder="Cari nama atau nomor HP pegawai..."
+                    class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#2c5e4e] focus:ring-1 focus:ring-[#2c5e4e]">
             </div>
             <div>
-                <label>Filter Role</label>
-                <select id="roleFilter">
+                <label class="block text-xs font-semibold uppercase tracking-wide text-gray-500 mb-1.5">Filter Role</label>
+                <select id="roleFilter"
+                    class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#2c5e4e] focus:ring-1 focus:ring-[#2c5e4e]">
                     <option value="">Semua Role</option>
                     <option value="admin">Admin</option>
                     <option value="manager">Manager</option>
@@ -288,51 +66,54 @@
         </div>
     </div>
 
-    <!-- TABLE -->
-    <div class="table-box">
-        <div class="table-header">
-            <h2>Daftar Pegawai</h2>
+    {{-- Table --}}
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+        <div class="flex items-center gap-3 px-6 py-5 border-b border-gray-100">
+            <div class="w-8 h-8 bg-[#eaf4f1] rounded-xl flex items-center justify-center">
+                <svg class="w-4 h-4 text-[#2c5e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+            </div>
+            <h2 class="text-sm font-semibold text-gray-700">Daftar Pegawai</h2>
         </div>
         <div class="overflow-x-auto">
-            <table>
-                <thead>
+            <table class="w-full">
+                <thead class="bg-gray-50 border-b border-gray-200">
                     <tr>
-                        <th>No</th>
-                        <th>Nama</th>
-                        <th>No HP</th>
-                        <th>Role</th>
-                        <th>Bergabung</th>
+                        <th class="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">No</th>
+                        <th class="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">Nama</th>
+                        <th class="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">No HP</th>
+                        <th class="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">Role</th>
+                        <th class="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">Bergabung</th>
                     </tr>
                 </thead>
                 <tbody id="employeeTable">
                     @foreach($pegawai as $i => $emp)
-                    <tr class="employee-row" data-role="{{ $emp->role }}" data-name="{{ strtolower($emp->name) }}" data-phone="{{ strtolower($emp->phone ?? $emp->no_hp ?? '') }}">
-                        <td style="font-weight:600;">{{ $i + 1 }}</td>
-                        <td>
-                            <div class="flex-start">
-                                <div class="avatar">{{ strtoupper(substr($emp->name, 0, 1)) }}</div>
+                    <tr class="employee-row border-b border-gray-100 hover:bg-gray-50 transition"
+                        data-role="{{ $emp->role }}"
+                        data-name="{{ strtolower($emp->name) }}"
+                        data-phone="{{ strtolower($emp->phone ?? $emp->no_hp ?? '') }}">
+                        <td class="px-4 py-3 text-sm font-semibold text-gray-600">{{ $i + 1 }}</td>
+                        <td class="px-4 py-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 bg-[#eaf4f1] rounded-xl flex items-center justify-center font-bold text-[#2c5e4e] text-sm flex-shrink-0">
+                                    {{ strtoupper(substr($emp->name, 0, 1)) }}
+                                </div>
                                 <div>
-                                    <div class="employee-name">{{ $emp->name }}</div>
-                                    <div class="employee-id">ID: {{ $emp->id }}</div>
+                                    <div class="font-semibold text-gray-800 text-sm">{{ $emp->name }}</div>
+                                    <div class="text-xs text-gray-400">ID: {{ $emp->id }}</div>
                                 </div>
                             </div>
                         </td>
-                        <td>
+                        <td class="px-4 py-3 text-sm text-gray-600">
                             @if(!empty($emp->phone) || !empty($emp->no_hp))
                                 {{ $emp->phone ?? $emp->no_hp }}
                             @else
-                                <span class="dash">-</span>
+                                <span class="text-gray-400">-</span>
                             @endif
                         </td>
-                        <td>
-                            <span class="badge-role 
-                                @if($emp->role=='admin') badge-admin
-                                @elseif($emp->role=='manager') badge-manager
-                                @elseif($emp->role=='user') badge-user
-                                @elseif($emp->role=='security') badge-security
-                                @elseif($emp->role=='cleaning') badge-cleaning
-                                @else badge-kantoran
-                                @endif">
+                        <td class="px-4 py-3">
+                            <span class="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-[#eaf4f1] text-[#2c5e4e]">
                                 @if($emp->role == 'user') Kebun & Panen
                                 @elseif($emp->role == 'security') Security
                                 @elseif($emp->role == 'cleaning') Cleaning
@@ -341,16 +122,19 @@
                                 @endif
                             </span>
                         </td>
-                        <td>{{ $emp->created_at ? $emp->created_at->format('d M Y') : '-' }}</td>
-                     </tr>
+                        <td class="px-4 py-3 text-sm text-gray-500">{{ $emp->created_at ? $emp->created_at->format('d M Y') : '-' }}</td>
+                    </tr>
                     @endforeach
                 </tbody>
             </table>
         </div>
 
         @if($pegawai->isEmpty())
-        <div class="empty-state">
-            <p>Tidak ada data pegawai</p>
+        <div class="py-14 text-center text-gray-400">
+            <svg class="w-10 h-10 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+            <p class="font-semibold text-sm text-gray-500">Tidak ada data pegawai</p>
         </div>
         @endif
     </div>
@@ -358,7 +142,6 @@
 </div>
 </div>
 
-<!-- FILTER SCRIPT -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('searchInput');

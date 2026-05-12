@@ -3,16 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Pegawai - Tubes MSBD</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Login - PT. Sipirok Indah</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
-        .gradient-bg {
-            background: linear-gradient(135deg, #edededff 0%, #edededff 100%);
-        }
-        .input-focus:focus {
-            box-shadow: 0 0 0 3px rgba(0, 182, 70, 0.2);
-        }
         .shake {
             animation: shake 0.5s;
         }
@@ -21,346 +14,316 @@
             10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
             20%, 40%, 60%, 80% { transform: translateX(5px); }
         }
-        .leaf-bg {
-            position: absolute;
+        body {
+            background: #d1d5db;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .login-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 2rem;
             width: 100%;
-            height: 100%;
-            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%2300b646' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
-            opacity: 0.1;
-            z-index: -1;
+            max-width: 360px;
+        }
+        .input-field {
+            width: 100%;
+            padding: 0.625rem 0.75rem 0.625rem 2.25rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            outline: none;
+            transition: all 0.2s;
+            box-sizing: border-box;
+        }
+        .input-field:focus {
+            border-color: #2c5e4e;
+            box-shadow: 0 0 0 3px rgba(44,94,78,0.1);
+        }
+        .input-wrapper {
+            position: relative;
+        }
+        .input-icon {
+            position: absolute;
+            left: 0.625rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            width: 1rem;
+            height: 1rem;
+        }
+        .input-action {
+            position: absolute;
+            right: 0.625rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #9ca3af;
+            padding: 0;
+            display: flex;
+            align-items: center;
+        }
+        .input-action:hover { color: #2c5e4e; }
+        .btn-primary {
+            width: 100%;
+            background: #2c5e4e;
+            color: white;
+            font-weight: 600;
+            font-size: 0.875rem;
+            padding: 0.7rem 1rem;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+        .btn-primary:hover { background: #1f4a3d; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(44,94,78,0.3); }
+        .btn-primary:disabled { opacity: 0.7; transform: none; }
+        label.field-label {
+            display: block;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #6b7280;
+            margin-bottom: 0.375rem;
+        }
+        .form-group { margin-bottom: 1rem; }
+        .alert-success {
+            background: #eaf4f1;
+            border: 1px solid rgba(44,94,78,0.2);
+            color: #1f4a3d;
+            border-radius: 12px;
+            padding: 0.75rem;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .alert-error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+            border-radius: 12px;
+            padding: 0.75rem;
+            font-size: 0.75rem;
+            margin-bottom: 1rem;
+            transition: opacity 0.5s;
+        }
+        .error-text { color: #dc2626; font-size: 0.7rem; margin-top: 0.25rem; }
+        .divider { height: 1px; background: #f3f4f6; margin: 1.25rem 0; }
+        .footer-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            font-size: 0.75rem;
+            color: #9ca3af;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .footer-link:hover { color: #2c5e4e; }
+        .remember-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            color: #6b7280;
+            cursor: pointer;
+            margin-bottom: 1rem;
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-center items-center p-4 relative overflow-hidden">
-    <!-- Background Leaf Pattern -->
-    <div class="leaf-bg"></div>
-    
-    <!-- Background Gradient -->
-    <div class="gradient-bg absolute inset-0 z-0"></div>
-    
-    <!-- Main Card -->
-    <div class="bg-white/95 backdrop-blur-sm shadow-2xl rounded-2xl p-8 w-full max-w-md transform transition-all duration-300 hover:shadow-3xl z-10 border border-green-100">
-        
-        <!-- Header -->
-        <div class="text-center mb-8">
-            <div class="inline-block">
-                <div class="w-24 h-24 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 flex items-center justify-center mx-auto mb-4 shadow-lg overflow-hidden border-4 border-white">
-                <img src="{{ asset('images/Logo 1.jpg') }}" 
-                    alt="Logo Tubes MSBD" 
-                    class="w-full h-full object-contain p-2 bg-white"
-                    onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNjQgMzJDNjQgMTQuNzcgNTAuMjMgNCAzNiA0UzggMTQuNzcgOCAzMmg4YzAtNi42MyA0LjQzLTEyIDEwLTEyczEwIDUuMzcgMTAgMTJIMzZDNDkuMjMgMzIgNjQgNDUuNzcgNjQgNjRzLTE0Ljc3IDMyLTMyIDMyYy0xNy4yMyAwLTMyLTE4LjIzLTMyLTMyaC04YzAgMTcuMjMgMTQuMjMgMzIgMzIgMzJzMzItMTQuNzcgMzItMzJjMC0xNy4yMy0xNC4yMy0zMi0zMi0zMloiIGZpbGw9IiMwMGI2NDYiLz48L3N2Zz4='">
-                </div>
+<body>
+
+    <div class="login-card">
+
+        {{-- Header --}}
+        <div style="text-align: center; margin-bottom: 1.5rem;">
+            <div style="width: 56px; height: 56px; border-radius: 14px; background: white; border: 1px solid #f3f4f6; box-shadow: 0 1px 4px rgba(0,0,0,0.08); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem; overflow: hidden;">
+                <img src="{{ asset('images/Logo 1.jpg') }}"
+                     alt="Logo"
+                     style="width: 100%; height: 100%; object-fit: contain; padding: 4px;"
+                     onerror="this.src='https://placehold.co/56x56?text=SP'">
             </div>
-            <h1 class="text-3xl font-bold text-gray-800 mb-2">
-                <span class="bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
-                    Login Pegawai
-                </span>
-            </h1>
-            <p class="text-gray-600 text-sm">
-                Sistem Manajemen Kebun Sawit
-            </p>
-            <div class="mt-2 flex justify-center items-center gap-2">
-                <i class="fas fa-seedling text-green-500"></i>
-                <span class="text-xs text-gray-500">Berkembang Bersama Alam</span>
-                <i class="fas fa-seedling text-green-500"></i>
-            </div>
+            <h1 style="font-size: 1rem; font-weight: 700; color: #2c5e4e; margin: 0 0 2px;">PT. Sipirok Indah</h1>
+            <p style="font-size: 0.75rem; color: #9ca3af; margin: 0;">Sistem Manajemen Kebun Sawit</p>
         </div>
 
-        <!-- Session Status -->
+        {{-- Session Status --}}
         @if(session('status'))
-            <div class="mb-6 p-4 rounded-xl bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 text-green-800 text-sm flex items-center gap-3 animate-pulse">
-                <i class="fas fa-check-circle text-green-600 text-lg"></i>
-                <div>
-                    <p class="font-medium">{{ session('status') }}</p>
-                </div>
-            </div>
+        <div class="alert-success">
+            <svg style="width:14px;height:14px;flex-shrink:0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            {{ session('status') }}
+        </div>
         @endif
 
-        <!-- Error Message -->
+        {{-- Error --}}
         @if($errors->any())
-            <div class="mb-6 p-4 rounded-xl bg-gradient-to-r from-red-50 to-red-50 border border-red-200 text-red-800 text-sm animate-shake" id="error-message">
-                <div class="flex items-center gap-3 mb-2">
-                    <i class="fas fa-exclamation-triangle text-red-600 text-lg"></i>
-                    <p class="font-medium">Terjadi Kesalahan</p>
-                </div>
-                <ul class="space-y-1 pl-7">
-                    @foreach($errors->all() as $error)
-                        <li class="flex items-center gap-2">
-                            <i class="fas fa-circle text-xs text-red-500"></i>
-                            <span>{{ $error }}</span>
-                        </li>
-                    @endforeach
-                </ul>
+        <div class="alert-error" id="error-message">
+            <div style="display:flex;align-items:center;gap:6px;font-weight:600;margin-bottom:4px;">
+                <svg style="width:14px;height:14px;flex-shrink:0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Terjadi Kesalahan
             </div>
+            <ul style="padding-left:1.25rem;margin:0;">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
         @endif
 
-        <!-- Login Form -->
-        <form method="POST" action="{{ route('login') }}" id="loginForm" class="space-y-6">
+        {{-- Form --}}
+        <form method="POST" action="{{ route('login') }}" id="loginForm">
             @csrf
 
-            <!-- No HP Field -->
-            <div class="space-y-2">
-                <label for="no_hp" class="block text-sm font-semibold text-gray-700">
-                    <i class="fas fa-user-circle mr-2 text-green-600"></i>
-                    Nomor HP / Username
-                </label>
-                <div class="relative group">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i class="fas fa-user text-gray-400 group-focus-within:text-green-600 transition-colors"></i>
-                    </div>
-                    <input 
-                        id="no_hp" 
-                        type="text" 
-                        name="no_hp" 
-                        value="{{ old('no_hp') }}" 
-                        required 
-                        autofocus 
-                        autocomplete="tel"
-                        class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all duration-300 outline-none input-focus @error('no_hp') border-red-500 @enderror"
-                        placeholder="Masukkan username/No HP"
+            {{-- No HP --}}
+            <div class="form-group">
+                <label class="field-label" for="no_hp">Nomor HP / Username</label>
+                <div class="input-wrapper">
+                    <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                    <input
+                        id="no_hp" type="text" name="no_hp"
+                        value="{{ old('no_hp') }}"
+                        required autofocus autocomplete="tel"
+                        placeholder="Masukkan username / No HP"
                         oninput="validateNoHP(this)"
-                    >
-                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                        <span id="no_hp_status" class="hidden">
-                            <i class="fas fa-check text-green-500"></i>
-                        </span>
-                    </div>
+                        class="input-field @error('no_hp') border-red-400 @enderror">
                 </div>
-                @error('no_hp')
-                    <p class="text-red-600 text-sm flex items-center gap-2 mt-1">
-                        <i class="fas fa-exclamation-circle"></i>
-                        {{ $message }}
-                    </p>
-                @enderror
-                <div id="no_hp_hint" class="text-xs text-gray-500 mt-1 hidden">
-                    <i class="fas fa-info-circle mr-1 text-green-500"></i>
-                    Gunakan nomor HP atau username yang terdaftar
-                </div>
+                @error('no_hp')<p class="error-text">{{ $message }}</p>@enderror
             </div>
 
-            <!-- Password Field -->
-            <div class="space-y-2">
-                <div class="flex justify-between items-center">
-                    <label for="password" class="block text-sm font-semibold text-gray-700">
-                        <i class="fas fa-lock mr-2 text-green-600"></i>
-                        Password
-                    </label>
-                    @if (Route::has('password.request'))
-                        <a href="{{ route('password.request') }}" 
-                           class="text-xs text-green-600 hover:text-green-800 hover:underline transition-colors">
-                        </a>
-                    @endif
-                </div>
-                <div class="relative group">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i class="fas fa-lock text-gray-400 group-focus-within:text-green-600 transition-colors"></i>
-                    </div>
-                    <input 
-                        id="password" 
-                        type="password" 
-                        name="password" 
-                        required 
-                        autocomplete="current-password"
-                        class="w-full pl-10 pr-10 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all duration-300 outline-none input-focus @error('password') border-red-500 @enderror"
+            {{-- Password --}}
+            <div class="form-group">
+                <label class="field-label" for="password">Password</label>
+                <div class="input-wrapper">
+                    <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    </svg>
+                    <input
+                        id="password" type="password" name="password"
+                        required autocomplete="current-password"
                         placeholder="Masukkan password Anda"
-                    >
-                    <button type="button" 
-                            onclick="togglePassword()" 
-                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-green-600 transition-colors">
-                        <i id="togglePasswordIcon" class="fas fa-eye"></i>
+                        class="input-field" style="padding-right: 2.5rem;"
+                        @error('password') style="border-color: #f87171; padding-right: 2.5rem;" @enderror>
+                    <button type="button" class="input-action" onclick="togglePassword()">
+                        <svg id="eyeIcon" style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        </svg>
                     </button>
                 </div>
-                @error('password')
-                    <p class="text-red-600 text-sm flex items-center gap-2 mt-1">
-                        <i class="fas fa-exclamation-circle"></i>
-                        {{ $message }}
-                    </p>
-                @enderror
-
-            <!-- Remember Me & Submit -->
-            <div class="space-y-4">
-                <div class="flex items-center">
-                    <input 
-                        id="remember_me" 
-                        type="checkbox"
-                        class="h-5 w-5 rounded border-gray-300 text-green-600 focus:ring-green-500 cursor-pointer"
-                        name="remember"
-                    >
-                    <label for="remember_me" class="ms-3 text-sm text-gray-700 cursor-pointer select-none">
-                        <i class="fas fa-bookmark mr-2 text-green-500"></i>
-                        Ingat saya di perangkat ini
-                    </label>
-                </div>
-
-                <button 
-                    type="submit" 
-                    id="submitBtn"
-                    class="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold py-3.5 px-4 rounded-xl hover:from-green-700 hover:to-emerald-700 focus:outline-none focus:ring-4 focus:ring-green-300 transition-all duration-300 transform hover:-translate-y-0.5 shadow-lg hover:shadow-xl flex items-center justify-center gap-3 group"
-                >
-                    <i class="fas fa-sign-in-alt group-hover:rotate-12 transition-transform"></i>
-                    <span id="submitText">{{ __('Masuk') }}</span>
-                    <div id="loadingSpinner" class="hidden">
-                        <i class="fas fa-spinner fa-spin"></i>
-                    </div>
-                </button>
+                @error('password')<p class="error-text">{{ $message }}</p>@enderror
             </div>
+
+            {{-- Remember --}}
+            <label class="remember-label">
+                <input type="checkbox" name="remember"
+                    style="width:14px;height:14px;accent-color:#2c5e4e;cursor:pointer;">
+                Ingat saya di perangkat ini
+            </label>
+
+            {{-- Submit --}}
+            <button type="submit" id="submitBtn" class="btn-primary">
+                <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                </svg>
+                <span id="submitText">Masuk</span>
+            </button>
         </form>
 
-        <!-- Footer -->
-        <div class="mt-8 pt-6 border-t border-green-100 space-y-4">
-            <!-- Back to Home -->
-            <div class="text-center">
-                <a href="{{ url('/') }}" 
-                   class="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-green-700 hover:underline transition-colors group">
-                    <i class="fas fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
-                    Kembali ke Halaman Utama
-                </a>
-            </div>
+        <div class="divider"></div>
+
+        <div style="text-align:center;">
+            <a href="{{ url('/') }}" class="footer-link">
+                <svg style="width:13px;height:13px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                Kembali ke Halaman Utama
+            </a>
         </div>
-    </div> <!-- End Main Card -->
 
-    <!-- Floating Leaves -->
-    <div class="absolute top-10 left-10 w-8 h-8 text-green-400 opacity-20 animate-bounce">
-        <i class="fas fa-leaf text-3xl"></i>
-    </div>
-    <div class="absolute bottom-10 right-10 w-6 h-6 text-green-400 opacity-20 animate-bounce" style="animation-delay: 0.5s;">
-        <i class="fas fa-leaf text-2xl"></i>
-    </div>
-    <div class="absolute top-20 right-20 w-4 h-4 text-green-400 opacity-20 animate-bounce" style="animation-delay: 1s;">
-        <i class="fas fa-leaf text-xl"></i>
     </div>
 
-    <!-- JavaScript -->
+    <p style="position:fixed;bottom:1rem;left:0;right:0;text-align:center;font-size:0.7rem;color:rgba(255,255,255,0.25);margin:0;">
+        © {{ date('Y') }} PT. Sipirok Indah
+    </p>
+
     <script>
-        // Toggle Password Visibility
         function togglePassword() {
-            const passwordInput = document.getElementById('password');
-            const toggleIcon = document.getElementById('togglePasswordIcon');
-            
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                toggleIcon.classList.remove('fa-eye');
-                toggleIcon.classList.add('fa-eye-slash');
+            const input = document.getElementById('password');
+            const icon = document.getElementById('eyeIcon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>';
             } else {
-                passwordInput.type = 'password';
-                toggleIcon.classList.remove('fa-eye-slash');
-                toggleIcon.classList.add('fa-eye');
+                input.type = 'password';
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>';
             }
         }
 
-        // Validate No HP Format
         function validateNoHP(input) {
             const value = input.value.trim();
-            const statusIcon = document.getElementById('no_hp_status');
-            const hint = document.getElementById('no_hp_hint');
-            
-            // Show hint when user starts typing
-            if (value.length > 0) {
-                hint.classList.remove('hidden');
-            } else {
-                hint.classList.add('hidden');
-            }
-            
-            // Basic validation
             if (value.length >= 3) {
-                statusIcon.classList.remove('hidden');
-                input.classList.remove('border-red-500');
-                input.classList.add('border-green-500');
+                input.style.borderColor = '#2c5e4e';
+            } else if (value.length > 0) {
+                input.style.borderColor = '#f87171';
             } else {
-                statusIcon.classList.add('hidden');
-                input.classList.remove('border-green-500');
-                if (value.length > 0) {
-                    input.classList.add('border-red-500');
-                } else {
-                    input.classList.remove('border-red-500');
-                }
+                input.style.borderColor = '#e5e7eb';
             }
         }
 
-        // Form submission validation
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             const noHP = document.getElementById('no_hp').value.trim();
             const password = document.getElementById('password').value.trim();
-            
-            // Cek jika ada input kosong
             if (!noHP || !password) {
-                e.preventDefault(); // Hentikan submit jika validasi gagal
-                
+                e.preventDefault();
                 if (!noHP) {
-                    document.getElementById('no_hp').focus();
                     document.getElementById('no_hp').classList.add('shake');
-                    setTimeout(() => {
-                        document.getElementById('no_hp').classList.remove('shake');
-                    }, 500);
+                    setTimeout(() => document.getElementById('no_hp').classList.remove('shake'), 500);
                 }
-                
                 if (!password) {
-                    document.getElementById('password').focus();
                     document.getElementById('password').classList.add('shake');
-                    setTimeout(() => {
-                        document.getElementById('password').classList.remove('shake');
-                    }, 500);
+                    setTimeout(() => document.getElementById('password').classList.remove('shake'), 500);
                 }
-                
                 return false;
             }
-            
-            // Jika validasi lolos, tampilkan loading
-            const submitText = document.getElementById('submitText');
-            const loadingSpinner = document.getElementById('loadingSpinner');
             const submitBtn = document.getElementById('submitBtn');
-            
-            submitText.classList.add('hidden');
-            loadingSpinner.classList.remove('hidden');
+            document.getElementById('submitText').textContent = 'Memproses...';
             submitBtn.disabled = true;
-            submitBtn.classList.remove('hover:-translate-y-0.5');
-            
-            // Form akan disubmit secara normal
             return true;
         });
 
-        // Auto-hide error message
         document.addEventListener('DOMContentLoaded', function() {
             const errorMessage = document.getElementById('error-message');
             if (errorMessage) {
                 setTimeout(() => {
                     errorMessage.style.opacity = '0';
-                    errorMessage.style.transition = 'opacity 0.5s ease';
-                    setTimeout(() => {
-                        errorMessage.style.display = 'none';
-                    }, 500);
+                    setTimeout(() => errorMessage.style.display = 'none', 500);
                 }, 5000);
             }
-            
-            // Focus on no_hp field if empty
             const noHPInput = document.getElementById('no_hp');
-            if (!noHPInput.value) {
-                noHPInput.focus();
-            }
-            
-            // Prevent form resubmission
+            if (!noHPInput.value) noHPInput.focus();
             if (window.history.replaceState) {
                 window.history.replaceState(null, null, window.location.href);
             }
-            
-            // Add subtle background animation
-            document.body.style.animation = 'gradientShift 10s ease infinite';
-            
-            // Preload logo untuk menghindari flash
-            const logo = new Image();
-            logo.src = "{{ asset('images/Logo 1.jpg') }}";
         });
-
-        // Add CSS for gradient animation
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes gradientShift {
-                0% { background: linear-gradient(135deg, #00b646 0%, #009933 100%); }
-                50% { background: linear-gradient(135deg, #009933 0%, #00b646 100%); }
-                100% { background: linear-gradient(135deg, #00b646 0%, #009933 100%); }
-            }
-        `;
-        document.head.appendChild(style);
     </script>
 </body>
 </html>
