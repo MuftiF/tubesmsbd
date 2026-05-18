@@ -1,11 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="min-h-screen bg-gray-50 py-8">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen bg-[#F8FAF9] p-6 md:p-8">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
 
-        {{-- HEADER --}}
-        <div class="mb-8 pb-5 border-b border-gray-200">
+        {{-- ============================================================ --}}
+        {{-- HEADER SECTION --}}
+        {{-- ============================================================ --}}
+        <div class="mb-8 pb-5 border-b border-[#E2E8F0]">
             <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                 <div class="flex items-center gap-4">
                     <div class="w-14 h-14 bg-[#eaf4f1] rounded-2xl flex items-center justify-center flex-shrink-0">
@@ -14,84 +16,94 @@
                         </svg>
                     </div>
                     <div>
-                        <p class="text-sm text-gray-500 uppercase tracking-wide mb-0.5">Dashboard</p>
+                       
                         <h1 class="text-2xl sm:text-3xl font-bold text-[#2c5e4e]">Security</h1>
+                        <p class="text-sm text-gray-500 mt-1">Pos Keamanan & Monitoring Area</p>
                     </div>
                 </div>
-                <div class="text-right">
-                    <p class="text-sm text-gray-500">Pos Keamanan & Monitoring Area</p>
-                    <span class="inline-block px-4 py-1.5 bg-[#eaf4f1] text-[#2c5e4e] rounded-full text-sm font-medium mt-1">
-                        PT. Sipirok Indah
-                    </span>
+                <div class="flex items-center gap-4">
+                    <div class="text-right">
+                        <p class="text-sm text-gray-500">{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</p>
+                        <span class="inline-block px-4 py-1.5 bg-[#eaf4f1] text-[#2c5e4e] rounded-full text-sm font-medium mt-1">
+                            PT. Sipirok Indah
+                        </span>
+                    </div>
+                 
                 </div>
             </div>
         </div>
 
-        {{-- PESAN SUKSES --}}
+        {{-- ============================================================ --}}
+        {{-- ALERT MESSAGES --}}
+        {{-- ============================================================ --}}
         @if(session('success'))
-        <div class="bg-[#eaf4f1] border border-[#2c5e4e]/20 text-[#1f4a3d] px-5 py-4 rounded-2xl mb-6 shadow-sm" id="successMessage">
-            <div class="flex items-start gap-3">
-                <div class="w-8 h-8 bg-[#2c5e4e] rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                    </svg>
-                </div>
-                <div class="flex-1">
-                    <p class="font-semibold text-sm">Berhasil!</p>
-                    <p class="text-sm text-[#2c5e4e]/80 mt-0.5">{{ session('success') }}</p>
-                    @if(session('photos_count'))
-                    <p class="text-sm mt-1 text-[#2c5e4e]/70">
-                        📸 {{ session('photos_count') }} foto telah diunggah
-                        @if(session('photos_count') == 1)
-                            ({{ session('photo_names')[0] }})
-                        @else
-                            <span class="block mt-1 text-xs">
-                                @foreach(session('photo_names') as $photo)
-                                    • {{ $photo }}<br>
-                                @endforeach
-                            </span>
-                        @endif
-                    </p>
-                    @endif
-                </div>
-                <button type="button" onclick="document.getElementById('successMessage').remove()" class="text-[#2c5e4e]/60 hover:text-[#2c5e4e] text-xl leading-none">&times;</button>
-            </div>
+        <div class="mb-5 p-4 rounded-xl bg-[#e8f5f0] border border-[#2e7d5e]/20 flex items-center gap-3" id="successMessage">
+            <svg class="w-5 h-5 text-[#2e7d5e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <p class="text-[#1f4a3d] flex-1">{{ session('success') }}</p>
+            <button type="button" onclick="document.getElementById('successMessage').remove()" class="text-[#2c5e4e]/60 hover:text-[#2c5e4e] text-xl leading-none">&times;</button>
         </div>
         @endif
 
-        {{-- ROW 1: STAT CARDS --}}
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-5 mb-6">
+        @if(session('error'))
+        <div class="mb-5 p-4 rounded-xl bg-[#FDECEA] border border-[#C0392B]/20 flex items-center gap-3">
+            <svg class="w-5 h-5 text-[#C0392B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <p class="text-[#7B1C14]">{{ session('error') }}</p>
+        </div>
+        @endif
 
-            <div class="bg-white rounded-2xl p-5 border border-gray-200 transition-all hover:border-[#eaf4f1] hover:shadow-sm">
+        {{-- ============================================================ --}}
+        {{-- STAT CARDS (tanpa hover border) --}}
+        {{-- ============================================================ --}}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+
+            <div class="bg-white rounded-2xl p-5 border border-[#E2E8F0] transition-all hover:shadow-md">
                 <div class="flex items-start justify-between">
                     <div>
                         <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Shift Masuk</p>
                         <p class="text-3xl font-bold text-gray-800 mt-1">18:00</p>
                     </div>
-                    <div class="w-10 h-10 rounded-xl bg-[#eaf4f1] flex items-center justify-center">
-                        <svg class="w-5 h-5 text-[#2c5e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-12 h-12 rounded-xl bg-[#eaf4f1] flex items-center justify-center">
+                        <svg class="w-6 h-6 text-[#2c5e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-white rounded-2xl p-5 border border-gray-200 transition-all hover:border-[#eaf4f1] hover:shadow-sm">
-                <div class="flex items-start justify-between">
-                    <div>
-                        <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Patroli Ke</p>
-                        <p class="text-3xl font-bold text-gray-800 mt-1">3</p>
-                    </div>
-                    <div class="w-10 h-10 rounded-xl bg-[#eaf4f1] flex items-center justify-center">
-                        <svg class="w-5 h-5 text-[#2c5e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        </svg>
-                    </div>
-                </div>
-            </div>
+           <div class="bg-white rounded-2xl p-5 border border-[#E2E8F0] transition-all hover:shadow-md">
+    <div class="flex items-start justify-between">
 
-            <div class="bg-white rounded-2xl p-5 border border-gray-200 transition-all hover:border-[#eaf4f1] hover:shadow-sm">
+        <div>
+            <p class="text-sm text-gray-500 font-medium">
+                Total Patroli Hari Ini
+            </p>
+
+            <h2 class="text-3xl font-bold text-[#2c5e4e] mt-2">
+                {{ $totalPatroliHariIni }}
+            </h2>
+
+        </div>
+
+        <div class="w-12 h-12 rounded-xl bg-[#eaf4f1] flex items-center justify-center">
+            <svg class="w-6 h-6 text-[#2c5e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
+                </path>
+
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z">
+                </path>
+            </svg>
+        </div>
+
+    </div>
+</div>
+
+            <div class="bg-white rounded-2xl p-5 border border-[#E2E8F0] transition-all hover:shadow-md">
                 <div class="flex items-start justify-between">
                     <div>
                         <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Waktu Masuk</p>
@@ -103,21 +115,28 @@
                             @endif
                         </p>
                     </div>
-                    <div class="w-10 h-10 rounded-xl bg-[#eaf4f1] flex items-center justify-center">
-                        <svg class="w-5 h-5 text-[#2c5e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-12 h-12 rounded-xl bg-[#eaf4f1] flex items-center justify-center">
+                        <svg class="w-6 h-6 text-[#2c5e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
                         </svg>
                     </div>
                 </div>
-                <div class="mt-2 pt-2 border-t border-gray-100">
-                    <span class="inline-block px-3 py-1 rounded-full text-xs font-medium
+                <div class="mt-3 pt-3 border-t border-gray-100">
+                    <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium
                         {{ !empty($absenHariIni) && $absenHariIni->check_in ? 'bg-[#eaf4f1] text-[#2c5e4e]' : 'bg-gray-200 text-gray-500' }}">
-                        @if(!empty($absenHariIni) && $absenHariIni->check_in) ✓ Tepat Waktu @else ⏳ Belum Masuk @endif
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            @if(!empty($absenHariIni) && $absenHariIni->check_in)
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            @else
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            @endif
+                        </svg>
+                        @if(!empty($absenHariIni) && $absenHariIni->check_in) Tepat Waktu @else Belum Masuk @endif
                     </span>
                 </div>
             </div>
 
-            <div class="bg-[#2c5e4e] rounded-2xl p-5 transition-all hover:bg-[#1f4a3d] hover:shadow-sm">
+            <div class="bg-[#2c5e4e] rounded-2xl p-5 transition-all hover:shadow-md">
                 <div class="flex items-start justify-between">
                     <div>
                         <p class="text-xs font-medium text-white/70 uppercase tracking-wide">Waktu Pulang</p>
@@ -129,37 +148,46 @@
                             @endif
                         </p>
                     </div>
-                    <div class="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                         </svg>
                     </div>
                 </div>
-                <div class="mt-2 pt-2 border-t border-white/20">
-                    <span class="inline-block px-3 py-1 rounded-full text-xs font-medium
+                <div class="mt-3 pt-3 border-t border-white/20">
+                    <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium
                         {{ !empty($absenHariIni) && $absenHariIni->check_out ? 'bg-white/20 text-white' : 'bg-white/10 text-white/60' }}">
-                        @if(!empty($absenHariIni) && $absenHariIni->check_out) ✓ Selesai @else ⏳ Belum Pulang @endif
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            @if(!empty($absenHariIni) && $absenHariIni->check_out)
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            @else
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            @endif
+                        </svg>
+                        @if(!empty($absenHariIni) && $absenHariIni->check_out) Selesai @else Belum Pulang @endif
                     </span>
                 </div>
             </div>
 
         </div>
 
-        {{-- ROW 2: MAIN GRID --}}
+        {{-- ============================================================ --}}
+        {{-- MAIN GRID --}}
+        {{-- ============================================================ --}}
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
             {{-- KEHADIRAN DETAIL - 2/3 --}}
             <div class="lg:col-span-2">
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-                    <div class="px-7 py-5 border-b-2 border-[#eaf4f1] flex items-center gap-3">
+                <div class="bg-white rounded-2xl shadow-sm border border-[#E2E8F0] overflow-hidden h-full">
+                    <div class="px-7 py-5 border-b border-[#eaf4f1] flex items-center gap-3">
                         <svg class="w-6 h-6 text-[#2c5e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                         </svg>
                         <h2 class="text-lg font-semibold text-gray-700">Status Kehadiran Hari Ini</h2>
                     </div>
                     <div class="p-7">
-                        <div class="grid grid-cols-2 gap-6">
-                            <div class="bg-gray-50 rounded-xl p-6 text-center border border-gray-200 transition-all hover:bg-white hover:border-[#eaf4f1]">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-gray-50 rounded-xl p-6 text-center border border-[#E2E8F0] transition-all hover:shadow-md">
                                 <div class="w-14 h-14 rounded-xl bg-[#eaf4f1] flex items-center justify-center mx-auto mb-4">
                                     <svg class="w-7 h-7 text-[#2c5e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
@@ -172,12 +200,19 @@
                                     @else --
                                     @endif
                                 </p>
-                                <span class="inline-block px-4 py-1.5 rounded-full text-sm font-medium
+                                <span class="inline-flex items-center gap-1 px-4 py-1.5 rounded-full text-sm font-medium
                                     {{ !empty($absenHariIni) && $absenHariIni->check_in ? 'bg-[#eaf4f1] text-[#2c5e4e]' : 'bg-gray-200 text-gray-600' }}">
-                                    @if(!empty($absenHariIni) && $absenHariIni->check_in) ✓ Tepat Waktu @else ⏳ Belum @endif
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        @if(!empty($absenHariIni) && $absenHariIni->check_in)
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        @else
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        @endif
+                                    </svg>
+                                    @if(!empty($absenHariIni) && $absenHariIni->check_in) Tepat Waktu @else Belum @endif
                                 </span>
                             </div>
-                            <div class="bg-gray-50 rounded-xl p-6 text-center border border-gray-200 transition-all hover:bg-white hover:border-[#eaf4f1]">
+                            <div class="bg-gray-50 rounded-xl p-6 text-center border border-[#E2E8F0] transition-all hover:shadow-md">
                                 <div class="w-14 h-14 rounded-xl bg-[#eaf4f1] flex items-center justify-center mx-auto mb-4">
                                     <svg class="w-7 h-7 text-[#2c5e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
@@ -190,9 +225,16 @@
                                     @else --
                                     @endif
                                 </p>
-                                <span class="inline-block px-4 py-1.5 rounded-full text-sm font-medium
+                                <span class="inline-flex items-center gap-1 px-4 py-1.5 rounded-full text-sm font-medium
                                     {{ !empty($absenHariIni) && $absenHariIni->check_out ? 'bg-[#eaf4f1] text-[#2c5e4e]' : 'bg-gray-200 text-gray-600' }}">
-                                    @if(!empty($absenHariIni) && $absenHariIni->check_out) ✓ Selesai @else ⏳ Belum Pulang @endif
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        @if(!empty($absenHariIni) && $absenHariIni->check_out)
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        @else
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        @endif
+                                    </svg>
+                                    @if(!empty($absenHariIni) && $absenHariIni->check_out) Selesai @else Belum Pulang @endif
                                 </span>
                             </div>
                         </div>
@@ -202,55 +244,53 @@
 
             {{-- AKSI CEPAT - 1/3 --}}
             <div class="lg:col-span-1">
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-                    <div class="px-7 py-5 border-b-2 border-[#eaf4f1] flex items-center gap-3">
+                <div class="bg-white rounded-2xl shadow-sm border border-[#E2E8F0] overflow-hidden h-full">
+                    <div class="px-7 py-5 border-b border-[#eaf4f1] flex items-center gap-3">
                         <svg class="w-6 h-6 text-[#2c5e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                         </svg>
                         <h3 class="text-lg font-semibold text-gray-700">Aksi Cepat</h3>
                     </div>
                     <div class="p-7">
-                        <div class="flex flex-col gap-3">
-
-                            @if(!isset($absenHariIni) || !$absenHariIni || !$absenHariIni->check_in)
-                            <a href="{{ route('attendance.index') }}"
-                               class="inline-flex items-center justify-center gap-3 bg-[#2c5e4e] hover:bg-[#1f4a3d] text-white px-5 py-3 rounded-xl font-semibold transition-all hover:-translate-y-0.5 shadow-md">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
-                                </svg>
-                                Absen Masuk
-                            </a>
-                            @endif
-
-                            @if(isset($absenHariIni) && $absenHariIni->check_in && !$absenHariIni->check_out)
-                            <a href="{{ route('attendance.index') }}"
-                                class="inline-flex items-center justify-center gap-3 bg-[#d4a373] hover:bg-[#b88352] text-white px-5 py-3 rounded-xl font-semibold transition-all hover:-translate-y-0.5 shadow-md">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                </svg>
-                                Ambil Foto & Absen Pulang
-                            </a>
-                            @endif
-
+                        <div class="flex flex-col gap-4">
                             @if(isset($absenHariIni) && $absenHariIni->check_out)
-                            <div class="bg-[#eaf4f1] rounded-xl p-5 text-center">
-                                <svg class="w-10 h-10 mx-auto mb-2 text-[#2c5e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                <h3 class="text-base font-semibold text-[#1f4a3d] mb-1">Absensi Selesai</h3>
-                                <p class="text-sm text-gray-500">Terima kasih sudah menjaga wilayah perkebunan hari ini!</p>
-                            </div>
+                                <div class="bg-[#eaf4f1] rounded-xl p-6 text-center border border-[#2c5e4e]/20 flex-1 flex flex-col items-center justify-center min-h-[200px]">
+                                    <svg class="w-14 h-14 mx-auto mb-3 text-[#2c5e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                    <h3 class="text-lg font-semibold text-[#1f4a3d] mb-2">Absensi Selesai</h3>
+                                    <p class="text-sm text-gray-600">Terima kasih sudah menjaga wilayah perkebunan hari ini!</p>
+                                </div>
+                            @else
+                                <a href="{{ route('attendance.history') }}"
+                                    class="inline-flex items-center justify-center gap-3 bg-gray-100 hover:bg-gray-200 text-gray-700 px-5 py-3.5 rounded-xl font-medium transition-all border border-[#E2E8F0] w-full">
+                                    <svg class="w-5 h-5 text-[#2c5e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                    </svg>
+                                    Lihat Riwayat
+                                </a>
+
+                                @if(!isset($absenHariIni) || !$absenHariIni || !$absenHariIni->check_in)
+                                <a href="{{ route('attendance.index') }}"
+                                   class="inline-flex items-center justify-center gap-3 bg-[#2c5e4e] hover:bg-[#1f4a3d] text-white px-5 py-3.5 rounded-xl font-semibold transition-all hover:translate-y-[-2px] shadow-md w-full">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                                    </svg>
+                                    <span>Absen Masuk</span>
+                                </a>
+                                @endif
+
+                                @if(isset($absenHariIni) && $absenHariIni->check_in && !$absenHariIni->check_out)
+                                <a href="{{ route('attendance.index') }}"
+                                    class="inline-flex items-center justify-center gap-3 bg-[#d4a373] hover:bg-[#b88352] text-white px-5 py-3.5 rounded-xl font-semibold transition-all hover:translate-y-[-2px] shadow-md w-full">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                    <span>Ambil Foto & Absen Pulang</span>
+                                </a>
+                                @endif
                             @endif
-
-                            <a href="{{ route('attendance.history') }}"
-                               class="inline-flex items-center justify-center gap-3 bg-gray-100 hover:bg-gray-200 text-gray-700 px-5 py-3 rounded-xl font-medium transition-all border border-gray-200">
-                                <svg class="w-5 h-5 text-[#2c5e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                                </svg>
-                                Lihat Riwayat
-                            </a>
-
                         </div>
                     </div>
                 </div>
@@ -341,14 +381,14 @@ document.addEventListener('DOMContentLoaded', function() {
         form1.addEventListener('submit', function() {
             document.getElementById('loading').classList.remove('hidden');
             document.getElementById('submitBtn').disabled = true;
-            document.getElementById('submitBtn').innerHTML = '<span class="text-xl mr-2">⏳</span>Mengunggah...';
+            document.getElementById('submitBtn').innerHTML = '<svg class="w-5 h-5 animate-spin mx-auto" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Mengunggah...';
         });
     }
     if (form2) {
         form2.addEventListener('submit', function() {
             document.getElementById('loading2').classList.remove('hidden');
             document.getElementById('submitBtn2').disabled = true;
-            document.getElementById('submitBtn2').innerHTML = '<span class="text-xl mr-2">⏳</span>Mengunggah...';
+            document.getElementById('submitBtn2').innerHTML = '<svg class="w-5 h-5 animate-spin mx-auto" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Mengunggah...';
         });
     }
     const successMessage = document.getElementById('successMessage');

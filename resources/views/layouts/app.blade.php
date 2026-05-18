@@ -164,26 +164,77 @@ class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-xl text-gray-700 fon
                         </a>
                         @break
                         
-                    @case('security')
-                    @case('cleaning')
-                    @case('kantoran')
-                        <a href="{{ route(Auth::user()->role . '.dashboard') }}" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-xl text-gray-700 font-medium transition-all duration-200 {{ request()->routeIs(Auth::user()->role . '.dashboard') ? 'bg-[#2c5e4e] text-white' : 'hover:bg-[#eaf4f1] hover:text-[#2c5e4e]' }}">
-                            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-                            <span>Dashboard</span>
-                        </a>
-                        <a href="{{ route('attendance.history') }}" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-xl text-gray-700 font-medium transition-all duration-200 {{ request()->routeIs('attendance.history') ? 'bg-[#2c5e4e] text-white' : 'hover:bg-[#eaf4f1] hover:text-[#2c5e4e]' }}">
-                            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            <span>Riwayat Absen</span>
-                        </a>
-                        <a href="{{ route('rapot.user') }}" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-xl text-gray-700 font-medium transition-all duration-200 {{ request()->routeIs('rapot.user') ? 'bg-[#2c5e4e] text-white' : 'hover:bg-[#eaf4f1] hover:text-[#2c5e4e]' }}">
-                            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                            <span>Rapot</span>
-                        </a>
-                        <a href="{{ route('pengumuman.user') }}" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-xl text-gray-700 font-medium transition-all duration-200 {{ request()->routeIs('pengumuman.user') ? 'bg-[#2c5e4e] text-white' : 'hover:bg-[#eaf4f1] hover:text-[#2c5e4e]' }}">
-                            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
-                            <span>Pengumuman</span>
-                        </a>
-                        @break
+                  @case('security')
+
+@case('cleaning')
+@case('kantoran')
+
+    <a href="{{ route(Auth::user()->role . '.dashboard') }}" 
+       class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-xl text-gray-700 font-medium transition-all duration-200 {{ request()->routeIs(Auth::user()->role . '.dashboard') ? 'bg-[#2c5e4e] text-white' : 'hover:bg-[#eaf4f1] hover:text-[#2c5e4e]' }}">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+        </svg>
+        <span>Dashboard</span>
+    </a>
+
+    <a href="{{ route('attendance.history') }}" 
+       class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-xl text-gray-700 font-medium transition-all duration-200 {{ request()->routeIs('attendance.history') ? 'bg-[#2c5e4e] text-white' : 'hover:bg-[#eaf4f1] hover:text-[#2c5e4e]' }}">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <span>Riwayat Absen</span>
+    </a>
+    {{-- KHUSUS SECURITY --}}
+@if(Auth::user()->role == 'security')
+
+    <a href="{{ route('security.patroli') }}" 
+       class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-xl text-gray-700 font-medium transition-all duration-200 {{ request()->routeIs('security.patroli') ? 'bg-[#2c5e4e] text-white' : 'hover:bg-[#eaf4f1] hover:text-[#2c5e4e]' }}">
+
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 01.553-.894L9 2m0 18l6-2m-6 2V2m6 16l5.447-2.724A1 1 0 0021 14.382V3.618a1 1 0 00-.553-.894L15 0m0 18V0"/>
+        </svg>
+
+        <span>Patroli</span>
+    </a>
+
+@endif
+
+    {{-- KHUSUS CLEANING --}}
+    @if(Auth::user()->role == 'cleaning')
+        <a href="{{ route('cleaning.kinerja') }}" 
+           class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-xl text-gray-700 font-medium transition-all duration-200 {{ request()->routeIs('cleaning.kinerja') ? 'bg-[#2c5e4e] text-white' : 'hover:bg-[#eaf4f1] hover:text-[#2c5e4e]' }}">
+            
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                    d="M3 7h18M3 12h18M3 17h18"/>
+            </svg>
+
+            <span>Input Kinerja</span>
+        </a>
+    @endif
+
+    <a href="{{ route('rapot.user') }}" 
+       class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-xl text-gray-700 font-medium transition-all duration-200 {{ request()->routeIs('rapot.user') ? 'bg-[#2c5e4e] text-white' : 'hover:bg-[#eaf4f1] hover:text-[#2c5e4e]' }}">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+        <span>Rapot</span>
+    </a>
+
+    <a href="{{ route('pengumuman.user') }}" 
+       class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-xl text-gray-700 font-medium transition-all duration-200 {{ request()->routeIs('pengumuman.user') ? 'bg-[#2c5e4e] text-white' : 'hover:bg-[#eaf4f1] hover:text-[#2c5e4e]' }}">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 0 01-1.564-.317z"/>
+        </svg>
+        <span>Pengumuman</span>
+    </a>
+
+    @break
                 @endswitch
             @endauth
         </nav>

@@ -12,6 +12,8 @@ use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\CleaningKinerjaController;
+use App\Http\Controllers\SecurityPatroliController;
 
 // ======================================================================
 // PUBLIC ROUTES
@@ -78,13 +80,32 @@ Route::middleware('auth')->group(function () {
         Route::get('/riwayat', [HomeController::class, 'userRiwayat'])->name('user.riwayat');
     });
 
-    Route::prefix('security')->group(function () {
-        Route::get('/dashboard', [HomeController::class, 'securityDashboard'])->name('security.dashboard');
-    });
+   Route::prefix('security')->group(function () {
 
-    Route::prefix('cleaning')->group(function () {
-        Route::get('/dashboard', [HomeController::class, 'cleaningDashboard'])->name('cleaning.dashboard');
-    });
+    Route::get('/dashboard', [HomeController::class, 'securityDashboard'])
+        ->name('security.dashboard');
+
+    // HALAMAN PATROLI
+    Route::get('/patroli', [SecurityPatroliController::class, 'index'])
+        ->name('security.patroli');
+
+    // SIMPAN PATROLI
+    Route::post('/patroli/store', [SecurityPatroliController::class, 'store'])
+        ->name('security.patroli.store');
+
+});
+
+Route::prefix('cleaning')->group(function () {
+
+    Route::get('/dashboard', [HomeController::class, 'cleaningDashboard'])
+        ->name('cleaning.dashboard');
+
+    Route::get('/kinerja', [CleaningKinerjaController::class, 'index'])
+        ->name('cleaning.kinerja');
+
+    Route::post('/kinerja', [CleaningKinerjaController::class, 'store'])
+        ->name('cleaning.kinerja.store');
+});
 
     Route::prefix('kantoran')->group(function () {
         Route::get('/dashboard', [HomeController::class, 'kantoranDashboard'])->name('kantoran.dashboard');

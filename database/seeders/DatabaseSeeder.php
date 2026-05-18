@@ -45,6 +45,27 @@ class DatabaseSeeder extends Seeder
                 'role'     => 'manager',
                 'password' => Hash::make('12345678'),
             ],
+            [
+                'name'     => 'Security User',
+                'email'    => 'security@gmail.com',
+                'no_hp'    => '085555555555',
+                'role'     => 'security',
+                'password' => Hash::make('12345678'),
+            ],
+            [
+                'name'     => 'Cleaning User',
+                'email'    => 'cleaning@gmail.com',
+                'no_hp'    => '086666666666',
+                'role'     => 'cleaning',
+                'password' => Hash::make('12345678'),
+            ],
+            [
+                'name'     => 'Kantoran User',
+                'email'    => 'kantoran@gmail.com',
+                'no_hp'    => '087777777777',
+                'role'     => 'kantoran',
+                'password' => Hash::make('12345678'),
+            ],
         ];
 
         foreach ($users as $user) {

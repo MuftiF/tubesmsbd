@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Models\KinerjaCleaning;
 use App\Exports\SheetAbsenExport;
 use App\Exports\RekapSemuaExport;
 
@@ -300,23 +301,46 @@ class HomeController extends Controller
         ));
     }
 
-    public function securityDashboard()
-    {
-        $today = now('Asia/Jakarta')->startOfDay();
-        $absenHariIni = Attendance::where('user_id', Auth::id())
-            ->whereDate('date', $today->toDateString())
-            ->first();
-        return view('security.dashboard', compact('absenHariIni'));
-    }
+  public function securityDashboard()
+{
+    $today = now('Asia/Jakarta')->toDateString();
 
-    public function cleaningDashboard()
-    {
-        $today = now('Asia/Jakarta')->startOfDay();
-        $absenHariIni = Attendance::where('user_id', Auth::id())
-            ->whereDate('date', $today->toDateString())
-            ->first();
-        return view('cleaning.dashboard', compact('absenHariIni'));
-    }
+    // Absen hari ini
+    $absenHariIni = Attendance::where('user_id', Auth::id())
+        ->whereDate('date', $today)
+        ->first();
+
+    // Data patroli hari ini
+    $patroliHariIni = \App\Models\PatroliSecurity::where('user_id', Auth::id())
+        ->whereDate('created_at', $today)
+        ->latest()
+        ->get();
+
+    // Total patroli hari ini
+    $totalPatroliHariIni = $patroliHariIni->count();
+
+    return view('security.dashboard', compact(
+        'absenHariIni',
+        'patroliHariIni',
+        'totalPatroliHariIni'
+    ));
+}
+
+   public function cleaningDashboard()
+{
+    $absenHariIni = Attendance::where('user_id', auth()->id())
+        ->whereDate('created_at', today())
+        ->first();
+
+    $jumlahAreaHariIni = KinerjaCleaning::where('user_id', auth()->id())
+        ->whereDate('tanggal', now()->toDateString())
+        ->count();
+
+    return view('cleaning.dashboard', compact(
+        'absenHariIni',
+        'jumlahAreaHariIni'
+    ));
+}
 
     public function kantoranDashboard()
     {
